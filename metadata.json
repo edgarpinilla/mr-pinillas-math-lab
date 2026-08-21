@@ -1,0 +1,7 @@
+{
+  "name": "Mr. Pinilla’s Math Lab",
+  "description": "A student-facing middle school math learning portal with conceptual guides, vocabulary, worked examples, video lessons, and interactive practice apps.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
