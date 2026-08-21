@@ -1,5 +1,6 @@
 interface Env {
   CLASS_ACCESS_CODE?: string;
+  SESSION_SECRET?: string;
 }
 
 interface EventContext<Env, P extends string, Data> {
@@ -18,16 +19,27 @@ type PagesFunction<
   Data extends Record<string, unknown> = Record<string, unknown>
 > = (context: EventContext<Env, Params, Data>) => Response | Promise<Response>;
 
+const SESSION_MESSAGE = 'mr-pinillas-math-lab-session-v1';
+
 /**
- * Computes a secure SHA-256 hash of the access code using standard Web Crypto.
- * This derived value is used for session authentication without ever exposing or storing
- * the raw secret code in the client cookie.
+ * Computes an HMAC-SHA-256 session token using SESSION_SECRET as the key and a fixed message.
+ * This ensures the session token is cryptographically signed and decoupled from the class access code.
  */
-async function computeSessionToken(secret: string): Promise<string> {
+async function computeSessionToken(sessionSecret: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(`mathlab_cloudflare_session_${secret}`);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(digest));
+  const keyData = encoder.encode(sessionSecret);
+  const messageData = encoder.encode(SESSION_MESSAGE);
+
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+  const hashArray = Array.from(new Uint8Array(signature));
   return hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
@@ -243,11 +255,17 @@ function renderLoginPage(errorMessage?: string): Response {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const accessSecret = env.CLASS_ACCESS_CODE;
+  const sessionSecret = env.SESSION_SECRET;
 
-  // Fail closed if the Cloudflare secret is not configured
-  if (!accessSecret || accessSecret.trim() === '') {
+  // Fail closed if either required Cloudflare secret is missing
+  if (
+    !accessSecret ||
+    accessSecret.trim() === '' ||
+    !sessionSecret ||
+    sessionSecret.trim() === ''
+  ) {
     return new Response(
-      '503 Service Unavailable: Math Lab access protection is not configured. Please configure the CLASS_ACCESS_CODE secret in your Cloudflare Pages project settings.',
+      '503 Service Unavailable: Math Lab access protection is not configured. Please configure both CLASS_ACCESS_CODE and SESSION_SECRET in your Cloudflare Pages project settings.',
       {
         status: 503,
         headers: {
@@ -280,7 +298,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const submittedCode = formData.get('access_code');
 
       if (typeof submittedCode === 'string' && submittedCode.trim() === accessSecret.trim()) {
-        const sessionToken = await computeSessionToken(accessSecret.trim());
+        const sessionToken = await computeSessionToken(sessionSecret.trim());
         return new Response(null, {
           status: 303,
           headers: {
@@ -309,7 +327,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Check existing session cookie
   const sessionCookie = getCookie(request, 'mathlab_session');
-  const expectedSession = await computeSessionToken(accessSecret.trim());
+  const expectedSession = await computeSessionToken(sessionSecret.trim());
 
   if (sessionCookie && sessionCookie === expectedSession) {
     // Authenticated: proceed to serve the React/Vite application
