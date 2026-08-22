@@ -16,12 +16,15 @@ import {
   RotateCcw,
   Copy,
   Check,
+  Target,
 } from 'lucide-react';
 import { TopicData, SectionTab } from '../types';
 import { TransformationsVisualizer } from './visualizers/TransformationsVisualizer';
 import { ProportionalVisualizer } from './visualizers/ProportionalVisualizer';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
+import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
+import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -36,6 +39,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
   onNavigateHome,
 }) => {
   const [activeTab, setActiveTab] = useState<SectionTab>(initialTab);
+  const [practicePathway, setPracticePathway] = useState<'self-check' | 'staar'>('self-check');
   const [vocabSearch, setVocabSearch] = useState<string>('');
   const [selectedExampleIndex, setSelectedExampleIndex] = useState<number>(0);
   const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
@@ -50,6 +54,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
   // Scroll to top when topic changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setPracticePathway('self-check');
   }, [topic.id]);
 
   const filteredVocab = topic.vocabulary.filter(
@@ -589,13 +594,132 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             </div>
           </div>
 
-          {/* In-Portal Quick Practice Quiz */}
-          <PracticeQuiz
-            topicId={topic.id}
-            questions={topic.practiceApp.quizQuestions}
-            quizBanks={topic.practiceApp.quizBanks}
-            topicTitle={topic.shortTitle}
-          />
+          {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  In-Portal Practice & Skills Check
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium">
+                  Choose your practice mode: review lesson concepts with hints or preview TEKS-aligned STAAR practice.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {/* Option 1: Self Check */}
+              <button
+                id="pathway-selfcheck-btn"
+                onClick={() => setPracticePathway('self-check')}
+                className={`p-4 sm:p-5 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                  practicePathway === 'self-check'
+                    ? 'bg-blue-50/90 border-blue-600 text-blue-950 shadow-md ring-4 ring-blue-500/15 -translate-y-0.5'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`p-2 rounded-xl flex items-center justify-center transition-colors ${
+                        practicePathway === 'self-check'
+                          ? 'bg-blue-600 text-white shadow-2xs'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                        Self Check
+                      </div>
+                      <div className="text-[11px] text-blue-700 font-bold">
+                        Lesson Practice · 6 Questions
+                      </div>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                      practicePathway === 'self-check'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 text-slate-600 border border-slate-200'
+                    }`}
+                  >
+                    {practicePathway === 'self-check' ? 'Active Mode' : 'Select'}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                  Practice what you learned in this topic.
+                </p>
+              </button>
+
+              {/* Option 2: STAAR Practice */}
+              <button
+                id="pathway-staar-btn"
+                onClick={() => setPracticePathway('staar')}
+                className={`p-4 sm:p-5 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                  practicePathway === 'staar'
+                    ? 'bg-indigo-50/90 border-indigo-600 text-indigo-950 shadow-md ring-4 ring-indigo-500/15 -translate-y-0.5'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`p-2 rounded-xl flex items-center justify-center transition-colors ${
+                        practicePathway === 'staar'
+                          ? 'bg-indigo-600 text-white shadow-2xs'
+                          : 'bg-indigo-100 text-indigo-700'
+                      }`}
+                    >
+                      <Target className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                        STAAR Practice
+                      </div>
+                      <div className="text-[11px] text-indigo-700 font-bold">
+                        Aligned to TEKS · STAAR-style practice
+                      </div>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                      practicePathway === 'staar'
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-amber-100 text-amber-900 border border-amber-200'
+                    }`}
+                  >
+                    {practicePathway === 'staar' ? 'Active Mode' : 'TEKS Aligned'}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                  Practice STAAR-style questions aligned to this topic.
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Practice Component Container */}
+          {practicePathway === 'self-check' ? (
+            <PracticeQuiz
+              topicId={topic.id}
+              questions={topic.practiceApp.quizQuestions}
+              quizBanks={topic.practiceApp.quizBanks}
+              topicTitle={topic.shortTitle}
+            />
+          ) : topic.id === 'geometric-transformations' ? (
+            <StaarTransformationsQuiz
+              topicTitle={topic.shortTitle}
+              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+            />
+          ) : (
+            <StaarPracticePlaceholder
+              topicId={topic.id}
+              topicTitle={topic.shortTitle}
+              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+            />
+          )}
         </div>
       )}
     </div>
