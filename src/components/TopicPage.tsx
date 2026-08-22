@@ -591,7 +591,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
           {/* In-Portal Quick Practice Quiz */}
           <PracticeQuiz
+            topicId={topic.id}
             questions={topic.practiceApp.quizQuestions}
+            quizBanks={topic.practiceApp.quizBanks}
             topicTitle={topic.shortTitle}
           />
         </div>

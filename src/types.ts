@@ -54,15 +54,27 @@ export interface VideoLessonInfo {
   lessons?: VideoLessonItem[];
 }
 
+export interface QuestionTable {
+  headers: string[];
+  rows: (string | number)[][];
+}
+
 export interface PracticeQuestion {
   id: string;
   question: string;
   context?: string;
+  category?: 'proportional' | 'non-proportional' | 'mixed' | 'transformations';
+  tableData?: QuestionTable;
   diagramSvgType?: 'grid' | 'table' | 'equation' | 'graph';
   options: string[];
   correctIndex: number;
   explanation: string;
   hint: string;
+}
+
+export interface PracticeQuestionBanks {
+  proportional?: PracticeQuestion[];
+  nonProportional?: PracticeQuestion[];
 }
 
 export interface PracticeAppInfo {
@@ -73,6 +85,7 @@ export interface PracticeAppInfo {
   features: string[];
   estimatedTime: string;
   quizQuestions: PracticeQuestion[];
+  quizBanks?: PracticeQuestionBanks;
 }
 
 export interface LearnConcept {
