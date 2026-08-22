@@ -48,27 +48,29 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
             <div
               key={lesson.id}
               id={`lesson-card-${lesson.id}`}
-              className="bg-slate-50/80 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-xs"
+              className="bg-white rounded-3xl border-2 border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-blue-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
             >
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900">{lesson.title}</h4>
+                  <h4 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">
+                    {lesson.title}
+                  </h4>
                   {lesson.badge && (
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800">
+                    <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-2xs">
                       {lesson.badge}
                     </span>
                   )}
                 </div>
                 {lesson.subtitle && (
-                  <p className="text-xs font-medium text-slate-500">{lesson.subtitle}</p>
+                  <p className="text-xs font-bold text-slate-500">{lesson.subtitle}</p>
                 )}
                 {lesson.description && (
-                  <p className="text-xs text-slate-600 pt-1 leading-relaxed">{lesson.description}</p>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">{lesson.description}</p>
                 )}
               </div>
 
               {/* Responsive 16:9 Video Embed Container */}
-              <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
+              <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 shadow-md">
                 <iframe
                   src={lesson.youtubeEmbedUrl}
                   title={lesson.title}
@@ -85,7 +87,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                   href={lesson.youtubeWatchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-98"
+                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs sm:text-sm font-black transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] active:scale-98"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>Open on YouTube</span>

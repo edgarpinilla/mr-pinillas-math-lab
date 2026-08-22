@@ -70,57 +70,62 @@ export const TopicPage: React.FC<TopicPageProps> = ({
   return (
     <div className="space-y-8 pb-16">
       {/* Top Header Banner */}
-      <div className={`rounded-3xl p-6 sm:p-8 text-white bg-gradient-to-r ${topic.themeColor.gradient} shadow-lg relative overflow-hidden`}>
+      <div className={`rounded-3xl p-6 sm:p-8 text-white bg-gradient-to-r ${topic.themeColor.gradient} shadow-xl relative overflow-hidden`}>
+        {/* Subtle grid pattern in banner */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
         {/* Background Math watermark */}
-        <div className="absolute right-4 -bottom-6 opacity-10 text-9xl font-serif select-none pointer-events-none">
+        <div className="absolute right-4 -bottom-6 opacity-15 text-9xl font-serif select-none pointer-events-none">
           {isTransformations ? '△' : 'k'}
         </div>
 
         <div className="relative z-10 space-y-4 max-w-4xl">
           {/* Breadcrumb & Navigation */}
-          <div className="flex flex-wrap items-center gap-2 text-xs text-white/80 font-medium">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-white/90 font-medium">
             <button
               id="topic-page-back-home-btn"
               onClick={onNavigateHome}
-              className="inline-flex items-center gap-1 hover:text-white bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 hover:text-white bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl transition-all font-bold backdrop-blur-md shadow-2xs"
             >
               <Home className="w-3.5 h-3.5" />
               <span>Math Lab Home</span>
             </button>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span>Unit {topic.number}</span>
+            <span className="font-semibold">Unit {topic.number}</span>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span className="text-white font-bold">{topic.shortTitle}</span>
+            <span className="text-white font-black bg-black/20 px-2.5 py-0.5 rounded-md backdrop-blur-xs">
+              {topic.shortTitle}
+            </span>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-black/20 text-white/95">
+          <div className="space-y-2">
+            <div className="inline-block px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-black/25 text-white/95 backdrop-blur-md">
               {topic.gradeLevel} • {topic.unit}
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
               {topic.title}
             </h1>
-            <p className="text-sm sm:text-base text-white/90 font-medium">
+            <p className="text-sm sm:text-base text-white/95 font-semibold">
               {topic.subtitle}
             </p>
           </div>
 
-          <p className="text-xs sm:text-sm text-white/85 leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-slate-100/90 leading-relaxed max-w-3xl font-medium">
             {topic.summary}
           </p>
         </div>
       </div>
 
       {/* Main Section Tabs Navigation Bar */}
-      <div className="sticky top-16 sm:top-20 z-40 bg-white/95 backdrop-blur-md rounded-2xl p-1.5 border border-slate-200 shadow-md">
+      <div className="sticky top-16 sm:top-20 z-40 bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border border-slate-200/90 shadow-md">
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
           <button
             id="tab-btn-learn"
             onClick={() => setActiveTab('learn')}
-            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               activeTab === 'learn'
-                ? `${topic.themeColor.primary} text-white shadow-md`
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? `${topic.themeColor.primary} text-white shadow-md shadow-blue-500/25 scale-[1.02]`
+                : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50/70 hover:-translate-y-0.5'
             }`}
           >
             <BookOpen className="w-4 h-4 shrink-0" />
@@ -130,10 +135,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           <button
             id="tab-btn-vocab"
             onClick={() => setActiveTab('vocab')}
-            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               activeTab === 'vocab'
-                ? `${topic.themeColor.primary} text-white shadow-md`
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? `${topic.themeColor.primary} text-white shadow-md shadow-indigo-500/25 scale-[1.02]`
+                : 'text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/70 hover:-translate-y-0.5'
             }`}
           >
             <Layers className="w-4 h-4 shrink-0" />
@@ -143,10 +148,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           <button
             id="tab-btn-examples"
             onClick={() => setActiveTab('examples')}
-            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               activeTab === 'examples'
-                ? `${topic.themeColor.primary} text-white shadow-md`
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? `${topic.themeColor.primary} text-white shadow-md shadow-purple-500/25 scale-[1.02]`
+                : 'text-slate-700 hover:text-purple-600 hover:bg-purple-50/70 hover:-translate-y-0.5'
             }`}
           >
             <FileText className="w-4 h-4 shrink-0" />
@@ -156,10 +161,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           <button
             id="tab-btn-watch"
             onClick={() => setActiveTab('watch')}
-            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            className={`py-3 px-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               activeTab === 'watch'
-                ? 'bg-red-600 text-white shadow-md'
-                : 'text-red-700 bg-red-50 hover:bg-red-100'
+                ? 'bg-rose-600 text-white shadow-md shadow-rose-500/25 scale-[1.02]'
+                : 'text-rose-700 bg-rose-50/90 hover:bg-rose-100 border border-rose-200/60 hover:-translate-y-0.5'
             }`}
           >
             <Play className="w-4 h-4 shrink-0 fill-current" />
@@ -169,10 +174,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           <button
             id="tab-btn-practice"
             onClick={() => setActiveTab('practice')}
-            className={`col-span-2 sm:col-span-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            className={`col-span-2 sm:col-span-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               activeTab === 'practice'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-[1.02]'
+                : 'text-emerald-700 bg-emerald-50/90 hover:bg-emerald-100 border border-emerald-200/60 hover:-translate-y-0.5'
             }`}
           >
             <Activity className="w-4 h-4 shrink-0" />

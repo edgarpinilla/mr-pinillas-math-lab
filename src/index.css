@@ -4,7 +4,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -12,7 +12,67 @@
     }
   }
 
+  @keyframes pulseGlow {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.04);
+    }
+  }
+
+  @keyframes floatSlow {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(1deg);
+    }
+  }
+
   .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out forwards;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-pulseGlow {
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: floatSlow 6s ease-in-out infinite;
+  }
+
+  /* Subtle Math Coordinate Grid Background */
+  .math-grid-bg {
+    background-image: 
+      linear-gradient(to right, rgba(59, 130, 246, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(59, 130, 246, 0.045) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Secondary subtle geometry dots */
+  .math-dots-bg {
+    background-image: radial-gradient(rgba(59, 130, 246, 0.12) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+  }
+
+  /* Interactive card lift and smooth transitions */
+  .interactive-card {
+    transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s cubic-bezier(0.2, 0, 0, 1), border-color 0.22s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fadeIn,
+    .animate-pulseGlow,
+    .animate-float,
+    .interactive-card {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
   }
 }
+
+
