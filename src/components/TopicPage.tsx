@@ -25,6 +25,7 @@ import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
 import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
+import { StaarProportionalQuiz } from './StaarProportionalQuiz';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -710,6 +711,11 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             />
           ) : topic.id === 'geometric-transformations' ? (
             <StaarTransformationsQuiz
+              topicTitle={topic.shortTitle}
+              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+            />
+          ) : topic.id === 'proportional-relationships' ? (
+            <StaarProportionalQuiz
               topicTitle={topic.shortTitle}
               onSwitchToSelfCheck={() => setPracticePathway('self-check')}
             />
