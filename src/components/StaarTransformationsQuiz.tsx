@@ -27,7 +27,7 @@ interface StaarTransformationsQuizProps {
 }
 
 /**
- * Generates 6 unique STAAR-style questions from the bank of 18 questions.
+ * Generates 6 unique STAAR-style questions from the bank of 36 questions.
  * - Balances TEKS coverage (TEKS 8.10.C, 8.3.C, 8.10.B).
  * - Ensures no exact duplicate set from the previous run.
  * - Shuffles answer choices while preserving correct answer mapping.
@@ -256,7 +256,9 @@ export const StaarTransformationsQuiz: React.FC<StaarTransformationsQuizProps> =
             <div className="text-xs font-black uppercase tracking-wider text-blue-900">
               Question Pool
             </div>
-            <div className="text-3xl font-black text-blue-600">18</div>
+            <div className="text-3xl font-black text-blue-600">
+              {STAAR_TRANSFORMATIONS_QUESTIONS.length}
+            </div>
             <div className="text-[11px] text-slate-500 font-bold">
               Original Grade 8 STAAR Items
             </div>
