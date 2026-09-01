@@ -40,6 +40,8 @@ export interface QuestionGraph {
   triangles?: SlopeTriangle[];
 }
 
+export type RelationshipType = 'proportional' | 'nonProportional' | 'mixed';
+
 export type QuestionCategory =
   | 'graph'
   | 'table'
@@ -50,6 +52,7 @@ export type QuestionCategory =
 export interface StaarPracticeQuestion {
   id: string;
   category: QuestionCategory;
+  relationshipType: RelationshipType;
   teksCode: string; // e.g. "TEKS 8.4.B", "TEKS 8.5.E", "TEKS 8.5.F", "TEKS 8.5.H", "TEKS 8.4.A", "TEKS 8.4.C"
   standardType: 'Readiness' | 'Supporting';
   reportingCategory: 2;
@@ -88,6 +91,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q01',
+    relationshipType: 'proportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.B',
     standardType: 'Readiness',
@@ -132,6 +136,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q02',
+    relationshipType: 'mixed',
     category: 'graph',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -188,6 +193,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q03',
+    relationshipType: 'nonProportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -233,6 +239,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q04',
+    relationshipType: 'proportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.A',
     standardType: 'Supporting',
@@ -295,6 +302,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q05',
+    relationshipType: 'proportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.B',
     standardType: 'Readiness',
@@ -349,6 +357,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q06',
+    relationshipType: 'nonProportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -393,6 +402,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q07',
+    relationshipType: 'nonProportional',
     category: 'graph',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -438,6 +448,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q08',
+    relationshipType: 'proportional',
     category: 'graph',
     teksCode: 'TEKS 8.4.B',
     standardType: 'Readiness',
@@ -487,6 +498,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q09',
+    relationshipType: 'proportional',
     category: 'table',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -514,6 +526,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q10',
+    relationshipType: 'nonProportional',
     category: 'table',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -541,6 +554,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q11',
+    relationshipType: 'proportional',
     category: 'table',
     teksCode: 'TEKS 8.5.E',
     standardType: 'Supporting',
@@ -568,6 +582,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q12',
+    relationshipType: 'nonProportional',
     category: 'table',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -595,6 +610,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q13',
+    relationshipType: 'nonProportional',
     category: 'table',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -622,6 +638,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q14',
+    relationshipType: 'nonProportional',
     category: 'table',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -653,6 +670,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q15',
+    relationshipType: 'mixed',
     category: 'equation',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -672,6 +690,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q16',
+    relationshipType: 'nonProportional',
     category: 'equation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -691,6 +710,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q17',
+    relationshipType: 'proportional',
     category: 'equation',
     teksCode: 'TEKS 8.5.E',
     standardType: 'Supporting',
@@ -710,6 +730,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q18',
+    relationshipType: 'nonProportional',
     category: 'equation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -729,6 +750,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q19',
+    relationshipType: 'nonProportional',
     category: 'equation',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -748,6 +770,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q20',
+    relationshipType: 'proportional',
     category: 'equation',
     teksCode: 'TEKS 8.5.E',
     standardType: 'Supporting',
@@ -767,6 +790,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q21',
+    relationshipType: 'mixed',
     category: 'equation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -786,6 +810,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q22',
+    relationshipType: 'nonProportional',
     category: 'equation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -809,6 +834,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q23',
+    relationshipType: 'mixed',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
@@ -828,6 +854,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q24',
+    relationshipType: 'nonProportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -847,6 +874,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q25',
+    relationshipType: 'mixed',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
@@ -866,6 +894,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q26',
+    relationshipType: 'nonProportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -885,6 +914,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q27',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.E',
     standardType: 'Supporting',
@@ -904,6 +934,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q28',
+    relationshipType: 'nonProportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -923,6 +954,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q29',
+    relationshipType: 'nonProportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
@@ -942,6 +974,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q30',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.B',
     standardType: 'Readiness',
@@ -961,6 +994,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q31',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.E',
     standardType: 'Supporting',
@@ -980,6 +1014,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q32',
+    relationshipType: 'mixed',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -1003,6 +1038,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q33',
+    relationshipType: 'nonProportional',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -1022,6 +1058,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q34',
+    relationshipType: 'mixed',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -1048,6 +1085,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q35',
+    relationshipType: 'nonProportional',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -1102,6 +1140,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q36',
+    relationshipType: 'mixed',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',

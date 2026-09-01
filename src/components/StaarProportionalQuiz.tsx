@@ -11,19 +11,160 @@ import {
   ChevronLeft,
   BookOpen,
   TrendingUp,
-  Sliders,
   Layers,
-  ArrowRight,
+  Check,
 } from 'lucide-react';
 import {
   STAAR_PROPORTIONAL_QUESTIONS,
   StaarPracticeQuestion,
   QuestionGraph,
+  RelationshipType,
 } from '../data/staar/staarQuestionsProportional';
+
+export type StaarProportionalMode = 'proportional' | 'nonProportional' | 'mixed';
 
 interface StaarProportionalQuizProps {
   topicTitle: string;
   onSwitchToSelfCheck?: () => void;
+}
+
+const STORAGE_SERVED_KEY_PREFIX = 'staar_unit2_served_ids_v1_';
+const STORAGE_SELECTED_MODE_KEY = 'staar_unit2_selected_mode_v1';
+
+function getStoredModeServedIds(mode: StaarProportionalMode): string[] {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((id): id is string => typeof id === 'string');
+    }
+  } catch {
+    // ignore
+  }
+  return [];
+}
+
+function saveStoredModeServedIds(mode: StaarProportionalMode, ids: string[]): void {
+  try {
+    localStorage.setItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`, JSON.stringify(ids));
+  } catch {
+    // ignore
+  }
+}
+
+function getPoolForMode(mode: StaarProportionalMode): StaarPracticeQuestion[] {
+  if (mode === 'proportional') {
+    return STAAR_PROPORTIONAL_QUESTIONS.filter((q) => q.relationshipType === 'proportional');
+  }
+  if (mode === 'nonProportional') {
+    return STAAR_PROPORTIONAL_QUESTIONS.filter((q) => q.relationshipType === 'nonProportional');
+  }
+  return STAAR_PROPORTIONAL_QUESTIONS;
+}
+
+/**
+ * Generates 6 unique STAAR-style questions from the chosen mode pool.
+ * - Filters by mode (Proportional, Non-Proportional, Mixed).
+ * - Tracks served IDs to ensure zero repeats across consecutive attempts until pool is exhausted.
+ * - Balances question representations (Graph, Table, Equation, Word Problem, Multiple Representation).
+ * - Shuffles answer choices while preserving correct answer mapping.
+ */
+function generateStaarQuestions(
+  mode: StaarProportionalMode,
+  count: number = 6,
+  previousIds: string[] = []
+): StaarPracticeQuestion[] {
+  const pool = getPoolForMode(mode);
+  if (pool.length <= count) {
+    return pool.map((q) => ({ ...q }));
+  }
+
+  const allIds = new Set(pool.map((q) => q.id));
+  let servedIds = getStoredModeServedIds(mode).filter((id) => allIds.has(id));
+  let servedSet = new Set(servedIds);
+
+  let candidatePool = pool.filter((q) => !servedSet.has(q.id));
+
+  // If candidate unserved pool is smaller than count, rollover cycle
+  // carrying forward only the immediately previous attempt IDs to prevent immediate repeats
+  if (candidatePool.length < count) {
+    const carryForward = (previousIds.length > 0 ? previousIds : servedIds.slice(-count)).filter((id) =>
+      allIds.has(id)
+    );
+    servedIds = [...carryForward];
+    servedSet = new Set(servedIds);
+    candidatePool = pool.filter((q) => !servedSet.has(q.id));
+  }
+
+  // Partition candidates by representation category
+  const graphPool = candidatePool.filter((q) => q.category === 'graph');
+  const tablePool = candidatePool.filter((q) => q.category === 'table');
+  const eqPool = candidatePool.filter((q) => q.category === 'equation');
+  const wordPool = candidatePool.filter((q) => q.category === 'word-problem');
+  const multiPool = candidatePool.filter((q) => q.category === 'multiple-representation');
+
+  const pickedSet = new Set<string>();
+  const selected: StaarPracticeQuestion[] = [];
+
+  const addFrom = (group: StaarPracticeQuestion[]) => {
+    const candidates = group.filter((item) => !pickedSet.has(item.id));
+    if (candidates.length > 0) {
+      const item = candidates[Math.floor(Math.random() * candidates.length)];
+      pickedSet.add(item.id);
+      selected.push(item);
+    }
+  };
+
+  // 1. Try to take 1 from each representation category available in candidates
+  if (graphPool.length > 0) addFrom(graphPool);
+  if (tablePool.length > 0) addFrom(tablePool);
+  if (eqPool.length > 0) addFrom(eqPool);
+  if (wordPool.length > 0) addFrom(wordPool);
+  if (multiPool.length > 0) addFrom(multiPool);
+
+  // 2. Fill remainder up to count from candidatePool
+  const remainingCandidates = candidatePool
+    .filter((item) => !pickedSet.has(item.id))
+    .sort(() => Math.random() - 0.5);
+
+  for (const item of remainingCandidates) {
+    if (selected.length >= count) break;
+    selected.push(item);
+    pickedSet.add(item.id);
+  }
+
+  // Safety fallback if candidatePool alone was insufficient
+  if (selected.length < count) {
+    const fallbackCandidates = pool
+      .filter((item) => !pickedSet.has(item.id))
+      .sort(() => Math.random() - 0.5);
+    for (const item of fallbackCandidates) {
+      if (selected.length >= count) break;
+      selected.push(item);
+      pickedSet.add(item.id);
+    }
+  }
+
+  // Persist updated served history for this mode
+  const newlyServedIds = selected.map((q) => q.id);
+  saveStoredModeServedIds(mode, [...servedIds, ...newlyServedIds]);
+
+  // Shuffle presentation sequence
+  const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
+
+  // Shuffle answer options while maintaining correctIndex
+  return shuffledSelected.map((q) => {
+    const correctOptionText = q.options[q.correctIndex];
+    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+    const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
+
+    return {
+      ...q,
+      options: shuffledOptions,
+      correctIndex: newCorrectIndex,
+    };
+  });
 }
 
 /**
@@ -418,106 +559,22 @@ const CoordinateGraphView: React.FC<{ graph: QuestionGraph }> = ({ graph }) => {
   );
 };
 
-/**
- * Generates 6 unique STAAR-style questions from the bank of 36 Proportional Relationships questions.
- * - Balances question representations (Graph, Table, Equation, Word Problem, Multiple Representation).
- * - Ensures no exact duplicate set from the previous run.
- * - Shuffles answer choices while preserving correct answer mapping.
- */
-function generateStaarQuestions(
-  pool: StaarPracticeQuestion[],
-  count: number = 6,
-  previousIds: string[] = []
-): StaarPracticeQuestion[] {
-  if (pool.length <= count) {
-    return pool.map((q) => ({ ...q }));
-  }
-
-  // Partition questions by representation category
-  const graphPool = pool.filter((q) => q.category === 'graph');
-  const tablePool = pool.filter((q) => q.category === 'table');
-  const eqPool = pool.filter((q) => q.category === 'equation');
-  const wordPool = pool.filter((q) => q.category === 'word-problem');
-  const multiPool = pool.filter((q) => q.category === 'multiple-representation');
-
-  const pickRandom = (arr: StaarPracticeQuestion[]) =>
-    arr[Math.floor(Math.random() * arr.length)];
-
-  let selected: StaarPracticeQuestion[] = [];
-  let attempts = 0;
-
-  do {
-    const pickedSet = new Set<string>();
-    const temp: StaarPracticeQuestion[] = [];
-
-    const addFrom = (group: StaarPracticeQuestion[]) => {
-      const candidates = group.filter((item) => !pickedSet.has(item.id));
-      if (candidates.length > 0) {
-        const item = pickRandom(candidates);
-        pickedSet.add(item.id);
-        temp.push(item);
-      }
-    };
-
-    // Guarantee balanced representation mix in every 6-question set:
-    // 1. At least 1-2 Graph-based questions
-    if (graphPool.length > 0) addFrom(graphPool);
-    // 2. At least 1 Table question
-    if (tablePool.length > 0) addFrom(tablePool);
-    // 3. At least 1 Equation question
-    if (eqPool.length > 0) addFrom(eqPool);
-    // 4. At least 1 Word Problem
-    if (wordPool.length > 0) addFrom(wordPool);
-    // 5. At least 1 Multiple Representation / Comparison question
-    if (multiPool.length > 0) addFrom(multiPool);
-    // 6. Another Graph or Word Problem
-    if (graphPool.length > 0) {
-      addFrom(graphPool);
-    } else if (wordPool.length > 0) {
-      addFrom(wordPool);
-    }
-
-    // Fill any remaining slots up to count from general unpicked pool
-    const remaining = pool.filter((item) => !pickedSet.has(item.id));
-    const shuffledRemaining = [...remaining].sort(() => Math.random() - 0.5);
-    for (const item of shuffledRemaining) {
-      if (temp.length >= count) break;
-      temp.push(item);
-      pickedSet.add(item.id);
-    }
-
-    selected = temp;
-    attempts++;
-
-    const currentIdSet = new Set(selected.map((q) => q.id));
-    const isSameAsPrevious =
-      previousIds.length === selected.length &&
-      previousIds.every((id) => currentIdSet.has(id));
-
-    if (!isSameAsPrevious || attempts >= 30) break;
-  } while (attempts < 30);
-
-  // Shuffle presentation sequence
-  const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
-
-  // Shuffle answer options while maintaining correctIndex
-  return shuffledSelected.map((q) => {
-    const correctOptionText = q.options[q.correctIndex];
-    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-    const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
-
-    return {
-      ...q,
-      options: shuffledOptions,
-      correctIndex: newCorrectIndex,
-    };
-  });
-}
-
 export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
   topicTitle,
   onSwitchToSelfCheck,
 }) => {
+  const [currentMode, setCurrentMode] = useState<StaarProportionalMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_SELECTED_MODE_KEY);
+      if (saved === 'proportional' || saved === 'nonProportional' || saved === 'mixed') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'mixed';
+  });
+
   const [questions, setQuestions] = useState<StaarPracticeQuestion[]>([]);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
@@ -530,7 +587,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
   // Initialize questions on mount
   useEffect(() => {
-    const initialQuestions = generateStaarQuestions(STAAR_PROPORTIONAL_QUESTIONS, 6, []);
+    const initialQuestions = generateStaarQuestions(currentMode, 6, []);
     setQuestions(initialQuestions);
     setPreviousQuestionIds(initialQuestions.map((q) => q.id));
     setCurrentIdx(0);
@@ -539,6 +596,28 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
     setShowHint(false);
     setShowReview(false);
   }, []);
+
+  const handleModeChange = (newMode: StaarProportionalMode) => {
+    if (newMode === currentMode && questions.length > 0 && !isCompleted) return;
+    setCurrentMode(newMode);
+    try {
+      localStorage.setItem(STORAGE_SELECTED_MODE_KEY, newMode);
+    } catch {
+      // ignore
+    }
+    const newQuestions = generateStaarQuestions(newMode, 6, previousQuestionIds);
+    setQuestions(newQuestions);
+    setPreviousQuestionIds(newQuestions.map((q) => q.id));
+    setCurrentIdx(0);
+    setSelectedAnswers({});
+    setIsCompleted(false);
+    setShowHint(false);
+    setShowReview(false);
+
+    if (quizContainerRef.current) {
+      quizContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const currentQ = questions[currentIdx];
   const answeredCount = Object.keys(selectedAnswers).length;
@@ -570,7 +649,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
   const handleRestart = () => {
     const newQuestions = generateStaarQuestions(
-      STAAR_PROPORTIONAL_QUESTIONS,
+      currentMode,
       6,
       previousQuestionIds
     );
@@ -594,6 +673,20 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
   const scorePercentage =
     questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+
+  const activePoolCount =
+    currentMode === 'proportional'
+      ? STAAR_PROPORTIONAL_QUESTIONS.filter((q) => q.relationshipType === 'proportional').length
+      : currentMode === 'nonProportional'
+      ? STAAR_PROPORTIONAL_QUESTIONS.filter((q) => q.relationshipType === 'nonProportional').length
+      : STAAR_PROPORTIONAL_QUESTIONS.length;
+
+  const modeTitle =
+    currentMode === 'proportional'
+      ? 'Proportional Relationships'
+      : currentMode === 'nonProportional'
+      ? 'Non-Proportional Relationships'
+      : 'Mixed Review';
 
   if (questions.length === 0 || !currentQ) {
     return (
@@ -623,15 +716,15 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase tracking-wider">
             <Target className="w-3.5 h-3.5 text-emerald-600" />
-            STAAR Practice Completed
+            STAAR {modeTitle} Practice Completed
           </div>
 
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             {isPerfect
               ? 'Outstanding Mastery!'
               : isPassing
-              ? 'Great Job on STAAR Practice!'
-              : 'Keep Practicing Proportional Relationships!'}
+              ? `Great Job on ${modeTitle}!`
+              : `Keep Practicing ${modeTitle}!`}
           </h3>
 
           <p className="text-slate-600 text-sm max-w-md mx-auto font-medium">
@@ -639,7 +732,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
               ? 'You answered all 6 STAAR-style questions correctly. You have strong mastery of Grade 8 Proportional Relationships TEKS!'
               : isPassing
               ? 'You passed this STAAR practice session. Review your answers below or try another set to lock in your skills.'
-              : 'Proportional relationships require verifying that the ratio y/x is constant and the graph passes through (0, 0). Review your explanations and practice again!'}
+              : 'Proportional and linear relationships require verifying if the ratio y/x is constant and if the graph passes through (0, 0). Review your explanations and practice again!'}
           </p>
         </div>
 
@@ -659,13 +752,13 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
           <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200 text-center space-y-1">
             <div className="text-xs font-black uppercase tracking-wider text-teal-900">
-              Question Pool
+              Active Mode Pool
             </div>
             <div className="text-3xl font-black text-teal-600">
-              {STAAR_PROPORTIONAL_QUESTIONS.length}
+              {activePoolCount}
             </div>
             <div className="text-[11px] text-slate-500 font-bold">
-              Original Grade 8 STAAR Items
+              {modeTitle} ({STAAR_PROPORTIONAL_QUESTIONS.length} Total Bank)
             </div>
           </div>
 
@@ -677,6 +770,88 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
             <div className="text-[11px] text-slate-500 font-bold">
               8.4.A · 8.4.B · 8.4.C · 8.5.E · 8.5.F · 8.5.H
             </div>
+          </div>
+        </div>
+
+        {/* Practice Mode Selector in Summary */}
+        <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-2.5">
+          <div className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center justify-between">
+            <span>Select Next STAAR Practice Focus</span>
+            <span className="text-[11px] font-bold text-emerald-700">Zero-Repeat Guaranteed</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button
+              onClick={() => handleModeChange('proportional')}
+              className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                currentMode === 'proportional'
+                  ? 'bg-blue-50 border-blue-600 text-blue-950 shadow-xs ring-2 ring-blue-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+                  Proportional
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                    currentMode === 'proportional' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  11 Bank
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-500">y = kx, origin (0,0), unit rates</span>
+            </button>
+
+            <button
+              onClick={() => handleModeChange('nonProportional')}
+              className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                currentMode === 'nonProportional'
+                  ? 'bg-purple-50 border-purple-600 text-purple-950 shadow-xs ring-2 ring-purple-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-purple-600" />
+                  Non-Proportional
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                    currentMode === 'nonProportional' ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  17 Bank
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-500">y = mx + b, b ≠ 0, base fees</span>
+            </button>
+
+            <button
+              onClick={() => handleModeChange('mixed')}
+              className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                currentMode === 'mixed'
+                  ? 'bg-emerald-50 border-emerald-600 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/70'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  Mixed Review
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                    currentMode === 'mixed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  36 Bank
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-500">All 36 STAAR practice models</span>
+            </button>
           </div>
         </div>
 
@@ -747,7 +922,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
           <p className="text-slate-600 text-xs sm:text-sm font-medium">
             {showReview
               ? 'Review all 6 questions, student answers, and pedagogical explanations.'
-              : 'Practice STAAR-style questions aligned to proportional and linear relationships.'}
+              : `Currently practicing ${modeTitle}. Choose a mode below to customize your STAAR preparation.`}
           </p>
         </div>
 
@@ -770,13 +945,115 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
 
           <button
             onClick={handleRestart}
-            title="Generate new question set"
+            title="Generate new question set for current mode"
             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      {/* Mode Selection Tabs (3 Modes) */}
+      {!showReview && (
+        <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200/90 space-y-2">
+          <div className="flex items-center justify-between text-xs font-black text-slate-600 uppercase tracking-wider">
+            <span>Select STAAR Practice Mode</span>
+            <span className="text-[11px] font-bold text-emerald-700">Zero-Repeat Guarantee</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {/* Mode 1: Proportional Relationships */}
+            <button
+              id="staar-mode-proportional-btn"
+              onClick={() => handleModeChange('proportional')}
+              className={`p-3 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                currentMode === 'proportional'
+                  ? 'bg-blue-50/90 border-blue-600 text-blue-950 shadow-sm ring-2 ring-blue-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/80 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-black flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4 text-blue-600 shrink-0" />
+                  Proportional Relationships
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                    currentMode === 'proportional'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  11 Bank
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                Direct variation <code className="font-mono text-blue-800 font-bold">y = kx</code>, origin <code className="font-mono font-bold">(0,0)</code>, constant ratios & unit rates
+              </p>
+            </button>
+
+            {/* Mode 2: Non-Proportional Relationships */}
+            <button
+              id="staar-mode-nonproportional-btn"
+              onClick={() => handleModeChange('nonProportional')}
+              className={`p-3 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                currentMode === 'nonProportional'
+                  ? 'bg-purple-50/90 border-purple-600 text-purple-950 shadow-sm ring-2 ring-purple-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/80 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-black flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-purple-600 shrink-0" />
+                  Non-Proportional Relationships
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                    currentMode === 'nonProportional'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  17 Bank
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                Linear <code className="font-mono text-purple-800 font-bold">y = mx + b</code> (b ≠ 0), base fees, unequal ratios & initial values
+              </p>
+            </button>
+
+            {/* Mode 3: Mixed Review */}
+            <button
+              id="staar-mode-mixed-btn"
+              onClick={() => handleModeChange('mixed')}
+              className={`p-3 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                currentMode === 'mixed'
+                  ? 'bg-emerald-50/90 border-emerald-600 text-emerald-950 shadow-sm ring-2 ring-emerald-500/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/80 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-black flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                  Mixed Review
+                </span>
+                <span
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                    currentMode === 'mixed'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  36 Bank
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                All 36 STAAR items combining proportional, non-proportional, & comparison models
+              </p>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Question Progress Navigation Bar */}
       <div className="flex items-center justify-between gap-2">
