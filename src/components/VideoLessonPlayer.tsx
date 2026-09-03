@@ -42,21 +42,21 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
           </p>
         )}
 
-        {/* 4 Responsive Lesson Cards */}
+        {/* Responsive Lesson Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {video.lessons.map((lesson) => (
             <div
               key={lesson.id}
               id={`lesson-card-${lesson.id}`}
-              className="bg-white rounded-3xl border-2 border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-blue-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="bg-white rounded-3xl border-2 border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-blue-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group h-full"
             >
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <div className="flex items-center justify-between gap-2">
                   <h4 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                     {lesson.title}
                   </h4>
                   {lesson.badge && (
-                    <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-2xs">
+                    <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 border border-blue-200/60 shadow-2xs whitespace-nowrap shrink-0">
                       {lesson.badge}
                     </span>
                   )}
@@ -77,6 +77,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                   className="w-full h-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  loading="lazy"
                 />
               </div>
 
@@ -103,7 +104,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
             <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Key Lesson Takeaways
             </h4>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+            <ul className={`grid grid-cols-1 ${video.keyTakeaways.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'} gap-3 pt-1`}>
               {video.keyTakeaways.map((point, idx) => (
                 <li
                   key={idx}
