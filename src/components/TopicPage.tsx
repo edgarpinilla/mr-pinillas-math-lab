@@ -23,6 +23,7 @@ import { TopicData, SectionTab } from '../types';
 import { TransformationsVisualizer } from './visualizers/TransformationsVisualizer';
 import { ProportionalVisualizer } from './visualizers/ProportionalVisualizer';
 import { SlopeVisualizer } from './visualizers/SlopeVisualizer';
+import { SystemsVisualizer } from './visualizers/SystemsVisualizer';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
@@ -217,6 +218,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <TransformationsVisualizer />
           ) : topic.id === 'slope-linear-equations' ? (
             <SlopeVisualizer />
+          ) : topic.id === 'systems-of-linear-equations' ? (
+            <SystemsVisualizer />
           ) : (
             <ProportionalVisualizer />
           )}
@@ -529,7 +532,35 @@ export const TopicPage: React.FC<TopicPageProps> = ({
       {/* TAB CONTENT 4: WATCH THE LESSON */}
       {activeTab === 'watch' && (
         <div className="animate-fadeIn">
-          <VideoLessonPlayer video={topic.videoLesson} topicTitle={topic.title} />
+          {topic.id === 'systems-of-linear-equations' ? (
+            <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center space-y-4 shadow-xs">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-2xs">
+                <Play className="w-8 h-8 fill-rose-600 ml-0.5" />
+              </div>
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <span className="text-xs font-black uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
+                  Video Lessons · Stage 2
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 pt-1">
+                  Video Lessons Coming Soon
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  Curated video walkthrough lessons for Systems of Linear Equations are being prepared for the next stage. Explore the <strong>Learn</strong> concepts, <strong>Key Vocabulary</strong>, and <strong>Worked Examples</strong> tabs!
+                </p>
+              </div>
+              <div className="pt-2">
+                <button
+                  onClick={() => setActiveTab('learn')}
+                  className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-2 transition-colors cursor-pointer shadow-sm"
+                >
+                  <BookOpen className="w-4 h-4 text-sky-400" />
+                  <span>Return to Learn Guide</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <VideoLessonPlayer video={topic.videoLesson} topicTitle={topic.title} />
+          )}
         </div>
       )}
 
@@ -729,7 +760,33 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           </div>
 
           {/* Practice Component Container */}
-          {practicePathway === 'self-check' ? (
+          {topic.id === 'systems-of-linear-equations' && practicePathway === 'self-check' ? (
+            <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center space-y-4 shadow-xs">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shadow-2xs">
+                <CheckCircle2 className="w-8 h-8 text-blue-600" />
+              </div>
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <span className="text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                  Self Check · Stage 2
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 pt-1">
+                  Self Check Practice Coming Soon
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  Self Check practice questions for Systems of Linear Equations will be added in the next development phase. Check out the <strong>Worked Examples</strong> and <strong>Interactive Coordinate Explorer</strong> in the meantime!
+                </p>
+              </div>
+              <div className="pt-2">
+                <button
+                  onClick={() => setActiveTab('examples')}
+                  className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-2 transition-colors cursor-pointer shadow-sm"
+                >
+                  <FileText className="w-4 h-4 text-violet-400" />
+                  <span>View Step-by-Step Worked Examples</span>
+                </button>
+              </div>
+            </div>
+          ) : practicePathway === 'self-check' ? (
             <PracticeQuiz
               topicId={topic.id}
               questions={topic.practiceApp.quizQuestions}

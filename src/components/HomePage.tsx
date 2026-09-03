@@ -243,16 +243,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onSelectTopic }) => {
             More Middle School Units Coming Throughout the Year
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Mr. Pinilla’s Math Lab is built with a flexible curriculum framework. Look out for upcoming modules including Linear Equations (y = mx + b), The Pythagorean Theorem, Angles & Triangles, and Probability!
+            Mr. Pinilla’s Math Lab is built with a flexible curriculum framework. Look out for upcoming modules including The Pythagorean Theorem, Angles & Triangles, and Probability!
           </p>
         </div>
 
         <div className="shrink-0 flex flex-wrap gap-2 text-xs font-bold relative z-10">
-          <span className="px-3.5 py-2 rounded-xl bg-slate-800/90 text-blue-200 border border-blue-500/30 shadow-sm">
-            📐 Linear Equations (Next)
-          </span>
           <span className="px-3.5 py-2 rounded-xl bg-slate-800/90 text-amber-200 border border-amber-500/30 shadow-sm">
             🔺 Pythagorean Theorem
+          </span>
+          <span className="px-3.5 py-2 rounded-xl bg-slate-800/90 text-emerald-200 border border-emerald-500/30 shadow-sm">
+            📐 Angles & Triangles
+          </span>
+          <span className="px-3.5 py-2 rounded-xl bg-slate-800/90 text-purple-200 border border-purple-500/30 shadow-sm">
+            🎲 Probability & Data
           </span>
         </div>
       </section>
@@ -280,7 +283,7 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic, onSelectTopic }) => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
 
         <div className="absolute right-3 -bottom-4 opacity-15 text-8xl font-serif select-none pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-6 duration-500">
-          {isGeometry ? '△' : 'k'}
+          {topic.number === 1 ? '△' : topic.number === 3 ? 'm' : topic.number === 4 ? '{x,y}' : 'k'}
         </div>
 
         <div className="relative z-10 space-y-2">

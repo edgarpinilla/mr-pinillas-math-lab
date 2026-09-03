@@ -1,5 +1,6 @@
 import { TopicData } from '../types';
 import { TOPIC_3_SLOPE } from './topics/slopeData';
+import { TOPIC_4_SYSTEMS } from './topics/systemsData';
 
 export const TOPICS_DATA: TopicData[] = [
   {
@@ -1498,4 +1499,5 @@ export const TOPICS_DATA: TopicData[] = [
     },
   },
   TOPIC_3_SLOPE,
+  TOPIC_4_SYSTEMS,
 ];
