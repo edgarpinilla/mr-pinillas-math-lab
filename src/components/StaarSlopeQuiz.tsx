@@ -34,6 +34,15 @@ export type StaarSlopeMode = 'finding-slope' | 'linear-equations' | 'mixed';
 const STORAGE_SERVED_KEY_PREFIX = 'pinilla_math_staar_slope_served_';
 const STORAGE_SELECTED_MODE_KEY = 'pinilla_math_staar_slope_selected_mode';
 
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 /**
  * Generates 6 unique STAAR-style questions for the selected mode from the 36-question bank.
  * Guarantees zero-repeat presentation until the entire mode pool is exhausted.
@@ -103,7 +112,7 @@ function generateStaarQuestions(
 
   // Fill remaining slots
   const remaining = available.filter((item) => !pickedSet.has(item.id));
-  const shuffledRemaining = [...remaining].sort(() => Math.random() - 0.5);
+  const shuffledRemaining = shuffleArray(remaining);
   for (const item of shuffledRemaining) {
     if (selected.length >= count) break;
     selected.push(item);
@@ -118,12 +127,12 @@ function generateStaarQuestions(
     // ignore
   }
 
-  // Shuffle sequence and options
-  const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
+  // Shuffle sequence and options with Fisher-Yates
+  const shuffledSelected = shuffleArray(selected);
 
   return shuffledSelected.map((q) => {
     const correctText = q.options[q.correctIndex];
-    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+    const shuffledOptions = shuffleArray(q.options);
     const newCorrectIdx = shuffledOptions.indexOf(correctText);
     return {
       ...q,
@@ -166,6 +175,17 @@ const GraphRenderer: React.FC<{ graph: QuestionGraph }> = ({ graph }) => {
       )}
 
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-w-[340px] aspect-[360/280] select-none">
+        <defs>
+          <clipPath id="graph-plot-area">
+            <rect
+              x={padding}
+              y={padding}
+              width={width - 2 * padding}
+              height={height - 2 * padding}
+            />
+          </clipPath>
+        </defs>
+
         {/* Grid Lines */}
         {xTicks.map((xVal) => (
           <line
@@ -288,10 +308,11 @@ const GraphRenderer: React.FC<{ graph: QuestionGraph }> = ({ graph }) => {
 
         {/* Plotted Function Lines */}
         {graph.lines.map((line, lIdx) => {
-          const startX = xMin;
-          const startY = line.slope * startX + line.intercept;
-          const endX = xMax;
-          const endY = line.slope * endX + line.intercept;
+          const isVertical = line.verticalX !== undefined;
+          const startX = isVertical ? line.verticalX! : xMin;
+          const startY = isVertical ? yMin : line.slope * startX + line.intercept;
+          const endX = isVertical ? line.verticalX! : xMax;
+          const endY = isVertical ? yMax : line.slope * endX + line.intercept;
 
           return (
             <g key={`line-${lIdx}`}>
@@ -303,6 +324,7 @@ const GraphRenderer: React.FC<{ graph: QuestionGraph }> = ({ graph }) => {
                 stroke="#38bdf8"
                 strokeWidth="3.5"
                 strokeLinecap="round"
+                clipPath="url(#graph-plot-area)"
               />
               {line.points?.map((pt, pIdx) => (
                 <g key={`pt-${pIdx}`}>
@@ -565,7 +587,7 @@ export const StaarSlopeQuiz: React.FC<StaarSlopeQuizProps> = ({
                   Finding Slope
                 </span>
                 <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-blue-600 text-white">
-                  12 Bank
+                  18 Bank
                 </span>
               </div>
               <span className="text-[10px] text-slate-500">Rise/run, slope formula, triangles</span>
@@ -585,7 +607,7 @@ export const StaarSlopeQuiz: React.FC<StaarSlopeQuizProps> = ({
                   y = mx + b Form
                 </span>
                 <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-600 text-white">
-                  12 Bank
+                  18 Bank
                 </span>
               </div>
               <span className="text-[10px] text-slate-500">Identify m & b, write equations</span>
@@ -711,7 +733,7 @@ export const StaarSlopeQuiz: React.FC<StaarSlopeQuizProps> = ({
                   Finding Slope
                 </span>
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-600 text-white">
-                  12 Bank
+                  18 Bank
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 leading-tight">
@@ -733,7 +755,7 @@ export const StaarSlopeQuiz: React.FC<StaarSlopeQuizProps> = ({
                   y = mx + b Form
                 </span>
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-indigo-600 text-white">
-                  12 Bank
+                  18 Bank
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 leading-tight">
