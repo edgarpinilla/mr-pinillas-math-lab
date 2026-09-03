@@ -63,7 +63,18 @@ export interface PracticeQuestion {
   id: string;
   question: string;
   context?: string;
-  category?: 'proportional' | 'non-proportional' | 'mixed' | 'transformations';
+  category?:
+    | 'proportional'
+    | 'non-proportional'
+    | 'mixed'
+    | 'transformations'
+    | 'slope-formula'
+    | 'rise-run'
+    | 'special-slopes'
+    | 'slope-intercept'
+    | 'tables-coordinates'
+    | 'real-world'
+    | string;
   tableData?: QuestionTable;
   diagramSvgType?: 'grid' | 'table' | 'equation' | 'graph';
   options: string[];

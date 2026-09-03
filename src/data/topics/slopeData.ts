@@ -419,19 +419,79 @@ export const TOPIC_3_SLOPE: TopicData = {
     ],
     estimatedTime: '15-20 min',
     quizQuestions: [
+      // STRAND 1: Slope from Two Points (m = (y₂ - y₁) / (x₂ - x₁))
       {
         id: 'slope-sc-q1',
-        category: 'proportional',
-        question: 'What is the slope of a line that passes through the points (2, 5) and (6, 17)?',
+        category: 'slope-formula',
+        question: 'What is the slope of the line that passes through the points (2, 5) and (6, 17)?',
         options: ['m = 3', 'm = 1/3', 'm = 4', 'm = 12'],
         correctIndex: 0,
         explanation:
           'Use the slope formula: m = (y₂ - y₁) / (x₂ - x₁) = (17 - 5) / (6 - 2) = 12 / 4 = 3.',
-        hint: 'Subtract y-values on top (17 - 5) and x-values on bottom (6 - 2).',
+        hint: 'Subtract the y-values in the numerator (17 - 5) and the x-values in the denominator (6 - 2).',
       },
       {
+        id: 'slope-sc-q7',
+        category: 'slope-formula',
+        question: 'What is the slope of the line passing through the points (-3, 11) and (2, -4)?',
+        options: ['m = -3', 'm = 3', 'm = -1/3', 'm = -15'],
+        correctIndex: 0,
+        explanation:
+          'Use the slope formula: m = (y₂ - y₁) / (x₂ - x₁) = (-4 - 11) / (2 - (-3)) = -15 / (2 + 3) = -15 / 5 = -3. The negative slope shows the line slants downwards.',
+        hint: 'Be careful when subtracting negative numbers: 2 - (-3) = 2 + 3 = 5.',
+      },
+      {
+        id: 'slope-sc-q13',
+        category: 'slope-formula',
+        question: 'A line passes through the points (4, -2) and (10, 1). What is the slope of this line in simplest fractional form?',
+        options: ['m = 1/2', 'm = 2', 'm = -1/2', 'm = -2'],
+        correctIndex: 0,
+        explanation:
+          'Use the slope formula: m = (1 - (-2)) / (10 - 4) = (1 + 2) / 6 = 3 / 6. Dividing both the numerator and denominator by 3 simplifies to m = 1/2.',
+        hint: 'Remember: 1 - (-2) = 1 + 2 = 3. Then divide by 10 - 4 = 6 and reduce the fraction.',
+      },
+
+      // STRAND 2: Rise over Run & Visual / Graph Slope (Δy / Δx)
+      {
         id: 'slope-sc-q2',
-        category: 'mixed',
+        category: 'rise-run',
+        question: 'On a coordinate plane, a line climbs from point (1, 2) to point (4, 8). What are the rise, run, and slope of this line?',
+        options: [
+          'Rise = 6, Run = 3, Slope = 2',
+          'Rise = 3, Run = 6, Slope = 1/2',
+          'Rise = 6, Run = 3, Slope = 3',
+          'Rise = -6, Run = 3, Slope = -2',
+        ],
+        correctIndex: 0,
+        explanation:
+          'Vertical change (Rise) is Δy = 8 - 2 = 6. Horizontal change (Run) is Δx = 4 - 1 = 3. Slope is Rise / Run = 6 / 3 = 2.',
+        hint: 'Rise is the vertical change (y₂ - y₁) and Run is the horizontal change (x₂ - x₁). Divide Rise by Run.',
+      },
+      {
+        id: 'slope-sc-q8',
+        category: 'rise-run',
+        question: 'Two similar right triangles are drawn along the same line on a coordinate plane. Triangle 1 has a vertical rise of 4 units and horizontal run of 6 units. Triangle 2 has a horizontal run of 15 units. What is the vertical rise of Triangle 2?',
+        options: ['10 units', '12 units', '8 units', '15 units'],
+        correctIndex: 0,
+        explanation:
+          'Because slope is constant along any straight line, similar slope triangles have equivalent ratios of rise to run (TEKS 8.4.A). Since 4/6 = 2/3, set up the proportion: rise / 15 = 2/3 → rise = (2/3) × 15 = 10 units.',
+        hint: 'Set up a proportion: Rise₁ / Run₁ = Rise₂ / Run₂, which means 4 / 6 = Rise₂ / 15.',
+      },
+      {
+        id: 'slope-sc-q14',
+        category: 'rise-run',
+        question: 'A line slants downward from left to right, dropping 9 units vertically for every 3 units it moves horizontally to the right. What is the slope of this line?',
+        options: ['m = -3', 'm = 3', 'm = -1/3', 'm = -9'],
+        correctIndex: 0,
+        explanation:
+          'Dropping vertically means the rise is negative (Rise = -9). Moving right is a positive run (Run = +3). Slope is Rise / Run = -9 / 3 = -3.',
+        hint: 'Lines that slant downward from left to right have a negative slope. Divide vertical drop (-9) by horizontal run (3).',
+      },
+
+      // STRAND 3: Special Slopes (Zero & Undefined)
+      {
+        id: 'slope-sc-q3',
+        category: 'special-slopes',
         question: 'Which of the following describes a line with an UNDEFINED slope?',
         options: [
           'A vertical line with equation x = 4',
@@ -441,14 +501,35 @@ export const TOPIC_3_SLOPE: TopicData = {
         ],
         correctIndex: 0,
         explanation:
-          'A vertical line has zero horizontal run (Δx = 0). Division by zero is undefined, so vertical lines (x = a) have an undefined slope.',
-        hint: 'Vertical lines go straight up and down and have no horizontal run.',
+          'A vertical line has zero horizontal run (Δx = 0). Since division by zero is undefined, vertical lines (equations in the form x = a) have an undefined slope.',
+        hint: 'Vertical lines go straight up and down and have zero horizontal run.',
       },
       {
-        id: 'slope-sc-q3',
-        category: 'non-proportional',
-        question:
-          'What are the slope (m) and y-intercept (b) of the linear equation y = -4x + 9?',
+        id: 'slope-sc-q9',
+        category: 'special-slopes',
+        question: 'What is the slope of the horizontal line represented by the equation y = -7?',
+        options: ['m = 0', 'm = -7', 'm is undefined', 'm = 1'],
+        correctIndex: 0,
+        explanation:
+          'A horizontal line is completely flat and has zero vertical change (rise = 0). Since m = 0 / run = 0, any horizontal line has a slope of 0. In y = mx + b, this is y = 0x - 7.',
+        hint: 'Horizontal lines have zero vertical rise. What is 0 divided by any number?',
+      },
+      {
+        id: 'slope-sc-q15',
+        category: 'special-slopes',
+        question: 'A line passes through the coordinates (-5, 8) and (-5, -2). What is the slope of this line?',
+        options: ['Undefined', 'm = 0', 'm = -10', 'm = 1'],
+        correctIndex: 0,
+        explanation:
+          'Using the slope formula: m = (-2 - 8) / (-5 - (-5)) = -10 / (-5 + 5) = -10 / 0. Division by zero is undefined, which means this line is vertical (x = -5).',
+        hint: 'Notice that both points have the same x-coordinate (-5). What happens when you subtract -5 - (-5) in the denominator?',
+      },
+
+      // STRAND 4: Slope-Intercept Form (Identifying m and b from y = mx + b)
+      {
+        id: 'slope-sc-q4',
+        category: 'slope-intercept',
+        question: 'What are the slope (m) and y-intercept (b) of the linear equation y = -4x + 9?',
         options: [
           'Slope m = -4, y-intercept b = (0, 9)',
           'Slope m = 9, y-intercept b = (0, -4)',
@@ -457,41 +538,124 @@ export const TOPIC_3_SLOPE: TopicData = {
         ],
         correctIndex: 0,
         explanation:
-          'In slope-intercept form y = mx + b, m is the coefficient of x (m = -4) and b is the constant term (b = 9, coordinate (0, 9)).',
-        hint: 'Match y = mx + b: m is multiplied by x, and b is added.',
+          'In slope-intercept form y = mx + b, m is the coefficient of x (m = -4) and b is the constant term (b = 9, located at point (0, 9)).',
+        hint: 'Match y = mx + b: m is the number multiplied by x, and b is the number added.',
       },
       {
-        id: 'slope-sc-q4',
-        category: 'mixed',
-        question:
-          'What is the slope of the horizontal line shown by the equation y = -7?',
-        options: ['m = 0', 'm = -7', 'm = Undefined', 'm = 1'],
+        id: 'slope-sc-q10',
+        category: 'slope-intercept',
+        question: 'The equation of a line is y = (2/5)x - 3. What is the slope of the line and the coordinate of its y-intercept?',
+        options: [
+          'Slope m = 2/5; y-intercept (0, -3)',
+          'Slope m = -3; y-intercept (0, 2/5)',
+          'Slope m = 2/5; y-intercept (-3, 0)',
+          'Slope m = 5/2; y-intercept (0, 3)',
+        ],
         correctIndex: 0,
         explanation:
-          'A horizontal line has zero vertical rise (rise = 0), so m = 0 / run = 0. The equation can be written as y = 0x - 7.',
-        hint: 'Horizontal lines are completely flat. What is their rate of vertical climb?',
+          'In y = mx + b, m = 2/5 is the slope and b = -3 is the y-intercept. The y-intercept always occurs where x = 0, so the point is (0, -3).',
+        hint: 'The slope m is multiplied by x, and the y-intercept is the point (0, b).',
       },
+      {
+        id: 'slope-sc-q16',
+        category: 'slope-intercept',
+        question: 'A line has a slope of m = -1 and a y-intercept at the point (0, 5). What is the equation of this line in slope-intercept form?',
+        options: ['y = -x + 5', 'y = x - 5', 'y = 5x - 1', 'y = -5x + 1'],
+        correctIndex: 0,
+        explanation:
+          'Substitute m = -1 and b = 5 into slope-intercept form y = mx + b. This gives y = -1x + 5, which is written in standard algebraic form as y = -x + 5.',
+        hint: 'In y = mx + b, replace m with -1 and b with 5.',
+      },
+
+      // STRAND 5: Linear Equations from Tables & Coordinate Pairs
       {
         id: 'slope-sc-q5',
-        category: 'non-proportional',
-        question:
-          'A gym charges a $30 registration fee plus $25 per month. Which linear equation models the total cost y for x months?',
-        options: ['y = 25x + 30', 'y = 30x + 25', 'y = 55x', 'y = 25x - 30'],
+        category: 'tables-coordinates',
+        question: 'A table of values shows the coordinates below. What is the equation of this linear relationship in y = mx + b form?',
+        tableData: {
+          headers: ['x', 'y'],
+          rows: [
+            [0, 4],
+            [1, 7],
+            [2, 10],
+            [3, 13],
+          ],
+        },
+        options: ['y = 3x + 4', 'y = 4x + 3', 'y = 7x + 4', 'y = 3x + 7'],
         correctIndex: 0,
         explanation:
-          'The monthly rate ($25/month) is the slope m, and the one-time registration fee ($30) is the initial value / y-intercept b. Therefore, y = 25x + 30.',
-        hint: 'The recurring monthly cost multiplies x, while the one-time fee is added once.',
+          'When x = 0, y = 4, so the y-intercept is b = 4. The rate of change is m = (7 - 4) / (1 - 0) = 3. In y = mx + b, the equation is y = 3x + 4.',
+        hint: 'Identify the y-intercept where x = 0, then calculate the rate of change Δy / Δx.',
       },
       {
-        id: 'slope-sc-q6',
-        category: 'proportional',
-        question:
-          'A table contains the points (0, 0), (2, 8), (4, 16), and (6, 24). What is the equation of this linear relationship?',
-        options: ['y = 4x', 'y = 8x', 'y = 2x + 8', 'y = 4x + 2'],
+        id: 'slope-sc-q11',
+        category: 'tables-coordinates',
+        question: 'A linear function contains the table entries below. What are the slope and y-intercept of this linear function?',
+        tableData: {
+          headers: ['x', 'y'],
+          rows: [
+            [2, 11],
+            [4, 17],
+            [6, 23],
+          ],
+        },
+        options: [
+          'Slope m = 3, y-intercept b = 5',
+          'Slope m = 6, y-intercept b = 11',
+          'Slope m = 3, y-intercept b = 6',
+          'Slope m = 2, y-intercept b = 5',
+        ],
         correctIndex: 0,
         explanation:
-          'The line passes through (0, 0), so b = 0. The slope is m = (8 - 0) / (2 - 0) = 4. The equation is y = 4x.',
-        hint: 'Find the rate of change Δy / Δx: (8 - 0) / (2 - 0) = 4.',
+          'Find slope m = (17 - 11) / (4 - 2) = 6 / 2 = 3. To find b, substitute point (2, 11): 11 = 3(2) + b → 11 = 6 + b → b = 5. The equation is y = 3x + 5.',
+        hint: 'First find the rate of change m = Δy / Δx. Then substitute x = 2 and y = 11 into y = mx + b to solve for b.',
+      },
+      {
+        id: 'slope-sc-q17',
+        category: 'tables-coordinates',
+        question: 'Which linear equation represents the line that passes through the points (0, -2) and (3, 4)?',
+        options: ['y = 2x - 2', 'y = -2x + 2', 'y = (1/2)x - 2', 'y = 2x + 4'],
+        correctIndex: 0,
+        explanation:
+          'The point (0, -2) gives the y-intercept directly: b = -2. The slope is m = (4 - (-2)) / (3 - 0) = (4 + 2) / 3 = 6 / 3 = 2. Writing in y = mx + b form produces y = 2x - 2.',
+        hint: 'The point (0, -2) tells you b = -2. Find the slope m = (4 - (-2)) / (3 - 0).',
+      },
+
+      // STRAND 6: Real-World Linear Situations & Rates of Change
+      {
+        id: 'slope-sc-q6',
+        category: 'real-world',
+        question: 'A plumber charges a $45 house-call fee plus $60 for each hour of work. Which linear equation models the total cost y for working x hours?',
+        options: ['y = 60x + 45', 'y = 45x + 60', 'y = 105x', 'y = 60x - 45'],
+        correctIndex: 0,
+        explanation:
+          'The one-time house-call fee is the starting value or y-intercept (b = 45). The hourly rate is the constant rate of change or slope (m = 60). Therefore, y = 60x + 45.',
+        hint: 'The hourly rate multiplies x (hours), while the one-time house-call fee is added once.',
+      },
+      {
+        id: 'slope-sc-q12',
+        category: 'real-world',
+        question: 'A water storage tank holds 500 gallons of water and drains at a constant rate of 25 gallons per minute. Which linear equation represents the gallons of water remaining, y, after x minutes?',
+        options: ['y = -25x + 500', 'y = 25x + 500', 'y = -500x + 25', 'y = -25x - 500'],
+        correctIndex: 0,
+        explanation:
+          'Draining means the tank is losing water, so the rate of change (slope) is negative: m = -25. The initial amount in the tank is b = 500. Putting these into y = mx + b gives y = -25x + 500.',
+        hint: 'When an amount decreases over time, the rate of change is negative. Initial amount is b.',
+      },
+      {
+        id: 'slope-sc-q18',
+        category: 'real-world',
+        question: 'A phone plan charges a base monthly subscription of $20 plus $0.15 per text message sent over the limit. The linear equation is y = 0.15x + 20. What does the slope (0.15) represent in this real-world context?',
+        options: [
+          'The cost of $0.15 for each additional text message sent',
+          'The monthly base fee of $20 for the phone plan',
+          'The total monthly phone bill in dollars',
+          'The maximum number of text messages allowed',
+        ],
+        correctIndex: 0,
+        explanation:
+          'In a real-world linear model y = mx + b, the slope m represents the unit rate of change. Here, m = 0.15 means each additional text message costs $0.15.',
+        hint: 'Slope is the rate that multiplies x (the number of messages). What does $0.15 per message represent?',
       },
     ],
   },

@@ -23,10 +23,23 @@ interface PracticeQuizProps {
 export type PracticeMode = 'proportional' | 'nonProportional' | 'mixed';
 
 /**
+ * Fisher-Yates array shuffle for unbiased randomization.
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
  * Randomizes questions from the appropriate bank.
  * - If bank > 6, selects 6 unique questions.
  * - Avoids repeating the exact previous 6-question set.
  * - In mixed mode, selects a balanced 3 proportional + 3 non-proportional split.
+ * - For Topic 3 Slope, balances across 6 key Grade 8 curriculum domains.
  * - Shuffles answer options while accurately re-mapping correctIndex.
  */
 function generateQuizQuestions(
@@ -34,7 +47,8 @@ function generateQuizQuestions(
   count: number = 6,
   previousIds: string[] = [],
   mode?: PracticeMode,
-  banks?: PracticeQuestionBanks
+  banks?: PracticeQuestionBanks,
+  topicId?: string
 ): PracticeQuestion[] {
   // If dedicated banks are present (Topic 2: Proportional Relationships)
   if (banks && banks.proportional && banks.nonProportional) {
@@ -91,12 +105,99 @@ function generateQuizQuestions(
     });
   }
 
-  // Fallback for Topic 1 (Geometric Transformations) or single-pool questions
+  // Fallback for single-pool questions if pool has 6 or fewer
   if (pool.length <= count) {
     return pool.map((q) => ({ ...q }));
   }
 
-  // Identify core transformation categories for a balanced Grade 8 mix
+  // Topic 3: Slope & Linear Equations - Balanced across 6 core Grade 8 strands
+  const isSlopeTopic =
+    topicId === 'slope-linear-equations' ||
+    pool.some((q) => q.id.startsWith('slope-sc-'));
+
+  if (isSlopeTopic) {
+    const slopeFormula = pool.filter((q) =>
+      ['slope-sc-q1', 'slope-sc-q7', 'slope-sc-q13'].includes(q.id)
+    );
+    const riseOverRun = pool.filter((q) =>
+      ['slope-sc-q2', 'slope-sc-q8', 'slope-sc-q14'].includes(q.id)
+    );
+    const specialSlopes = pool.filter((q) =>
+      ['slope-sc-q3', 'slope-sc-q9', 'slope-sc-q15'].includes(q.id)
+    );
+    const slopeIntercept = pool.filter((q) =>
+      ['slope-sc-q4', 'slope-sc-q10', 'slope-sc-q16'].includes(q.id)
+    );
+    const tablesAndPoints = pool.filter((q) =>
+      ['slope-sc-q5', 'slope-sc-q11', 'slope-sc-q17'].includes(q.id)
+    );
+    const realWorld = pool.filter((q) =>
+      ['slope-sc-q6', 'slope-sc-q12', 'slope-sc-q18'].includes(q.id)
+    );
+
+    const pickRandom = (arr: PracticeQuestion[]) =>
+      arr[Math.floor(Math.random() * arr.length)];
+
+    let selected: PracticeQuestion[] = [];
+    let attempts = 0;
+
+    do {
+      const pickedSet = new Set<string>();
+      const temp: PracticeQuestion[] = [];
+
+      const addFrom = (group: PracticeQuestion[]) => {
+        const candidates = group.filter((item) => !pickedSet.has(item.id));
+        if (candidates.length > 0) {
+          const item = pickRandom(candidates);
+          pickedSet.add(item.id);
+          temp.push(item);
+        }
+      };
+
+      // Guarantee 1 question from each key domain for Grade 8 balance
+      if (slopeFormula.length > 0) addFrom(slopeFormula);
+      if (riseOverRun.length > 0) addFrom(riseOverRun);
+      if (specialSlopes.length > 0) addFrom(specialSlopes);
+      if (slopeIntercept.length > 0) addFrom(slopeIntercept);
+      if (tablesAndPoints.length > 0) addFrom(tablesAndPoints);
+      if (realWorld.length > 0) addFrom(realWorld);
+
+      // Fill remaining slots if count > 6
+      const remainingPool = pool.filter((item) => !pickedSet.has(item.id));
+      const shuffledRemaining = shuffleArray(remainingPool);
+      for (const item of shuffledRemaining) {
+        if (temp.length >= count) break;
+        temp.push(item);
+        pickedSet.add(item.id);
+      }
+
+      selected = temp;
+      attempts++;
+
+      const currentIdSet = new Set(selected.map((q) => q.id));
+      const isSameAsPrevious =
+        previousIds.length === count &&
+        previousIds.every((id) => currentIdSet.has(id));
+
+      if (!isSameAsPrevious) break;
+    } while (attempts < 25);
+
+    const shuffledSelected = shuffleArray(selected);
+
+    return shuffledSelected.map((q) => {
+      const correctOptionText = q.options[q.correctIndex];
+      const shuffledOptions = shuffleArray(q.options);
+      const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
+
+      return {
+        ...q,
+        options: shuffledOptions,
+        correctIndex: newCorrectIndex,
+      };
+    });
+  }
+
+  // Identify core transformation categories for a balanced Grade 8 mix (Topic 1)
   const translations = pool.filter((q) => ['t-q3', 't-q9', 't-q14'].includes(q.id));
   const reflections = pool.filter((q) => ['t-q2', 't-q6', 't-q16', 't-q17'].includes(q.id));
   const rotations = pool.filter((q) => ['t-q5', 't-q7', 't-q11'].includes(q.id));
@@ -184,7 +285,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       targetCount,
       [],
       'proportional',
-      quizBanks
+      quizBanks,
+      topicId
     );
     previousIdsRef.current = initial.map((q) => q.id);
     return initial;
@@ -202,7 +304,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       targetCount,
       [],
       currentMode,
-      quizBanks
+      quizBanks,
+      topicId
     );
     previousIdsRef.current = initial.map((q) => q.id);
     setActiveQuestions(initial);
@@ -210,7 +313,7 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
     setShowHints({});
     setSubmitted(false);
     setAttemptCount(1);
-  }, [questions, quizBanks]);
+  }, [questions, quizBanks, topicId]);
 
   const handleModeChange = (mode: PracticeMode) => {
     if (mode === currentMode && !submitted) return;
@@ -220,7 +323,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       targetCount,
       [],
       mode,
-      quizBanks
+      quizBanks,
+      topicId
     );
     previousIdsRef.current = newQuestions.map((q) => q.id);
     setActiveQuestions(newQuestions);
@@ -251,7 +355,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       targetCount,
       previousIdsRef.current,
       currentMode,
-      quizBanks
+      quizBanks,
+      topicId
     );
     previousIdsRef.current = nextQuestions.map((q) => q.id);
     setActiveQuestions(nextQuestions);
