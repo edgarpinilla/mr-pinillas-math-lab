@@ -17,15 +17,19 @@ import {
   Copy,
   Check,
   Target,
+  Calculator,
 } from 'lucide-react';
 import { TopicData, SectionTab } from '../types';
 import { TransformationsVisualizer } from './visualizers/TransformationsVisualizer';
 import { ProportionalVisualizer } from './visualizers/ProportionalVisualizer';
+import { SlopeVisualizer } from './visualizers/SlopeVisualizer';
+import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
 import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
 import { StaarProportionalQuiz } from './StaarProportionalQuiz';
+import { StaarSlopeQuiz } from './StaarSlopeQuiz';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -82,7 +86,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
         {/* Background Math watermark */}
         <div className="absolute right-4 -bottom-6 opacity-15 text-9xl font-serif select-none pointer-events-none">
-          {isTransformations ? '△' : 'k'}
+          {isTransformations ? '△' : topic.id === 'slope-linear-equations' ? 'm' : 'k'}
         </div>
 
         <div className="relative z-10 space-y-4 max-w-4xl">
@@ -209,8 +213,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           </div>
 
           {/* Interactive Visualizer Canvas (Specific to the topic) */}
-          {isTransformations ? (
+          {topic.id === 'geometric-transformations' ? (
             <TransformationsVisualizer />
+          ) : topic.id === 'slope-linear-equations' ? (
+            <SlopeVisualizer />
           ) : (
             <ProportionalVisualizer />
           )}
@@ -538,7 +544,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className="relative z-10 max-w-3xl space-y-5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-emerald-400" />
-                Interactive Cloud Run Math Simulator
+                {topic.id === 'slope-linear-equations'
+                  ? 'Interactive In-Portal Math Lab Simulator'
+                  : 'Interactive Cloud Run Math Simulator'}
               </div>
 
               <div className="space-y-2">
@@ -563,37 +571,56 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 ))}
               </div>
 
-              {/* Large Practice Launch Button with Placeholder URL */}
-              <div className="pt-4 space-y-3">
-                <a
-                  id="large-practice-app-button"
-                  href={topic.practiceApp.placeholderUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98"
-                >
-                  <Activity className="w-6 h-6" />
-                  <span>{topic.practiceApp.buttonText}</span>
-                  <ExternalLink className="w-5 h-5 opacity-80" />
-                </a>
-
-                {/* Clearly Labeled Placeholder URL Notice */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-400 pt-1">
-                  <span className="font-semibold text-slate-300">Placeholder Target:</span>
-                  <code className="bg-slate-800/90 text-emerald-300 px-2.5 py-1 rounded-lg font-mono text-[11px] border border-slate-700">
-                    {topic.practiceApp.placeholderUrl}
-                  </code>
+              {/* Practice Launch Action */}
+              {topic.id === 'slope-linear-equations' ? (
+                <div className="pt-4">
                   <button
-                    onClick={handleCopyPlaceholderUrl}
-                    className="inline-flex items-center gap-1 text-slate-300 hover:text-white underline cursor-pointer"
+                    id="large-practice-app-button"
+                    onClick={() => {
+                      document.getElementById('slope-linear-simulator-lab')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
                   >
-                    {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copiedUrl ? 'Copied!' : 'Copy URL'}
+                    <Calculator className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ArrowRight className="w-5 h-5 opacity-80" />
                   </button>
                 </div>
-              </div>
+              ) : (
+                <div className="pt-4 space-y-3">
+                  <a
+                    id="large-practice-app-button"
+                    href={topic.practiceApp.placeholderUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98"
+                  >
+                    <Activity className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ExternalLink className="w-5 h-5 opacity-80" />
+                  </a>
+
+                  {/* Clearly Labeled Placeholder URL Notice */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-400 pt-1">
+                    <span className="font-semibold text-slate-300">Placeholder Target:</span>
+                    <code className="bg-slate-800/90 text-emerald-300 px-2.5 py-1 rounded-lg font-mono text-[11px] border border-slate-700">
+                      {topic.practiceApp.placeholderUrl}
+                    </code>
+                    <button
+                      onClick={handleCopyPlaceholderUrl}
+                      className="inline-flex items-center gap-1 text-slate-300 hover:text-white underline cursor-pointer"
+                    >
+                      {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedUrl ? 'Copied!' : 'Copy URL'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Embedded Interactive Practice Simulator for Slope & Linear Equations */}
+          {topic.id === 'slope-linear-equations' && <SlopeLinearSimulator />}
 
           {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
           <div className="space-y-4">
@@ -716,6 +743,11 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             />
           ) : topic.id === 'proportional-relationships' ? (
             <StaarProportionalQuiz
+              topicTitle={topic.shortTitle}
+              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+            />
+          ) : topic.id === 'slope-linear-equations' ? (
+            <StaarSlopeQuiz
               topicTitle={topic.shortTitle}
               onSwitchToSelfCheck={() => setPracticePathway('self-check')}
             />
