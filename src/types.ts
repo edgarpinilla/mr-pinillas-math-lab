@@ -59,6 +59,24 @@ export interface QuestionTable {
   rows: (string | number)[][];
 }
 
+export interface SystemGraphLine {
+  label: string;
+  slope: number;
+  intercept: number;
+  color: string;
+  equation: string;
+}
+
+export interface QuestionGraphData {
+  title?: string;
+  xMin?: number;
+  xMax?: number;
+  yMin?: number;
+  yMax?: number;
+  lines: SystemGraphLine[];
+  intersectionPoint?: { x: number; y: number; label?: string };
+}
+
 export interface PracticeQuestion {
   id: string;
   question: string;
@@ -76,6 +94,7 @@ export interface PracticeQuestion {
     | 'real-world'
     | string;
   tableData?: QuestionTable;
+  graphData?: QuestionGraphData;
   diagramSvgType?: 'grid' | 'table' | 'equation' | 'graph';
   options: string[];
   correctIndex: number;

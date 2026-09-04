@@ -11,7 +11,7 @@ import {
   Sliders,
   Table as TableIcon,
 } from 'lucide-react';
-import { PracticeQuestion, PracticeQuestionBanks } from '../types';
+import { PracticeQuestion, PracticeQuestionBanks, QuestionGraphData } from '../types';
 
 interface PracticeQuizProps {
   topicId?: string;
@@ -197,6 +197,93 @@ function generateQuizQuestions(
     });
   }
 
+  // Topic 4: Systems of Linear Equations - Balanced across 6 core Grade 8 strands
+  const isSystemsTopic =
+    topicId === 'systems-of-linear-equations' ||
+    pool.some((q) => q.id.startsWith('sys-sc-'));
+
+  if (isSystemsTopic) {
+    const strand1 = pool.filter((q) =>
+      ['sys-sc-q1', 'sys-sc-q7', 'sys-sc-q13'].includes(q.id)
+    );
+    const strand2 = pool.filter((q) =>
+      ['sys-sc-q2', 'sys-sc-q8', 'sys-sc-q14'].includes(q.id)
+    );
+    const strand3 = pool.filter((q) =>
+      ['sys-sc-q3', 'sys-sc-q9', 'sys-sc-q15'].includes(q.id)
+    );
+    const strand4 = pool.filter((q) =>
+      ['sys-sc-q4', 'sys-sc-q10', 'sys-sc-q16'].includes(q.id)
+    );
+    const strand5 = pool.filter((q) =>
+      ['sys-sc-q5', 'sys-sc-q11', 'sys-sc-q17'].includes(q.id)
+    );
+    const strand6 = pool.filter((q) =>
+      ['sys-sc-q6', 'sys-sc-q12', 'sys-sc-q18'].includes(q.id)
+    );
+
+    const pickRandom = (arr: PracticeQuestion[]) =>
+      arr[Math.floor(Math.random() * arr.length)];
+
+    let selected: PracticeQuestion[] = [];
+    let attempts = 0;
+
+    do {
+      const pickedSet = new Set<string>();
+      const temp: PracticeQuestion[] = [];
+
+      const addFrom = (group: PracticeQuestion[]) => {
+        const candidates = group.filter((item) => !pickedSet.has(item.id));
+        if (candidates.length > 0) {
+          const item = pickRandom(candidates);
+          pickedSet.add(item.id);
+          temp.push(item);
+        }
+      };
+
+      // Guarantee 1 question from each key domain for Grade 8 balance
+      if (strand1.length > 0) addFrom(strand1);
+      if (strand2.length > 0) addFrom(strand2);
+      if (strand3.length > 0) addFrom(strand3);
+      if (strand4.length > 0) addFrom(strand4);
+      if (strand5.length > 0) addFrom(strand5);
+      if (strand6.length > 0) addFrom(strand6);
+
+      // Fill remaining slots if count > 6
+      const remainingPool = pool.filter((item) => !pickedSet.has(item.id));
+      const shuffledRemaining = shuffleArray(remainingPool);
+      for (const item of shuffledRemaining) {
+        if (temp.length >= count) break;
+        temp.push(item);
+        pickedSet.add(item.id);
+      }
+
+      selected = temp;
+      attempts++;
+
+      const currentIdSet = new Set(selected.map((q) => q.id));
+      const isSameAsPrevious =
+        previousIds.length === count &&
+        previousIds.every((id) => currentIdSet.has(id));
+
+      if (!isSameAsPrevious) break;
+    } while (attempts < 25);
+
+    const shuffledSelected = shuffleArray(selected);
+
+    return shuffledSelected.map((q) => {
+      const correctOptionText = q.options[q.correctIndex];
+      const shuffledOptions = shuffleArray(q.options);
+      const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
+
+      return {
+        ...q,
+        options: shuffledOptions,
+        correctIndex: newCorrectIndex,
+      };
+    });
+  }
+
   // Identify core transformation categories for a balanced Grade 8 mix (Topic 1)
   const translations = pool.filter((q) => ['t-q3', 't-q9', 't-q14'].includes(q.id));
   const reflections = pool.filter((q) => ['t-q2', 't-q6', 't-q16', 't-q17'].includes(q.id));
@@ -263,6 +350,201 @@ function generateQuizQuestions(
     };
   });
 }
+
+const QuestionGraphViewer: React.FC<{ graphData: QuestionGraphData }> = ({ graphData }) => {
+  const width = 340;
+  const height = 260;
+  const padding = 28;
+
+  const xMin = graphData.xMin ?? -2;
+  const xMax = graphData.xMax ?? 8;
+  const yMin = graphData.yMin ?? -2;
+  const yMax = graphData.yMax ?? 8;
+
+  const toSvgX = (x: number) =>
+    padding + ((x - xMin) / (xMax - xMin)) * (width - 2 * padding);
+  const toSvgY = (y: number) =>
+    height - padding - ((y - yMin) / (yMax - yMin)) * (height - 2 * padding);
+
+  const xTicks: number[] = [];
+  for (let x = Math.ceil(xMin); x <= Math.floor(xMax); x++) {
+    xTicks.push(x);
+  }
+
+  const yTicks: number[] = [];
+  for (let y = Math.ceil(yMin); y <= Math.floor(yMax); y++) {
+    yTicks.push(y);
+  }
+
+  const clipId = `clip-${(graphData.title || 'graph').toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+  return (
+    <div className="mt-3.5 mb-3 ml-0 sm:ml-10 max-w-sm">
+      <div className="bg-slate-900 text-white rounded-2xl p-3 sm:p-4 border border-slate-800 shadow-md flex flex-col items-center">
+        {graphData.title && (
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-300 mb-2">
+            {graphData.title}
+          </div>
+        )}
+
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="w-full max-w-[320px] aspect-[340/260] select-none"
+        >
+          <defs>
+            <clipPath id={clipId}>
+              <rect
+                x={padding}
+                y={padding}
+                width={width - 2 * padding}
+                height={height - 2 * padding}
+              />
+            </clipPath>
+          </defs>
+
+          {/* Grid lines */}
+          {xTicks.map((xVal) => (
+            <line
+              key={`x-grid-${xVal}`}
+              x1={toSvgX(xVal)}
+              y1={padding}
+              x2={toSvgX(xVal)}
+              y2={height - padding}
+              stroke="#334155"
+              strokeWidth="1"
+              strokeDasharray="2,2"
+            />
+          ))}
+          {yTicks.map((yVal) => (
+            <line
+              key={`y-grid-${yVal}`}
+              x1={padding}
+              y1={toSvgY(yVal)}
+              x2={width - padding}
+              y2={toSvgY(yVal)}
+              stroke="#334155"
+              strokeWidth="1"
+              strokeDasharray="2,2"
+            />
+          ))}
+
+          {/* Main Axes */}
+          {yMin <= 0 && yMax >= 0 && (
+            <line
+              x1={toSvgX(xMin)}
+              y1={toSvgY(0)}
+              x2={toSvgX(xMax)}
+              y2={toSvgY(0)}
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+          )}
+          {xMin <= 0 && xMax >= 0 && (
+            <line
+              x1={toSvgX(0)}
+              y1={toSvgY(yMin)}
+              x2={toSvgX(0)}
+              y2={toSvgY(yMax)}
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+          )}
+
+          {/* Axis Labels / Numbers */}
+          {xTicks
+            .filter((xVal) => xVal !== 0 && xVal % 2 === 0)
+            .map((xVal) => (
+              <text
+                key={`tx-${xVal}`}
+                x={toSvgX(xVal)}
+                y={toSvgY(0) + 12}
+                fill="#94a3b8"
+                fontSize="9"
+                fontWeight="bold"
+                textAnchor="middle"
+              >
+                {xVal}
+              </text>
+            ))}
+          {yTicks
+            .filter((yVal) => yVal !== 0 && yVal % 2 === 0)
+            .map((yVal) => (
+              <text
+                key={`ty-${yVal}`}
+                x={toSvgX(0) - 5}
+                y={toSvgY(yVal) + 3}
+                fill="#94a3b8"
+                fontSize="9"
+                fontWeight="bold"
+                textAnchor="end"
+              >
+                {yVal}
+              </text>
+            ))}
+
+          {/* Lines & Points clipped to coordinate area */}
+          <g clipPath={`url(#${clipId})`}>
+            {graphData.lines.map((l, idx) => {
+              const y1 = l.slope * xMin + l.intercept;
+              const y2 = l.slope * xMax + l.intercept;
+              return (
+                <line
+                  key={idx}
+                  x1={toSvgX(xMin)}
+                  y1={toSvgY(y1)}
+                  x2={toSvgX(xMax)}
+                  y2={toSvgY(y2)}
+                  stroke={l.color}
+                  strokeWidth="3"
+                />
+              );
+            })}
+
+            {/* Intersection Point */}
+            {graphData.intersectionPoint && (
+              <g>
+                <circle
+                  cx={toSvgX(graphData.intersectionPoint.x)}
+                  cy={toSvgY(graphData.intersectionPoint.y)}
+                  r="6"
+                  fill="#f59e0b"
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                />
+              </g>
+            )}
+          </g>
+        </svg>
+
+        {/* Legend */}
+        <div className="mt-2.5 flex flex-wrap gap-2 text-xs justify-center">
+          {graphData.lines.map((l, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700"
+            >
+              <span
+                className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
+                style={{ backgroundColor: l.color }}
+              />
+              <span className="text-slate-200 font-medium font-mono text-[11px]">
+                {l.label}
+              </span>
+            </div>
+          ))}
+          {graphData.intersectionPoint && (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-950/60 border border-amber-500/40 text-amber-300">
+              <span className="w-2 h-2 rounded-full bg-amber-400 inline-block shrink-0" />
+              <span className="font-bold text-[11px]">
+                Intersection: {graphData.intersectionPoint.label || `(${graphData.intersectionPoint.x}, ${graphData.intersectionPoint.y})`}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
   topicId,
@@ -640,6 +922,9 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* RENDER COORDINATE PLANE GRAPH IF PRESENT */}
+              {q.graphData && <QuestionGraphViewer graphData={q.graphData} />}
 
               {/* Teacher Hint Box */}
               {showHints[q.id] && !submitted && (
