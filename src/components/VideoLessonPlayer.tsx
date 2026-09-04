@@ -69,29 +69,68 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                 )}
               </div>
 
-              {/* Responsive 16:9 Video Embed Container */}
-              <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 shadow-md">
-                <iframe
-                  src={lesson.youtubeEmbedUrl}
-                  title={lesson.title}
-                  className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
+              {/* Responsive 16:9 Video Embed Container or Direct Watch Thumbnail */}
+              {lesson.directWatchOnly ? (
+                <a
+                  id={`preview-watch-youtube-${lesson.id}`}
+                  href={lesson.youtubeWatchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Watch ${lesson.title} on YouTube`}
+                  className="group/thumb relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 shadow-md block cursor-pointer"
+                >
+                  <img
+                    src={lesson.customThumbnailUrl || `https://img.youtube.com/vi/${lesson.id}/hqdefault.jpg`}
+                    alt={lesson.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-500 brightness-90 group-hover/thumb:brightness-100"
+                    loading="lazy"
+                  />
+                  {/* Subtle dark gradient overlay for contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none" />
 
-              {/* Open on YouTube Action Button */}
+                  {/* Centered Large Play Overlay Badge */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-red-600/95 group-hover/thumb:bg-red-600 text-white flex items-center justify-center shadow-2xl shadow-red-600/50 group-hover/thumb:scale-110 transition-all duration-300 border-2 border-white/90">
+                      <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white ml-1" />
+                    </div>
+                  </div>
+
+                  {/* Corner Badge */}
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                    <span className="px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-xs text-[11px] font-extrabold text-white border border-white/10 flex items-center gap-1.5 shadow-sm">
+                      <Play className="w-3 h-3 fill-red-500 text-red-500" />
+                      <span>YouTube Video</span>
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-red-600/90 text-[11px] font-black tracking-wide text-white uppercase shadow-sm">
+                      Click to Watch
+                    </span>
+                  </div>
+                </a>
+              ) : (
+                <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 shadow-md">
+                  <iframe
+                    src={lesson.youtubeEmbedUrl}
+                    title={lesson.title}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              )}
+
+              {/* Action Button */}
               <div className="pt-1">
                 <a
                   id={`open-youtube-${lesson.id}`}
                   href={lesson.youtubeWatchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs sm:text-sm font-black transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] active:scale-98"
+                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs sm:text-sm font-black tracking-wide transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] active:scale-98"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  <span>Open on YouTube</span>
+                  <span>{lesson.directWatchOnly ? 'WATCH ON YOUTUBE' : 'Open on YouTube'}</span>
                 </a>
               </div>
             </div>

@@ -458,19 +458,60 @@ export const TOPIC_4_SYSTEMS: TopicData = {
   ],
   videoLesson: {
     title: 'Video Library: Systems of Linear Equations',
-    subtitle: 'Video walkthrough lessons coming in the next stage',
-    duration: 'Coming Soon',
+    subtitle: 'Graphing Intersections, Step-by-Step Solutions, Solution Types & Real-World Modeling',
     instructor: 'Mr. Edgar Pinilla',
     description:
-      'Curated video walkthrough lessons explaining how to solve systems of linear equations by graphing, substitution, and real-world modeling are being prepared for the next stage.',
+      'Explore these video walkthroughs to master systems of linear equations: graph lines to find their intersection point, follow step-by-step solving methods, classify solution types with animations, and model real-world break-even scenarios.',
     keyTakeaways: [
-      'A system of linear equations is a set of two lines considered simultaneously.',
-      'The solution (x, y) is the coordinates of the point where both lines intersect.',
-      'If slopes are different (m₁ ≠ m₂), the system has exactly 1 solution.',
-      'If slopes are equal but y-intercepts differ (m₁ = m₂, b₁ ≠ b₂), the lines are parallel and there is NO solution.',
-      'If slopes and y-intercepts are identical (m₁ = m₂, b₁ = b₂), there are INFINITELY MANY solutions.',
+      'The solution to a system is the single ordered pair (x, y) where both lines intersect on the coordinate plane.',
+      'Lines with different slopes (m₁ ≠ m₂) intersect at exactly ONE unique solution.',
+      'Parallel lines have equal slopes and different intercepts (m₁ = m₂, b₁ ≠ b₂) with NO solution.',
+      'Real-world systems model two changing quantities to reveal the break-even decision point.',
     ],
-    lessons: [],
+    lessons: [
+      {
+        id: 'lesson-systems-graphing',
+        title: 'Graph It! Find the Intersection',
+        subtitle: 'Solving Systems of Equations by Graphing | 8th Grade Math',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/1LcUdEBNPk0',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=1LcUdEBNPk0',
+        description:
+          'Graph two linear equations on a coordinate plane and find where they cross to identify the solution point (x, y).',
+        badge: 'Graphing',
+      },
+      {
+        id: 'lesson-systems-step-by-step',
+        title: 'Solve It Step by Step',
+        subtitle: 'Solving Systems of Equations Step-by-Step',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/9MPUSWUyaYU',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=9MPUSWUyaYU',
+        description:
+          'Follow a clear step-by-step method to solve systems of equations and check that your solution works in both equations.',
+        badge: 'Step-by-Step',
+      },
+      {
+        id: 'lesson-systems-solution-types',
+        title: 'One, None, or Infinite?',
+        subtitle: 'Inconsistent, Dependent, & Independent Systems | MyWhyU',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/bQjtwc6DZeA',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=bQjtwc6DZeA',
+        description:
+          'Watch a fun animated guide to easily recognize whether a system has one solution, no solution (parallel lines), or infinitely many solutions.',
+        badge: 'Solution Types',
+      },
+      {
+        id: 'lesson-systems-real-world',
+        title: 'Systems in the Real World',
+        subtitle: 'Modeling Real World Situations with Systems | 8th Grade Math',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/byv41FLCJqw',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=byv41FLCJqw',
+        description:
+          'See how systems of equations can model situations you encounter every day.',
+        badge: 'Real-World',
+        directWatchOnly: true,
+        customThumbnailUrl: 'https://img.youtube.com/vi/byv41FLCJqw/maxresdefault.jpg',
+      },
+    ],
   },
   practiceApp: {
     buttonText: 'Practice Systems of Linear Equations',

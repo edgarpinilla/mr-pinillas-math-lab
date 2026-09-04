@@ -37,6 +37,8 @@ export interface VideoLessonItem {
   youtubeWatchUrl: string;
   description?: string;
   badge?: string;
+  directWatchOnly?: boolean;
+  customThumbnailUrl?: string;
 }
 
 export interface VideoLessonInfo {

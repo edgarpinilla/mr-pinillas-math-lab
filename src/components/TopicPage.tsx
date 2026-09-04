@@ -533,35 +533,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
       {/* TAB CONTENT 4: WATCH THE LESSON */}
       {activeTab === 'watch' && (
         <div className="animate-fadeIn">
-          {topic.id === 'systems-of-linear-equations' ? (
-            <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center space-y-4 shadow-xs">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-2xs">
-                <Play className="w-8 h-8 fill-rose-600 ml-0.5" />
-              </div>
-              <div className="space-y-1.5 max-w-md mx-auto">
-                <span className="text-xs font-black uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
-                  Video Lessons · Stage 2
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 pt-1">
-                  Video Lessons Coming Soon
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-                  Curated video walkthrough lessons for Systems of Linear Equations are being prepared for the next stage. Explore the <strong>Learn</strong> concepts, <strong>Key Vocabulary</strong>, and <strong>Worked Examples</strong> tabs!
-                </p>
-              </div>
-              <div className="pt-2">
-                <button
-                  onClick={() => setActiveTab('learn')}
-                  className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-2 transition-colors cursor-pointer shadow-sm"
-                >
-                  <BookOpen className="w-4 h-4 text-sky-400" />
-                  <span>Return to Learn Guide</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <VideoLessonPlayer video={topic.videoLesson} topicTitle={topic.title} />
-          )}
+          <VideoLessonPlayer video={topic.videoLesson} topicTitle={topic.title} />
         </div>
       )}
 
