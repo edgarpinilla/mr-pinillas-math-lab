@@ -31,6 +31,7 @@ import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
 import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
 import { StaarProportionalQuiz } from './StaarProportionalQuiz';
 import { StaarSlopeQuiz } from './StaarSlopeQuiz';
+import { StaarSystemsQuiz } from './StaarSystemsQuiz';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -738,7 +739,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                         STAAR Practice
                       </div>
                       <div className="text-[11px] text-indigo-700 font-bold">
-                        Aligned to TEKS · STAAR-style practice
+                        {topic.id === 'systems-of-linear-equations'
+                          ? 'TEKS 8.9A · 36 Original Questions'
+                          : 'Aligned to TEKS · STAAR-style practice'}
                       </div>
                     </div>
                   </div>
@@ -753,7 +756,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                  Practice STAAR-style questions aligned to this topic.
+                  {topic.id === 'systems-of-linear-equations'
+                    ? '36 Original STAAR-Style Questions · TEKS 8.9A · 6 Questions per Attempt'
+                    : 'Practice STAAR-style questions aligned to this topic.'}
                 </p>
               </button>
             </div>
@@ -779,6 +784,11 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             />
           ) : topic.id === 'slope-linear-equations' ? (
             <StaarSlopeQuiz
+              topicTitle={topic.shortTitle}
+              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+            />
+          ) : topic.id === 'systems-of-linear-equations' ? (
+            <StaarSystemsQuiz
               topicTitle={topic.shortTitle}
               onSwitchToSelfCheck={() => setPracticePathway('self-check')}
             />
