@@ -28,8 +28,9 @@ interface StaarProportionalQuizProps {
   onSwitchToSelfCheck?: () => void;
 }
 
-const STORAGE_SERVED_KEY_PREFIX = 'staar_unit2_served_ids_v1_';
-const STORAGE_SELECTED_MODE_KEY = 'staar_unit2_selected_mode_v1';
+const STORAGE_SERVED_KEY_PREFIX = 'staar_unit2_served_ids_v4_';
+const STORAGE_CYCLE_KEY_PREFIX = 'staar_unit2_cycle_plan_v4_';
+const STORAGE_SELECTED_MODE_KEY = 'staar_unit2_selected_mode_v4';
 
 function getStoredModeServedIds(mode: StaarProportionalMode): string[] {
   try {
@@ -53,6 +54,28 @@ function saveStoredModeServedIds(mode: StaarProportionalMode, ids: string[]): vo
   }
 }
 
+function getStoredModeCyclePlan(mode: StaarProportionalMode): string[][] | null {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_CYCLE_KEY_PREFIX}${mode}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.every((b) => Array.isArray(b))) {
+      return parsed;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function saveStoredModeCyclePlan(mode: StaarProportionalMode, plan: string[][]): void {
+  try {
+    localStorage.setItem(`${STORAGE_CYCLE_KEY_PREFIX}${mode}`, JSON.stringify(plan));
+  } catch {
+    // ignore
+  }
+}
+
 function getPoolForMode(mode: StaarProportionalMode): StaarPracticeQuestion[] {
   if (mode === 'proportional') {
     return STAAR_PROPORTIONAL_QUESTIONS.filter((q) => q.relationshipType === 'proportional');
@@ -64,10 +87,205 @@ function getPoolForMode(mode: StaarProportionalMode): StaarPracticeQuestion[] {
 }
 
 /**
+ * Helper predicates to inspect question mathematical representations.
+ * Handles primary category as well as embedded interactive SVG coordinate graphs & data tables.
+ */
+function isGraphQuestion(q: StaarPracticeQuestion): boolean {
+  return q.category === 'graph' || Boolean(q.graphData);
+}
+
+function isTableQuestion(q: StaarPracticeQuestion): boolean {
+  return !isGraphQuestion(q) && (q.category === 'table' || Boolean(q.tableData));
+}
+
+function isEquationQuestion(q: StaarPracticeQuestion): boolean {
+  return !isGraphQuestion(q) && q.category === 'equation';
+}
+
+function isVerbalOrMultiQuestion(q: StaarPracticeQuestion): boolean {
+  return !isGraphQuestion(q) && !isTableQuestion(q) && !isEquationQuestion(q);
+}
+
+/**
+ * Creates a balanced cycle partition without question overlap within the cycle.
+ * - 12 coordinate-graph questions in bank (6 Proportional, 6 Non-Proportional).
+ * - Mixed Review (36 questions): 6 disjoint blocks of 6 questions.
+ *   - Exactly 3 Proportional + 3 Non-Proportional in every block.
+ *   - Exactly 2 coordinate graphs (1 Proportional + 1 Non-Proportional) in every block.
+ *   - At least 1 table in every block.
+ *   - Balanced representation across equations and verbal questions.
+ *   - Zero question overlap across attempts 1-6.
+ * - Proportional mode (18 questions): 3 disjoint blocks of 6 questions.
+ *   - Exactly 2 coordinate graphs in every block (6 graphs distributed across 3 blocks).
+ *   - At least 1 table in blocks 0 and 1, equations, and verbal questions.
+ *   - Zero question overlap across attempts 1-3.
+ * - Non-Proportional mode (18 questions): 3 disjoint blocks of 6 questions.
+ *   - Exactly 2 coordinate graphs in every block (6 graphs distributed across 3 blocks).
+ *   - At least 1 table in every block, equations, and verbal questions.
+ *   - Zero question overlap across attempts 1-3.
+ * - Rollover protection: When lastAttemptIds is supplied, Block 0 of the new cycle has zero overlap with lastAttemptIds.
+ */
+function createCyclePartitionForMode(
+  mode: StaarProportionalMode,
+  lastAttemptIds: string[] = []
+): string[][] {
+  const pool = getPoolForMode(mode);
+  const totalQuestions = pool.length;
+  const numBlocks = mode === 'mixed' ? 6 : 3;
+  const blockSize = 6;
+  const lastAttemptSet = new Set(lastAttemptIds);
+
+  const propPool = pool.filter((q) => q.relationshipType === 'proportional');
+  const nonPropPool = pool.filter((q) => q.relationshipType === 'nonProportional');
+
+  for (let trial = 0; trial < 500; trial++) {
+    const blocks: StaarPracticeQuestion[][] = Array.from({ length: numBlocks }, () => []);
+
+    if (mode === 'mixed') {
+      const pG = propPool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const npG = nonPropPool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+
+      // Exactly 1 proportional graph + 1 non-proportional graph per block -> exactly 2 graphs per block
+      for (let b = 0; b < 6; b++) {
+        blocks[b].push(pG[b], npG[b]);
+      }
+
+      // Proportional non-graphs: 2 tables, 4 equations, 6 verbal
+      const pT = propPool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const pE = propPool.filter(isEquationQuestion).sort(() => Math.random() - 0.5);
+      const pV = propPool.filter(isVerbalOrMultiQuestion).sort(() => Math.random() - 0.5);
+
+      const propOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+      const pTableBlocks = propOrder.slice(0, 2);
+      const pEqBlocks = propOrder.slice(2, 6);
+
+      for (let i = 0; i < 6; i++) {
+        blocks[i].push(pV[i]);
+      }
+      blocks[pTableBlocks[0]].push(pT[0]);
+      blocks[pTableBlocks[1]].push(pT[1]);
+      for (let i = 0; i < 4; i++) {
+        blocks[pEqBlocks[i]].push(pE[i]);
+      }
+
+      // Non-proportional non-graphs: 5 tables, 4 equations, 3 verbal (total 12)
+      const npT = nonPropPool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const npE = nonPropPool.filter(isEquationQuestion).sort(() => Math.random() - 0.5);
+      const npV = nonPropPool.filter(isVerbalOrMultiQuestion).sort(() => Math.random() - 0.5);
+
+      const nonPropNonGraphs = [...npT, ...npE, ...npV].sort(() => Math.random() - 0.5);
+      for (let b = 0; b < 6; b++) {
+        blocks[b].push(nonPropNonGraphs[b * 2], nonPropNonGraphs[b * 2 + 1]);
+      }
+
+      // Verify table distribution across all blocks
+      if (!blocks.every((b) => b.some(isTableQuestion))) continue;
+
+    } else if (mode === 'proportional') {
+      // 18 questions -> 3 blocks of 6 questions each
+      const graphs = pool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const tables = pool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const eqs = pool.filter(isEquationQuestion).sort(() => Math.random() - 0.5);
+      const verbal = pool.filter(isVerbalOrMultiQuestion).sort(() => Math.random() - 0.5);
+
+      // Exactly 2 graphs in each block (all 6 bank graphs utilized)
+      blocks[0].push(graphs[0], graphs[1]);
+      blocks[1].push(graphs[2], graphs[3]);
+      blocks[2].push(graphs[4], graphs[5]);
+
+      // 2 tables -> blocks 0 and 1
+      blocks[0].push(tables[0]);
+      blocks[1].push(tables[1]);
+
+      // 4 equations -> 1 in block 0, 1 in block 1, 2 in block 2
+      blocks[0].push(eqs[0]);
+      blocks[1].push(eqs[1]);
+      blocks[2].push(eqs[2], eqs[3]);
+
+      // 6 verbal -> 2 in each block
+      blocks[0].push(verbal[0], verbal[1]);
+      blocks[1].push(verbal[2], verbal[3]);
+      blocks[2].push(verbal[4], verbal[5]);
+
+    } else {
+      // nonProportional: 18 questions -> 3 blocks of 6 questions each
+      const graphs = pool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const tables = pool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const eqs = pool.filter(isEquationQuestion).sort(() => Math.random() - 0.5);
+      const verbal = pool.filter(isVerbalOrMultiQuestion).sort(() => Math.random() - 0.5);
+
+      // Exactly 2 graphs in each block (all 6 bank graphs utilized)
+      blocks[0].push(graphs[0], graphs[1]);
+      blocks[1].push(graphs[2], graphs[3]);
+      blocks[2].push(graphs[4], graphs[5]);
+
+      // 5 tables -> 2 in block 0, 2 in block 1, 1 in block 2
+      blocks[0].push(tables[0], tables[1]);
+      blocks[1].push(tables[2], tables[3]);
+      blocks[2].push(tables[4]);
+
+      // 4 equations -> 1 in block 0, 1 in block 1, 2 in block 2
+      blocks[0].push(eqs[0]);
+      blocks[1].push(eqs[1]);
+      blocks[2].push(eqs[2], eqs[3]);
+
+      // 3 verbal -> 1 in each block
+      blocks[0].push(verbal[0]);
+      blocks[1].push(verbal[1]);
+      blocks[2].push(verbal[2]);
+    }
+
+    // Rollover protection: if block 0 has any overlap with lastAttemptSet, swap with an available non-overlapping block
+    if (lastAttemptSet.size > 0 && blocks[0].some((q) => lastAttemptSet.has(q.id))) {
+      const nonOverlapIdx = blocks.findIndex(
+        (b, idx) => idx > 0 && !b.some((q) => lastAttemptSet.has(q.id))
+      );
+      if (nonOverlapIdx !== -1) {
+        const temp = blocks[0];
+        blocks[0] = blocks[nonOverlapIdx];
+        blocks[nonOverlapIdx] = temp;
+      } else {
+        continue;
+      }
+    }
+
+    const allBlockSizeOk = blocks.every((b) => b.length === blockSize);
+    const allUnique = new Set(blocks.flat().map((q) => q.id)).size === totalQuestions;
+
+    if (allBlockSizeOk && allUnique) {
+      if (lastAttemptSet.size > 0 && blocks[0].some((q) => lastAttemptSet.has(q.id))) {
+        continue;
+      }
+      return blocks.map((b) => b.map((q) => q.id));
+    }
+  }
+
+  // Deterministic fallback partition if stochastic trials did not resolve
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
+  const fallbackBlocks: string[][] = [];
+  for (let i = 0; i < numBlocks; i++) {
+    fallbackBlocks.push(shuffledPool.slice(i * blockSize, (i + 1) * blockSize).map((q) => q.id));
+  }
+  if (lastAttemptSet.size > 0 && fallbackBlocks[0].some((id) => lastAttemptSet.has(id))) {
+    const nonOverlappingIdx = fallbackBlocks.findIndex(
+      (b, idx) => idx > 0 && !b.some((id) => lastAttemptSet.has(id))
+    );
+    if (nonOverlappingIdx !== -1) {
+      const temp = fallbackBlocks[0];
+      fallbackBlocks[0] = fallbackBlocks[nonOverlappingIdx];
+      fallbackBlocks[nonOverlappingIdx] = temp;
+    }
+  }
+  return fallbackBlocks;
+}
+
+/**
  * Generates 6 unique STAAR-style questions from the chosen mode pool.
- * - Filters by mode (Proportional, Non-Proportional, Mixed).
- * - Tracks served IDs to ensure zero repeats across consecutive attempts until pool is exhausted.
- * - Balances question representations (Graph, Table, Equation, Word Problem, Multiple Representation).
+ * - Proportional mode: 18 questions partitioned into three 6-question attempts before recycling.
+ * - Non-Proportional mode: 18 questions partitioned into three 6-question attempts before recycling.
+ * - Mixed Review mode: 36 questions partitioned into six 6-question attempts before recycling.
+ * - Guarantees ZERO question overlap within each complete cycle.
+ * - Reshuffles and guarantees zero immediate repeat across cycle boundaries.
  * - Shuffles answer choices while preserving correct answer mapping.
  */
 function generateStaarQuestions(
@@ -80,75 +298,58 @@ function generateStaarQuestions(
     return pool.map((q) => ({ ...q }));
   }
 
+  const poolMap = new Map<string, StaarPracticeQuestion>(pool.map((q) => [q.id, q]));
   const allIds = new Set(pool.map((q) => q.id));
   let servedIds = getStoredModeServedIds(mode).filter((id) => allIds.has(id));
-  let servedSet = new Set(servedIds);
+  let cyclePlan = getStoredModeCyclePlan(mode);
 
-  let candidatePool = pool.filter((q) => !servedSet.has(q.id));
+  const expectedBlocks = mode === 'mixed' ? 6 : 3;
 
-  // If candidate unserved pool is smaller than count, rollover cycle
-  // carrying forward only the immediately previous attempt IDs to prevent immediate repeats
-  if (candidatePool.length < count) {
-    const carryForward = (previousIds.length > 0 ? previousIds : servedIds.slice(-count)).filter((id) =>
-      allIds.has(id)
-    );
-    servedIds = [...carryForward];
-    servedSet = new Set(servedIds);
-    candidatePool = pool.filter((q) => !servedSet.has(q.id));
+  // Validate stored cycle plan against current pool
+  const isCyclePlanValid =
+    cyclePlan !== null &&
+    cyclePlan.length === expectedBlocks &&
+    cyclePlan.every((block) => block.length === count) &&
+    cyclePlan.flat().length === pool.length &&
+    new Set(cyclePlan.flat()).size === pool.length &&
+    cyclePlan.flat().every((id) => allIds.has(id));
+
+  // If cycle plan is missing or all questions in bank have been served, create a new cycle plan
+  if (!isCyclePlanValid || servedIds.length >= pool.length) {
+    const lastAttemptIds = previousIds.length > 0 ? previousIds : servedIds.slice(-count);
+    const newPlan = createCyclePartitionForMode(mode, lastAttemptIds);
+    cyclePlan = newPlan;
+    saveStoredModeCyclePlan(mode, newPlan);
+    servedIds = [];
   }
 
-  // Partition candidates by representation category
-  const graphPool = candidatePool.filter((q) => q.category === 'graph');
-  const tablePool = candidatePool.filter((q) => q.category === 'table');
-  const eqPool = candidatePool.filter((q) => q.category === 'equation');
-  const wordPool = candidatePool.filter((q) => q.category === 'word-problem');
-  const multiPool = candidatePool.filter((q) => q.category === 'multiple-representation');
+  let selected: StaarPracticeQuestion[] = [];
 
-  const pickedSet = new Set<string>();
-  const selected: StaarPracticeQuestion[] = [];
+  if (cyclePlan) {
+    // Find the first block whose IDs have not yet been served in this cycle
+    const servedSet = new Set(servedIds);
+    const nextBlockIds = cyclePlan.find((block) => !block.some((id) => servedSet.has(id)));
 
-  const addFrom = (group: StaarPracticeQuestion[]) => {
-    const candidates = group.filter((item) => !pickedSet.has(item.id));
-    if (candidates.length > 0) {
-      const item = candidates[Math.floor(Math.random() * candidates.length)];
-      pickedSet.add(item.id);
-      selected.push(item);
+    if (nextBlockIds && nextBlockIds.length === count) {
+      selected = nextBlockIds
+        .map((id) => poolMap.get(id))
+        .filter((q): q is StaarPracticeQuestion => q !== undefined);
     }
-  };
-
-  // 1. Try to take 1 from each representation category available in candidates
-  if (graphPool.length > 0) addFrom(graphPool);
-  if (tablePool.length > 0) addFrom(tablePool);
-  if (eqPool.length > 0) addFrom(eqPool);
-  if (wordPool.length > 0) addFrom(wordPool);
-  if (multiPool.length > 0) addFrom(multiPool);
-
-  // 2. Fill remainder up to count from candidatePool
-  const remainingCandidates = candidatePool
-    .filter((item) => !pickedSet.has(item.id))
-    .sort(() => Math.random() - 0.5);
-
-  for (const item of remainingCandidates) {
-    if (selected.length >= count) break;
-    selected.push(item);
-    pickedSet.add(item.id);
   }
 
-  // Safety fallback if candidatePool alone was insufficient
-  if (selected.length < count) {
-    const fallbackCandidates = pool
-      .filter((item) => !pickedSet.has(item.id))
-      .sort(() => Math.random() - 0.5);
-    for (const item of fallbackCandidates) {
-      if (selected.length >= count) break;
-      selected.push(item);
-      pickedSet.add(item.id);
-    }
+  // Safety fallback if ever needed
+  if (!selected || selected.length !== count) {
+    const immediatePreviousIds = previousIds.length > 0 ? previousIds : servedIds.slice(-count);
+    const safeCandidates = pool.filter((q) => !immediatePreviousIds.includes(q.id));
+    selected = (safeCandidates.length >= count ? safeCandidates : pool)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, count);
   }
 
   // Persist updated served history for this mode
   const newlyServedIds = selected.map((q) => q.id);
-  saveStoredModeServedIds(mode, [...servedIds, ...newlyServedIds]);
+  const updatedServedIds = [...servedIds, ...newlyServedIds];
+  saveStoredModeServedIds(mode, updatedServedIds);
 
   // Shuffle presentation sequence
   const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
@@ -799,7 +1000,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
                     currentMode === 'proportional' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
                   }`}
                 >
-                  11 Bank
+                  18 Bank
                 </span>
               </div>
               <span className="text-[10px] text-slate-500">y = kx, origin (0,0), unit rates</span>
@@ -823,7 +1024,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
                     currentMode === 'nonProportional' ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-700'
                   }`}
                 >
-                  17 Bank
+                  18 Bank
                 </span>
               </div>
               <span className="text-[10px] text-slate-500">y = mx + b, b ≠ 0, base fees</span>
@@ -984,7 +1185,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
                       : 'bg-slate-200 text-slate-700'
                   }`}
                 >
-                  11 Bank
+                  18 Bank
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 leading-tight">
@@ -1014,7 +1215,7 @@ export const StaarProportionalQuiz: React.FC<StaarProportionalQuizProps> = ({
                       : 'bg-slate-200 text-slate-700'
                   }`}
                 >
-                  17 Bank
+                  18 Bank
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 leading-tight">

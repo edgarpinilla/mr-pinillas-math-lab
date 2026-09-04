@@ -40,7 +40,7 @@ export interface QuestionGraph {
   triangles?: SlopeTriangle[];
 }
 
-export type RelationshipType = 'proportional' | 'nonProportional' | 'mixed';
+export type RelationshipType = 'proportional' | 'nonProportional';
 
 export type QuestionCategory =
   | 'graph'
@@ -76,6 +76,11 @@ export interface StaarPracticeQuestion {
  *   - TEKS 8.5.E: Direct variation problem solving (y = kx)
  *   - TEKS 8.5.F: Distinguishing proportional vs non-proportional representations
  *   - TEKS 8.5.H: Real-world proportional vs non-proportional situations
+ *
+ * Structural Distribution:
+ *   - 18 Proportional Relationships
+ *   - 18 Non-Proportional Relationships
+ *   - Mixed Review draws from all 36 questions
  *
  * Balanced Distribution:
  *   - 8 Graph-based questions (with dedicated interactive/visual coordinate graphs)
@@ -136,7 +141,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q02',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'graph',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -643,26 +648,26 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
     reportingCategory: 2,
-    subtopic: 'Constant Rate of Change from Tabular Data',
-    question: 'A commercial bakery mixes artisanal dough using flour according to the proportional relationship in the table. What is the constant rate of change in cups of flour per batch?',
+    subtopic: 'Rate of Change from a Non-Proportional Linear Table',
+    question: 'The table represents a non-proportional linear relationship between x, the operating time of a backup generator in hours, and y, the fuel remaining in gallons. What is the rate of change of the fuel remaining with respect to operating time?',
     tableData: {
-      headers: ['Batches of Bread (x)', 'Cups of Flour (y)'],
+      headers: ['Operating Time in Hours (x)', 'Fuel Remaining in Gallons (y)'],
       rows: [
-        ['3', '10.5'],
-        ['5', '17.5'],
-        ['8', '28.0'],
-        ['12', '42.0'],
+        ['3', '38.5'],
+        ['6', '29.5'],
+        ['10', '17.5'],
+        ['14', '5.5'],
       ],
     },
     options: [
-      '3.5 cups per batch',
-      '0.29 cups per batch',
-      '7.0 cups per batch',
-      '2.5 cups per batch',
+      '-3 gallons per hour',
+      '-9 gallons per hour',
+      '3 gallons per hour',
+      '-0.33 gallons per hour',
     ],
     correctIndex: 0,
-    explanation: 'The rate of change is k = y / x. For every row: 10.5 / 3 = 3.5, 17.5 / 5 = 3.5, 28.0 / 8 = 3.5, and 42.0 / 12 = 3.5 cups of flour per batch.',
-    hint: 'Divide the cups of flour (y) by the number of batches (x): 10.5 / 3 = 3.5.',
+    explanation: 'The rate of change is calculated using any two points from the table: m = (y₂ - y₁) / (x₂ - x₁) = (29.5 - 38.5) / (6 - 3) = -9 / 3 = -3 gallons per hour. The negative sign indicates that fuel is being consumed. (Because the initial fuel tank volume at x = 0 is 47.5 gallons, this represents a non-proportional relationship with equation y = -3x + 47.5).',
+    hint: 'Find the change in gallons (y₂ - y₁) and divide it by the change in hours (x₂ - x₁): (29.5 - 38.5) / (6 - 3) = -9 / 3.',
   },
 
   // ==========================================
@@ -670,7 +675,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q15',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'equation',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -755,18 +760,18 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
     reportingCategory: 2,
-    subtopic: 'Identifying Non-Proportional Equations with Intercepts',
-    question: 'Which of the following equations represents a relationship that is NOT proportional?',
-    context: 'Comparing equations for direct variation vs. slope-intercept form',
+    subtopic: 'Identifying Non-Proportional Linear Equations in Equivalent Forms',
+    question: 'Which of the following equations does NOT represent a proportional relationship between x and y?',
+    context: 'Testing linear equations in various algebraic and factored forms',
     options: [
-      'y = 4.5x - 6',
-      'y = 4.5x',
-      'y = 0.8x',
-      'y = (3/4)x',
+      'y = 3(x + 2)',
+      'y = (2/5)x',
+      'y / x = 7.5',
+      '4y = 12x',
     ],
     correctIndex: 0,
-    explanation: 'A proportional linear equation has the direct variation form y = kx where the y-intercept is 0. The equation y = 4.5x - 6 has a y-intercept of b = -6 (when x = 0, y = -6 ≠ 0), which makes it non-proportional.',
-    hint: 'Look for the equation that has an added or subtracted constant term (b ≠ 0).',
+    explanation: 'A proportional equation must simplify to the direct variation form y = kx with a y-intercept of 0. Applying the distributive property to y = 3(x + 2) yields y = 3x + 6, which has a non-zero y-intercept (b = 6) and does not pass through (0, 0). In contrast, y = (2/5)x, y / x = 7.5 (which is y = 7.5x), and 4y = 12x (which simplifies to y = 3x) all pass through (0, 0) and represent proportional relationships.',
+    hint: 'Apply the distributive property or isolate y. A proportional relationship must simplify to y = kx with NO added or subtracted constant (b = 0).',
   },
   {
     id: 'staar-p-q20',
@@ -790,7 +795,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q21',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'equation',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -834,7 +839,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
   {
     id: 'staar-p-q23',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
@@ -874,7 +879,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q25',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
@@ -895,22 +900,49 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   {
     id: 'staar-p-q26',
     relationshipType: 'nonProportional',
-    category: 'word-problem',
+    category: 'graph',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
     reportingCategory: 2,
-    subtopic: 'Writing Linear Model for Admission and Per-Unit Charges',
-    question: 'An amusement park charges an admission fee of $18.00 plus $2.25 for each carnival ride ticket. Which linear equation represents y, the total cost in dollars for admission and x ride tickets?',
-    context: 'Amusement park: $18.00 admission + $2.25 per ticket',
+    subtopic: 'Rate of Change and Initial Value from a Decreasing Linear Graph',
+    question: 'The coordinate graph displays the linear relationship between x, the driving time of a delivery van in hours, and y, the volume of fuel remaining in the gas tank in gallons.\n\nWhich statement accurately describes the rate of change and the y-intercept of the graph?',
+    context: 'Fuel tank level: line through (0, 24), (2, 18), (4, 12), (6, 6), and (8, 0)',
+    graphData: {
+      title: 'Delivery Van Fuel Tank Level Over Time',
+      xLabel: 'Driving Time in Hours (x)',
+      yLabel: 'Fuel Remaining in Gallons (y)',
+      xMin: 0,
+      xMax: 8,
+      yMin: 0,
+      yMax: 28,
+      xStep: 1,
+      yStep: 4,
+      lines: [
+        {
+          id: 'fuel-level-line',
+          name: 'Fuel in Tank',
+          slope: -3,
+          intercept: 24,
+          color: 'rose',
+          points: [
+            { x: 0, y: 24, label: '(0, 24)', highlight: true },
+            { x: 2, y: 18, label: '(2, 18)' },
+            { x: 4, y: 12, label: '(4, 12)' },
+            { x: 6, y: 6, label: '(6, 6)' },
+            { x: 8, y: 0, label: '(8, 0)', highlight: true },
+          ],
+        },
+      ],
+    },
     options: [
-      'y = 2.25x + 18.00',
-      'y = 18.00x + 2.25',
-      'y = 20.25x',
-      'y = 2.25x - 18.00',
+      'The rate of change is -3 gallons per hour, and the y-intercept is (0, 24), which represents an initial tank volume of 24 gallons before driving.',
+      'The rate of change is +3 gallons per hour, and the y-intercept is (0, 24), which represents an initial tank volume of 24 gallons before driving.',
+      'The rate of change is -3 gallons per hour, and the y-intercept is (8, 0), which represents that the tank becomes empty after 8 hours.',
+      'The rate of change is -4 gallons per hour, and the y-intercept is (0, 24), which represents an initial tank volume of 24 gallons before driving.',
     ],
     correctIndex: 0,
-    explanation: 'The per-ticket charge ($2.25) is the rate of change (slope) multiplied by the number of tickets x. The general admission fee ($18.00) is the initial value (y-intercept). The linear equation is y = 2.25x + 18.00.',
-    hint: 'Multiply the price per ticket ($2.25) by tickets (x) and add the starting admission fee ($18.00).',
+    explanation: 'The y-intercept is the point where the line crosses the vertical y-axis at x = 0, which is (0, 24). In context, this represents the van starting with 24 gallons of fuel before driving. The rate of change (slope m) is calculated using two points, such as (0, 24) and (2, 18): m = (18 - 24) / (2 - 0) = -6 / 2 = -3 gallons per hour. Because fuel is consumed as time passes, the line slopes downward from left to right and the rate of change is negative (-3 gal/hr).',
+    hint: 'Find where the line crosses the vertical y-axis for the y-intercept (at x = 0). Then find the slope using m = (y2 - y1) / (x2 - x1). Notice that fuel is decreasing as time increases, so the slope must be negative.',
   },
   {
     id: 'staar-p-q27',
@@ -995,26 +1027,52 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   {
     id: 'staar-p-q31',
     relationshipType: 'proportional',
-    category: 'word-problem',
-    teksCode: 'TEKS 8.5.E',
-    standardType: 'Supporting',
+    category: 'graph',
+    teksCode: 'TEKS 8.4.B',
+    standardType: 'Readiness',
     reportingCategory: 2,
-    subtopic: 'Recipe Scaling Direct Variation',
-    question: 'A caterer follows a recipe where the amount of sugar needed varies directly with the number of muffins baked. The recipe uses 2.5 cups of sugar to make 15 muffins. How many cups of sugar are needed to bake 36 muffins?',
-    context: 'Direct variation: 2.5 cups for 15 muffins',
+    subtopic: 'Constant of Proportionality and Direct Variation Equation from a Coordinate Graph',
+    question: 'The coordinate graph displays the relationship between x, the operating time of an industrial solar panel manufacturing machine in hours, and y, the total number of solar panels produced.\n\nWhich statement best describes the constant of proportionality and the equation that models this relationship?',
+    context: 'Direct variation graph passing through (0, 0), (2, 48), (4, 96), (6, 144)',
+    graphData: {
+      title: 'Solar Panel Machine Production Rate',
+      xLabel: 'Operating Time in Hours (x)',
+      yLabel: 'Solar Panels Produced (y)',
+      xMin: 0,
+      xMax: 8,
+      yMin: 0,
+      yMax: 180,
+      xStep: 1,
+      yStep: 20,
+      lines: [
+        {
+          id: 'solar-production',
+          name: 'Panels Produced',
+          slope: 24,
+          intercept: 0,
+          color: 'emerald',
+          points: [
+            { x: 0, y: 0, label: '(0, 0)' },
+            { x: 2, y: 48, label: '(2, 48)', highlight: true },
+            { x: 4, y: 96, label: '(4, 96)' },
+            { x: 6, y: 144, label: '(6, 144)' },
+          ],
+        },
+      ],
+    },
     options: [
-      '6.0 cups',
-      '5.5 cups',
-      '9.0 cups',
-      '7.2 cups',
+      'The constant of proportionality is 24 panels per hour, and the linear relationship is represented by y = 24x.',
+      'The constant of proportionality is 48 panels per hour, and the linear relationship is represented by y = 48x.',
+      'The constant of proportionality is 2 hours per panel, and the linear relationship is represented by y = (1/24)x.',
+      'The constant of proportionality is 24 panels per hour, and the linear relationship is represented by y = 24x + 2.',
     ],
     correctIndex: 0,
-    explanation: 'Find the constant of proportionality: k = 2.5 / 15 = 1/6 (or 0.1667) cups per muffin. For 36 muffins: y = (1/6) * 36 = 6.0 cups of sugar.',
-    hint: 'Find the cups of sugar per 1 muffin: 2.5 / 15 = 1/6 cup. Then multiply 1/6 by 36 muffins.',
+    explanation: 'Because the graph is a straight line passing through the origin (0, 0), it represents a proportional direct variation relationship. The constant of proportionality k is the unit rate k = y / x: k = 48 / 2 = 24 panels per hour (also 96 / 4 = 24 and 144 / 6 = 24). Since the y-intercept is 0, the equation is y = kx, which is y = 24x.',
+    hint: 'Calculate the constant of proportionality k = y / x for any point on the line, such as (2, 48): 48 ÷ 2 = 24. A proportional line passing through (0, 0) has a y-intercept of 0 and follows y = kx.',
   },
   {
     id: 'staar-p-q32',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'word-problem',
     teksCode: 'TEKS 8.4.C',
     standardType: 'Readiness',
@@ -1039,26 +1097,52 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   {
     id: 'staar-p-q33',
     relationshipType: 'nonProportional',
-    category: 'multiple-representation',
-    teksCode: 'TEKS 8.4.C',
+    category: 'graph',
+    teksCode: 'TEKS 8.5.I',
     standardType: 'Readiness',
     reportingCategory: 2,
-    subtopic: 'Connecting Word Problem to Equation and Initial Value',
-    question: 'A decorative candle is 14 inches tall when lit and burns down at a steady rate of 1.75 inches per hour. Which linear equation and initial value represent h, the height of the candle after t hours?',
-    context: 'Candle: starting height 14 inches, burning rate 1.75 inches/hr',
+    subtopic: 'Writing Linear Equation y = mx + b from a Coordinate Graph',
+    question: 'The coordinate graph displays the relationship between x, the number of days a landscaping contractor rents a heavy-duty lawn aerator, and y, the total cost in dollars.\n\nWhich linear equation best models the relationship between x and y shown on the graph?',
+    context: 'Equipment rental cost: line through (0, 25), (2, 45), (4, 65), (6, 85)',
+    graphData: {
+      title: 'Lawn Aerator Daily Rental Cost',
+      xLabel: 'Rental Time in Days (x)',
+      yLabel: 'Total Rental Cost in Dollars (y)',
+      xMin: 0,
+      xMax: 8,
+      yMin: 0,
+      yMax: 100,
+      xStep: 1,
+      yStep: 10,
+      lines: [
+        {
+          id: 'aerator-cost-line',
+          name: 'Rental Cost',
+          slope: 10,
+          intercept: 25,
+          color: 'indigo',
+          points: [
+            { x: 0, y: 25, label: '(0, 25)', highlight: true },
+            { x: 2, y: 45, label: '(2, 45)' },
+            { x: 4, y: 65, label: '(4, 65)' },
+            { x: 6, y: 85, label: '(6, 85)' },
+          ],
+        },
+      ],
+    },
     options: [
-      'Equation: h = -1.75t + 14; Initial Value: 14 inches',
-      'Equation: h = 1.75t + 14; Initial Value: 1.75 inches',
-      'Equation: h = 14t - 1.75; Initial Value: -1.75 inches',
-      'Equation: h = -14t + 1.75; Initial Value: 14 inches',
+      'y = 10x + 25',
+      'y = 20x + 25',
+      'y = 25x + 10',
+      'y = 10x',
     ],
     correctIndex: 0,
-    explanation: 'The candle starts at an initial height of 14 inches (y-intercept b = 14). Because it burns down, the rate of change is negative (-1.75 inches per hour). The correct linear model is h = -1.75t + 14 with an initial value of 14 inches.',
-    hint: 'The starting height at t = 0 is 14 inches (initial value), and burning down means a negative slope of -1.75.',
+    explanation: 'To write the equation in slope-intercept form (y = mx + b):\n1. Identify the y-intercept (b): The line intersects the vertical y-axis at (0, 25), so b = 25 (the initial equipment preparation deposit).\n2. Calculate the slope (m = rate of change) using two points on the line, such as (0, 25) and (2, 45):\n   m = (y2 - y1) / (x2 - x1) = (45 - 25) / (2 - 0) = 20 / 2 = 10 dollars per day.\n3. Combine m and b into y = mx + b: y = 10x + 25.',
+    hint: 'Find the y-intercept where the line touches the vertical axis: (0, 25). Then calculate the slope between (0, 25) and (2, 45): m = (45 - 25) / (2 - 0) = 20 / 2 = 10. Write the equation as y = 10x + 25.',
   },
   {
     id: 'staar-p-q34',
-    relationshipType: 'mixed',
+    relationshipType: 'nonProportional',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.5.F',
     standardType: 'Supporting',
@@ -1140,7 +1224,7 @@ export const STAAR_PROPORTIONAL_QUESTIONS: StaarPracticeQuestion[] = [
   },
   {
     id: 'staar-p-q36',
-    relationshipType: 'mixed',
+    relationshipType: 'proportional',
     category: 'multiple-representation',
     teksCode: 'TEKS 8.5.H',
     standardType: 'Supporting',
