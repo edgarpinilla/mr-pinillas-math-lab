@@ -32,112 +32,314 @@ interface StaarSlopeQuizProps {
 export type StaarSlopeMode = 'finding-slope' | 'linear-equations' | 'mixed';
 
 const STORAGE_SERVED_KEY_PREFIX = 'pinilla_math_staar_slope_served_';
+const STORAGE_CYCLE_PLAN_KEY_PREFIX = 'pinilla_math_staar_slope_cycle_plan_';
 const STORAGE_SELECTED_MODE_KEY = 'pinilla_math_staar_slope_selected_mode';
 
-function shuffleArray<T>(array: T[]): T[] {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+const isGraphQuestion = (q: StaarPracticeQuestion) => q.category === 'graph' || q.graphData !== undefined;
+const isTableQuestion = (q: StaarPracticeQuestion) => q.category === 'table' || q.tableData !== undefined;
+const isEquationQuestion = (q: StaarPracticeQuestion) => q.category === 'equation';
+const isVerbalOrMultiQuestion = (q: StaarPracticeQuestion) =>
+  q.category === 'word-problem' || q.category === 'multiple-representation';
+
+function getPoolForMode(mode: StaarSlopeMode): StaarPracticeQuestion[] {
+  if (mode === 'finding-slope') {
+    return STAAR_SLOPE_QUESTIONS.filter((q) => q.slopeType === 'finding-slope');
   }
-  return arr;
+  if (mode === 'linear-equations') {
+    return STAAR_SLOPE_QUESTIONS.filter((q) => q.slopeType === 'linear-equations');
+  }
+  return STAAR_SLOPE_QUESTIONS;
+}
+
+function getStoredModeServedIds(mode: StaarSlopeMode): string[] {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredModeServedIds(mode: StaarSlopeMode, ids: string[]): void {
+  try {
+    localStorage.setItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`, JSON.stringify(ids));
+  } catch {
+    // Ignore storage quota/permission failures
+  }
+}
+
+function getStoredModeCyclePlan(mode: StaarSlopeMode): string[][] | null {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_CYCLE_PLAN_KEY_PREFIX}${mode}`);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredModeCyclePlan(mode: StaarSlopeMode, plan: string[][]): void {
+  try {
+    localStorage.setItem(`${STORAGE_CYCLE_PLAN_KEY_PREFIX}${mode}`, JSON.stringify(plan));
+  } catch {
+    // Ignore storage quota/permission failures
+  }
+}
+
+/**
+ * Creates a balanced cycle partition for the selected mode:
+ * - 'mixed': 36 questions partitioned into 6 attempts of 6 questions.
+ *   Each attempt has exactly:
+ *     - 3 Finding Slope questions + 3 Linear Equations questions
+ *     - Exactly 2 coordinate graphs (1 Finding Slope graph + 1 Linear Equations graph)
+ *     - At least 1 data table
+ * - 'finding-slope': 18 questions partitioned into 3 attempts of 6 questions.
+ *   Each attempt has exactly 2 coordinate graphs (all 6 graphs used once).
+ * - 'linear-equations': 18 questions partitioned into 3 attempts of 6 questions.
+ *   Each attempt has exactly 2 coordinate graphs (all 6 graphs used once).
+ *
+ * Guarantees zero question overlap within each full cycle.
+ * Incorporates rollover protection to prevent repeats across cycle boundaries.
+ */
+function createCyclePartitionForMode(
+  mode: StaarSlopeMode,
+  lastAttemptIds: string[] = []
+): string[][] {
+  const pool = getPoolForMode(mode);
+  const totalQuestions = pool.length;
+  const blockSize = 6;
+  const numBlocks = totalQuestions / blockSize;
+  const lastAttemptSet = new Set(lastAttemptIds);
+
+  const maxAttempts = 200;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const blocks: StaarPracticeQuestion[][] = Array.from({ length: numBlocks }, () => []);
+
+    if (mode === 'mixed') {
+      // 36 questions -> 6 blocks of 6 questions each
+      const fsPool = pool.filter((q) => q.slopeType === 'finding-slope');
+      const lePool = pool.filter((q) => q.slopeType === 'linear-equations');
+
+      // 1. Graphs: 6 FS graphs and 6 LE graphs -> exactly 1 FS graph + 1 LE graph per block (2 graphs total per block)
+      const fsGraphs = fsPool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const leGraphs = lePool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+
+      for (let b = 0; b < 6; b++) {
+        blocks[b].push(fsGraphs[b], leGraphs[b]);
+      }
+
+      // 2. Finding Slope non-graphs: 4 tables and 8 others
+      const fsTables = fsPool.filter((q) => !isGraphQuestion(q) && isTableQuestion(q)).sort(() => Math.random() - 0.5);
+      const fsOthers = fsPool.filter((q) => !isGraphQuestion(q) && !isTableQuestion(q)).sort(() => Math.random() - 0.5);
+
+      // Distribute 4 FS tables into 4 random blocks
+      const fsBlockOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+      const fsTableBlocks = fsBlockOrder.slice(0, 4);
+      const fsOtherOnlyBlocks = fsBlockOrder.slice(4, 6);
+
+      for (let i = 0; i < 4; i++) {
+        blocks[fsTableBlocks[i]].push(fsTables[i]);
+      }
+      for (let i = 0; i < 4; i++) {
+        blocks[fsTableBlocks[i]].push(fsOthers[i]);
+      }
+      blocks[fsOtherOnlyBlocks[0]].push(fsOthers[4], fsOthers[5]);
+      blocks[fsOtherOnlyBlocks[1]].push(fsOthers[6], fsOthers[7]);
+
+      // 3. Linear Equations non-graphs: 5 tables and 7 others
+      const leTables = lePool.filter((q) => !isGraphQuestion(q) && isTableQuestion(q)).sort(() => Math.random() - 0.5);
+      const leOthers = lePool.filter((q) => !isGraphQuestion(q) && !isTableQuestion(q)).sort(() => Math.random() - 0.5);
+
+      // Distribute 5 LE tables into 5 random blocks
+      const leBlockOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+      const leTableBlocks = leBlockOrder.slice(0, 5);
+      const leOtherOnlyBlock = leBlockOrder[5];
+
+      for (let i = 0; i < 5; i++) {
+        blocks[leTableBlocks[i]].push(leTables[i]);
+      }
+      for (let i = 0; i < 5; i++) {
+        blocks[leTableBlocks[i]].push(leOthers[i]);
+      }
+      blocks[leOtherOnlyBlock].push(leOthers[5], leOthers[6]);
+
+      // Verify that every block has at least 1 table question
+      if (!blocks.every((b) => b.some(isTableQuestion))) continue;
+
+    } else if (mode === 'finding-slope') {
+      // 18 questions -> 3 blocks of 6 questions each
+      const graphs = pool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const tables = pool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const others = pool.filter((q) => !isGraphQuestion(q) && !isTableQuestion(q)).sort(() => Math.random() - 0.5);
+
+      // Exactly 2 graphs in each block (all 6 graphs utilized)
+      blocks[0].push(graphs[0], graphs[1]);
+      blocks[1].push(graphs[2], graphs[3]);
+      blocks[2].push(graphs[4], graphs[5]);
+
+      // 4 tables -> 2 in one block, 1 in each of the other two
+      const blockOrder = [0, 1, 2].sort(() => Math.random() - 0.5);
+      blocks[blockOrder[0]].push(tables[0], tables[1]);
+      blocks[blockOrder[1]].push(tables[2]);
+      blocks[blockOrder[2]].push(tables[3]);
+
+      // 8 others -> 2 in the two-table block, 3 in each of the other two blocks
+      blocks[blockOrder[0]].push(others[0], others[1]);
+      blocks[blockOrder[1]].push(others[2], others[3], others[4]);
+      blocks[blockOrder[2]].push(others[5], others[6], others[7]);
+
+    } else {
+      // linear-equations: 18 questions -> 3 blocks of 6 questions each
+      const graphs = pool.filter(isGraphQuestion).sort(() => Math.random() - 0.5);
+      const tables = pool.filter(isTableQuestion).sort(() => Math.random() - 0.5);
+      const others = pool.filter((q) => !isGraphQuestion(q) && !isTableQuestion(q)).sort(() => Math.random() - 0.5);
+
+      // Exactly 2 graphs in each block (all 6 graphs utilized)
+      blocks[0].push(graphs[0], graphs[1]);
+      blocks[1].push(graphs[2], graphs[3]);
+      blocks[2].push(graphs[4], graphs[5]);
+
+      // 5 tables -> 2 in block 0, 2 in block 1, 1 in block 2
+      const blockOrder = [0, 1, 2].sort(() => Math.random() - 0.5);
+      blocks[blockOrder[0]].push(tables[0], tables[1]);
+      blocks[blockOrder[1]].push(tables[2], tables[3]);
+      blocks[blockOrder[2]].push(tables[4]);
+
+      // 7 others -> 2 in block 0, 2 in block 1, 3 in block 2
+      blocks[blockOrder[0]].push(others[0], others[1]);
+      blocks[blockOrder[1]].push(others[2], others[3]);
+      blocks[blockOrder[2]].push(others[4], others[5], others[6]);
+    }
+
+    // Rollover protection: if block 0 has any overlap with lastAttemptSet, swap with a non-overlapping block
+    if (lastAttemptSet.size > 0 && blocks[0].some((q) => lastAttemptSet.has(q.id))) {
+      const nonOverlapIdx = blocks.findIndex(
+        (b, idx) => idx > 0 && !b.some((q) => lastAttemptSet.has(q.id))
+      );
+      if (nonOverlapIdx !== -1) {
+        const temp = blocks[0];
+        blocks[0] = blocks[nonOverlapIdx];
+        blocks[nonOverlapIdx] = temp;
+      } else {
+        continue;
+      }
+    }
+
+    const allBlockSizeOk = blocks.every((b) => b.length === blockSize);
+    const allUnique = new Set(blocks.flat().map((q) => q.id)).size === totalQuestions;
+
+    if (allBlockSizeOk && allUnique) {
+      if (lastAttemptSet.size > 0 && blocks[0].some((q) => lastAttemptSet.has(q.id))) {
+        continue;
+      }
+      return blocks.map((b) => b.map((q) => q.id));
+    }
+  }
+
+  // Deterministic fallback partition if stochastic trials did not resolve
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
+  const fallbackBlocks: string[][] = [];
+  for (let i = 0; i < numBlocks; i++) {
+    fallbackBlocks.push(shuffledPool.slice(i * blockSize, (i + 1) * blockSize).map((q) => q.id));
+  }
+  if (lastAttemptSet.size > 0 && fallbackBlocks[0].some((id) => lastAttemptSet.has(id))) {
+    const nonOverlappingIdx = fallbackBlocks.findIndex(
+      (b, idx) => idx > 0 && !b.some((id) => lastAttemptSet.has(id))
+    );
+    if (nonOverlappingIdx !== -1) {
+      const temp = fallbackBlocks[0];
+      fallbackBlocks[0] = fallbackBlocks[nonOverlappingIdx];
+      fallbackBlocks[nonOverlappingIdx] = temp;
+    }
+  }
+  return fallbackBlocks;
 }
 
 /**
  * Generates 6 unique STAAR-style questions for the selected mode from the 36-question bank.
- * Guarantees zero-repeat presentation until the entire mode pool is exhausted.
+ * - Finding Slope mode: 18 questions partitioned into 3 attempts of 6 questions before recycling.
+ * - Linear Equations mode: 18 questions partitioned into 3 attempts of 6 questions before recycling.
+ * - Mixed Review mode: 36 questions partitioned into 6 attempts of 6 questions before recycling.
+ * - Guarantees ZERO question repeat within each complete cycle.
+ * - Guarantees exactly 2 coordinate graph questions per 6-question attempt.
+ * - Incorporates rollover protection across cycle boundaries.
+ * - Shuffles presentation sequence and answer choices while maintaining correctIndex.
  */
 function generateStaarQuestions(
   mode: StaarSlopeMode,
   count: number = 6,
   previousIds: string[] = []
 ): StaarPracticeQuestion[] {
-  // 1. Filter bank by mode
-  const modePool =
-    mode === 'finding-slope'
-      ? STAAR_SLOPE_QUESTIONS.filter((q) => q.slopeType === 'finding-slope')
-      : mode === 'linear-equations'
-      ? STAAR_SLOPE_QUESTIONS.filter((q) => q.slopeType === 'linear-equations')
-      : STAAR_SLOPE_QUESTIONS;
-
-  if (modePool.length <= count) {
-    return modePool.map((q) => ({ ...q }));
+  const pool = getPoolForMode(mode);
+  if (pool.length <= count) {
+    return pool.map((q) => ({ ...q }));
   }
 
-  // 2. Read served history from localStorage
-  let servedIds: string[] = [];
-  try {
-    const raw = localStorage.getItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`);
-    if (raw) servedIds = JSON.parse(raw);
-  } catch {
+  const poolMap = new Map<string, StaarPracticeQuestion>(pool.map((q) => [q.id, q]));
+  const allIds = new Set(pool.map((q) => q.id));
+  let servedIds = getStoredModeServedIds(mode).filter((id) => allIds.has(id));
+  let cyclePlan = getStoredModeCyclePlan(mode);
+
+  const expectedBlocks = mode === 'mixed' ? 6 : 3;
+
+  // Validate stored cycle plan against current pool
+  const isCyclePlanValid =
+    cyclePlan !== null &&
+    cyclePlan.length === expectedBlocks &&
+    cyclePlan.every((block) => block.length === count) &&
+    cyclePlan.flat().length === pool.length &&
+    new Set(cyclePlan.flat()).size === pool.length &&
+    cyclePlan.flat().every((id) => allIds.has(id));
+
+  // If cycle plan is missing or all questions in bank have been served, create a new cycle plan
+  if (!isCyclePlanValid || servedIds.length >= pool.length) {
+    const lastAttemptIds = previousIds.length > 0 ? previousIds : servedIds.slice(-count);
+    const newPlan = createCyclePartitionForMode(mode, lastAttemptIds);
+    cyclePlan = newPlan;
+    saveStoredModeCyclePlan(mode, newPlan);
     servedIds = [];
   }
 
-  // 3. Find unserved candidates
-  let available = modePool.filter((q) => !servedIds.includes(q.id));
+  let selected: StaarPracticeQuestion[] = [];
 
-  // If pool exhausted, reset served tracking
-  if (available.length < count) {
-    servedIds = [...previousIds];
-    available = modePool.filter((q) => !servedIds.includes(q.id));
-    if (available.length < count) available = [...modePool];
-  }
+  if (cyclePlan) {
+    // Find the first block whose IDs have not yet been served in this cycle
+    const servedSet = new Set(servedIds);
+    const nextBlockIds = cyclePlan.find((block) => !block.some((id) => servedSet.has(id)));
 
-  // 4. Partition available questions by representation
-  const graphGroup = available.filter((q) => q.category === 'graph');
-  const tableGroup = available.filter((q) => q.category === 'table');
-  const eqGroup = available.filter((q) => q.category === 'equation');
-  const wordGroup = available.filter((q) => q.category === 'word-problem');
-  const multiGroup = available.filter((q) => q.category === 'multiple-representation');
-
-  const pickedSet = new Set<string>();
-  const selected: StaarPracticeQuestion[] = [];
-
-  const addFromGroup = (group: StaarPracticeQuestion[]) => {
-    const candidates = group.filter((item) => !pickedSet.has(item.id));
-    if (candidates.length > 0) {
-      const idx = Math.floor(Math.random() * candidates.length);
-      const chosen = candidates[idx];
-      pickedSet.add(chosen.id);
-      selected.push(chosen);
+    if (nextBlockIds && nextBlockIds.length === count) {
+      selected = nextBlockIds
+        .map((id) => poolMap.get(id))
+        .filter((q): q is StaarPracticeQuestion => q !== undefined);
     }
-  };
-
-  // Sample balanced representation
-  if (graphGroup.length > 0) addFromGroup(graphGroup);
-  if (tableGroup.length > 0) addFromGroup(tableGroup);
-  if (eqGroup.length > 0) addFromGroup(eqGroup);
-  if (wordGroup.length > 0) addFromGroup(wordGroup);
-  if (multiGroup.length > 0) addFromGroup(multiGroup);
-
-  // Fill remaining slots
-  const remaining = available.filter((item) => !pickedSet.has(item.id));
-  const shuffledRemaining = shuffleArray(remaining);
-  for (const item of shuffledRemaining) {
-    if (selected.length >= count) break;
-    selected.push(item);
-    pickedSet.add(item.id);
   }
 
-  // Save new served history
-  try {
-    const updatedServed = Array.from(new Set([...servedIds, ...selected.map((q) => q.id)]));
-    localStorage.setItem(`${STORAGE_SERVED_KEY_PREFIX}${mode}`, JSON.stringify(updatedServed));
-  } catch {
-    // ignore
+  // Safety fallback if ever needed
+  if (!selected || selected.length !== count) {
+    const immediatePreviousIds = previousIds.length > 0 ? previousIds : servedIds.slice(-count);
+    const safeCandidates = pool.filter((q) => !immediatePreviousIds.includes(q.id));
+    selected = (safeCandidates.length >= count ? safeCandidates : pool)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, count);
   }
 
-  // Shuffle sequence and options with Fisher-Yates
-  const shuffledSelected = shuffleArray(selected);
+  // Persist updated served history for this mode
+  const newlyServedIds = selected.map((q) => q.id);
+  const updatedServedIds = [...servedIds, ...newlyServedIds];
+  saveStoredModeServedIds(mode, updatedServedIds);
 
+  // Shuffle presentation sequence
+  const shuffledSelected = [...selected].sort(() => Math.random() - 0.5);
+
+  // Shuffle answer options while maintaining correctIndex
   return shuffledSelected.map((q) => {
-    const correctText = q.options[q.correctIndex];
-    const shuffledOptions = shuffleArray(q.options);
-    const newCorrectIdx = shuffledOptions.indexOf(correctText);
+    const correctOptionText = q.options[q.correctIndex];
+    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+    const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
+
     return {
       ...q,
       options: shuffledOptions,
-      correctIndex: newCorrectIdx,
+      correctIndex: newCorrectIndex,
     };
   });
 }
