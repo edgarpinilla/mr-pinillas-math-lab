@@ -516,7 +516,7 @@ export const TOPIC_4_SYSTEMS: TopicData = {
   practiceApp: {
     buttonText: 'Practice Systems of Linear Equations',
     appTitle: 'Systems of Linear Equations Practice Lab',
-    placeholderUrl: '',
+    placeholderUrl: 'https://system-linear-equations-practice-lab.edgarpinilla.workers.dev',
     appDescription:
       'Test your mastery of solving systems of linear equations by graphing, substitution, classifying solution types, and modeling real-world break-even applications.',
     features: [
