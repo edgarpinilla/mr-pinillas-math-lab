@@ -959,9 +959,9 @@ export const StaarTransformationsQuiz: React.FC<StaarTransformationsQuizProps> =
             <div className="text-xs font-black uppercase tracking-wider text-purple-900">
               Standards
             </div>
-            <div className="text-3xl font-black text-purple-600">3</div>
+            <div className="text-3xl font-black text-purple-600">4</div>
             <div className="text-[11px] text-slate-500 font-bold">
-              TEKS 8.3.C · 8.10.B · 8.10.C
+              TEKS 8.3.C · 8.10.A · 8.10.B · 8.10.C
             </div>
           </div>
         </div>

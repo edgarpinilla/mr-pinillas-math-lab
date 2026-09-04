@@ -41,10 +41,10 @@ export interface TransformationGraph {
 
 export interface StaarPracticeQuestion {
   id: string;
-  teksCode: string; // e.g. "TEKS 8.10.C", "TEKS 8.3.C", "TEKS 8.10.B"
+  teksCode: string; // e.g. "TEKS 8.10.C", "TEKS 8.3.C", "TEKS 8.10.B", "TEKS 8.10.A"
   standardType: 'Readiness' | 'Supporting';
   reportingCategory: 3;
-  transformationType: 'translation' | 'reflection' | 'rotation' | 'dilation';
+  transformationType: 'translation' | 'reflection' | 'rotation' | 'dilation' | 'combined';
   category: 'graph' | 'coordinate' | 'rule' | 'table' | 'word-problem' | 'concept';
   subtopic: string;
   question: string;
@@ -59,25 +59,26 @@ export interface StaarPracticeQuestion {
 
 /**
  * Bank of 36 Original Grade 8 STAAR-Style Transformations Questions
- * Aligned to Texas TEKS (8.3.C, 8.10.B, 8.10.C) and 2026 STAAR metadata.
+ * Aligned to Texas TEKS (8.3.C, 8.10.A, 8.10.B, 8.10.C) and STAAR blueprint.
  *
- * RIGOROUS MULTI-REPRESENTATIONAL BALANCE:
+ * RIGOROUS MULTI-REPRESENTATIONAL BLUEPRINT:
  * Total Questions: 36
- * - Translation: 9 (3 Graph, 2 Rule, 2 Coordinate, 1 Word Problem, 1 Mixed/Table)
- * - Reflection:  9 (3 Graph, 2 Rule, 2 Coordinate, 1 Word Problem, 1 Mixed/Concept)
- * - Rotation:    9 (3 Graph, 2 Rule, 2 Coordinate, 1 Word Problem, 1 Mixed/Table)
- * - Dilation:    9 (3 Graph, 2 Rule, 2 Coordinate, 1 Word Problem, 1 Mixed/Concept)
+ * - Translation: 8 (3 Graph, 2 Rule, 1 Working-Backwards Coordinate, 1 Table, 1 Real-World Vector)
+ * - Reflection:  8 (3 Graph, 2 Rule, 1 Working-Backwards Coordinate, 1 Quadrant Reasoning, 1 Logo Context, 1 Concept)
+ * - Rotation:    8 (3 Graph, 2 Rule, 1 Coordinate, 1 Table, 1 Real-World Rotor)
+ * - Dilation:    8 (3 Graph, 2 Rule, 1 Coordinate, 1 Blueprint Context, 1 Linear vs Area Concept)
+ * - Multi-Step & Combined: 4 (2 Sequences, 1 Congruence vs. Similarity, 1 Angle & Parallelism Invariance)
  *
  * Grand Representation Totals:
- * - Graphical Coordinate Planes: 12 (3 per transformation)
- * - Algebraic Rules: 8 (2 per transformation)
- * - Coordinate / Ordered-Pair Reasoning: 8 (2 per transformation)
- * - Word Problems / Real-World Context: 4 (1 per transformation)
- * - Mixed / Concept / Table Reasoning: 4 (1 per transformation)
+ * - Graphical Coordinate Planes: 12 (3 per core transformation)
+ * - Algebraic Rules: 8
+ * - Coordinate / Ordered-Pair Reasoning: 8
+ * - Real-World Applications / Contexts: 4
+ * - Concepts & Mathematical Invariance: 4
  */
 export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
   // ==========================================
-  // TRANSLATIONS (9 QUESTIONS: q01 - q09)
+  // TRANSLATIONS (8 QUESTIONS: q01 - q08)
   // ==========================================
   {
     id: 'staar-t-q01',
@@ -256,7 +257,7 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
       'The triangle is translated 9 units left and 4 units up.',
       'The triangle is translated 9 units right and 4 units down.',
       'The triangle is translated 9 units left and 4 units down.',
-      'The triangle is dilated by a scale factor of 9.',
+      'The triangle is translated 9 units down and 4 units right.',
     ],
     correctIndex: 0,
     explanation: 'In the rule (x - 9, y + 4), subtracting 9 from x represents a horizontal shift of 9 units left. Adding 4 to y represents a vertical shift of 4 units up.',
@@ -269,61 +270,21 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     reportingCategory: 3,
     transformationType: 'translation',
     category: 'coordinate',
-    subtopic: 'Applying Translation Rule to Ordered Pair',
-    question: 'Point P is located at (-4, 7). Point P is translated using the algebraic rule (x, y) -> (x - 5, y + 8) to create point P\'. What are the coordinates of point P\'?',
-    context: 'Pre-image: P(-4, 7), Rule: (x, y) -> (x - 5, y + 8)',
+    subtopic: 'Working Backwards to Find Pre-Image of Translation',
+    question: 'Point P\' is located at (2, -3) after being translated using the algebraic rule (x, y) -> (x - 5, y + 4). What were the coordinates of the original point P?',
+    context: 'Image: P\'(2, -3), Rule: (x, y) -> (x - 5, y + 4)',
     options: [
-      '(-9, 15)',
-      '(1, 15)',
-      '(-9, -1)',
-      '(1, -1)',
+      '(7, -7)',
+      '(-3, 1)',
+      '(-3, -7)',
+      '(7, 1)',
     ],
     correctIndex: 0,
-    explanation: 'Apply the rule directly: x\' = -4 - 5 = -9, and y\' = 7 + 8 = 15. The coordinates of P\' are (-9, 15).',
-    hint: 'Subtract 5 from the x-coordinate (-4 - 5) and add 8 to the y-coordinate (7 + 8).',
+    explanation: 'To find the pre-image coordinates, reverse the translation operations: x - 5 = 2 gives x = 2 + 5 = 7, and y + 4 = -3 gives y = -3 - 4 = -7. The original point P was at (7, -7). Applying the rule to the image instead of working backwards is a common error that incorrectly produces (-3, 1).',
+    hint: 'Work backwards from the image coordinates: add 5 to the image x-coordinate (2 + 5 = 7) and subtract 4 from the image y-coordinate (-3 - 4 = -7).',
   },
   {
     id: 'staar-t-q07',
-    teksCode: 'TEKS 8.10.C',
-    standardType: 'Readiness',
-    reportingCategory: 3,
-    transformationType: 'translation',
-    category: 'coordinate',
-    subtopic: 'Determine Translation Shift from Ordered Pairs',
-    question: 'A polygon vertex with original coordinates (3, -2) is translated to the image coordinates (7, -8). Which translation rule was applied to the vertex?',
-    context: 'Pre-image (3, -2) -> Image (7, -8)',
-    options: [
-      '(x, y) -> (x + 4, y - 6)',
-      '(x, y) -> (x - 4, y + 6)',
-      '(x, y) -> (x + 10, y - 10)',
-      '(x, y) -> (4x, -6y)',
-    ],
-    correctIndex: 0,
-    explanation: 'Change in x: 7 - 3 = +4 (add 4 to x). Change in y: -8 - (-2) = -8 + 2 = -6 (subtract 6 from y). The translation rule is (x, y) -> (x + 4, y - 6).',
-    hint: 'Subtract original coordinates from image coordinates: 7 - 3 = +4 and -8 - (-2) = -6.',
-  },
-  {
-    id: 'staar-t-q08',
-    teksCode: 'TEKS 8.10.C',
-    standardType: 'Readiness',
-    reportingCategory: 3,
-    transformationType: 'translation',
-    category: 'word-problem',
-    subtopic: 'Robotic Navigation on Coordinate Grid',
-    question: 'A warehouse automated robot starts at coordinate position (3, -4) on a floor map. The robot travels 5 units to the right and 7 units up, then pauses. Next, it moves 2 units to the left and 3 units down. What is the final coordinate position of the robot?',
-    context: 'Initial Position: (3, -4)',
-    options: [
-      '(6, 0)',
-      '(10, 6)',
-      '(0, -10)',
-      '(6, 6)',
-    ],
-    correctIndex: 0,
-    explanation: 'Combine the horizontal changes: +5 - 2 = +3. New x = 3 + 3 = 6. Combine the vertical changes: +7 - 3 = +4. New y = -4 + 4 = 0. The final position is (6, 0).',
-    hint: 'Net horizontal movement: +5 - 2 = +3. Net vertical movement: +7 - 3 = +4. Apply these to (3, -4).',
-  },
-  {
-    id: 'staar-t-q09',
     teksCode: 'TEKS 8.10.C',
     standardType: 'Readiness',
     reportingCategory: 3,
@@ -346,12 +307,32 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
       '(-7, -5)',
     ],
     correctIndex: 0,
-    explanation: 'Find the translation rule from vertex A: x\' = -3 + 5 = 2 (add 5), y\' = 6 - 4 = 2 (subtract 4). Rule is (x + 5, y - 4). Apply to C(-2, -1): x\' = -2 + 5 = 3, y\' = -1 - 4 = -5. C\' is at (3, -5).',
-    hint: 'Determine how much x changes (from -3 to 2 is +5) and how much y changes (from 6 to 2 is -4), then apply to C(-2, -1).',
+    explanation: 'Find the translation rule from vertex A: x\' = -3 + 5 = 2 (add 5), and y\' = 6 - 4 = 2 (subtract 4). The rule is (x + 5, y - 4). Apply this rule to C(-2, -1): x\' = -2 + 5 = 3, and y\' = -1 - 4 = -5. Vertex C\' is at (3, -5).',
+    hint: 'Determine how much x changes (from -3 to 2 is +5) and how much y changes (from 6 to 2 is -4), then apply those changes to C(-2, -1).',
+  },
+  {
+    id: 'staar-t-q08',
+    teksCode: 'TEKS 8.10.C',
+    standardType: 'Readiness',
+    reportingCategory: 3,
+    transformationType: 'translation',
+    category: 'word-problem',
+    subtopic: 'Robotic Navigation Vector & Final Position',
+    question: 'A warehouse automated robot starts at coordinate position (3, -4) on a floor map. The robot travels 5 units to the right and 7 units up, then pauses. Next, it moves 2 units to the left and 3 units down. Which algebraic rule models the net translation of the robot, and what is its final coordinate position?',
+    context: 'Start: (3, -4); Movements: +5 right, +7 up, then -2 left, -3 down',
+    options: [
+      '(x, y) -> (x + 3, y + 4), with final position at (6, 0)',
+      '(x, y) -> (x + 7, y + 10), with final position at (10, 6)',
+      '(x, y) -> (x - 3, y - 4), with final position at (0, -8)',
+      '(x, y) -> (3x, 4y), with final position at (9, -16)',
+    ],
+    correctIndex: 0,
+    explanation: 'Calculate the net changes: horizontal movement is +5 - 2 = +3 (x + 3), and vertical movement is +7 - 3 = +4 (y + 4). The net translation rule is (x, y) -> (x + 3, y + 4). Applying this to the starting point (3, -4): x\' = 3 + 3 = 6, and y\' = -4 + 4 = 0. The robot\'s final position is (6, 0).',
+    hint: 'Combine movements: horizontal (+5 - 2 = +3) and vertical (+7 - 3 = +4). Apply (x + 3, y + 4) to (3, -4) to get (6, 0).',
   },
 
   // ==========================================
-  // REFLECTIONS (9 QUESTIONS: q10 - q18)
+  // REFLECTIONS (8 QUESTIONS: q10 - q14, q16 - q18)
   // ==========================================
   {
     id: 'staar-t-q10',
@@ -533,38 +514,18 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     reportingCategory: 3,
     transformationType: 'reflection',
     category: 'rule',
-    subtopic: 'Reflection across the Line y = x',
-    question: 'A polygon on a coordinate grid is reflected across the line y = x. Which algebraic rule represents this reflection?',
-    context: 'Reflection across diagonal line y = x',
+    subtopic: 'Working Backwards to Find Pre-Image of Reflection',
+    question: 'An image vertex K\' is located at (-6, -8) after a polygon is reflected across the x-axis on a coordinate plane. What were the coordinates of the pre-image vertex K?',
+    context: 'Image: K\'(-6, -8), Reflection across x-axis',
     options: [
-      '(x, y) -> (y, x)',
-      '(x, y) -> (-y, -x)',
-      '(x, y) -> (-x, y)',
-      '(x, y) -> (x, -y)',
+      '(-6, 8)',
+      '(6, -8)',
+      '(-6, -8)',
+      '(6, 8)',
     ],
     correctIndex: 0,
-    explanation: 'Reflecting across the line y = x interchanges the x and y coordinates of every point: (x, y) -> (y, x). For instance, (2, 5) becomes (5, 2).',
-    hint: 'When reflecting over y = x, simply swap the position of x and y: (y, x).',
-  },
-  {
-    id: 'staar-t-q15',
-    teksCode: 'TEKS 8.10.C',
-    standardType: 'Readiness',
-    reportingCategory: 3,
-    transformationType: 'reflection',
-    category: 'coordinate',
-    subtopic: 'Reflection across the x-axis Calculation',
-    question: 'Point G is located at (-8, 5) on a coordinate plane. If point G is reflected across the x-axis to create point G\', what are the coordinates of G\'?',
-    context: 'Pre-image: G(-8, 5)',
-    options: [
-      '(-8, -5)',
-      '(8, 5)',
-      '(8, -5)',
-      '(5, -8)',
-    ],
-    correctIndex: 0,
-    explanation: 'Reflecting across the x-axis keeps the x-coordinate unchanged and negates the y-coordinate: (x, y) -> (x, -y). G(-8, 5) maps to G\'(-8, -5).',
-    hint: 'Keep x unchanged (-8) and change the sign of y from 5 to -5.',
+    explanation: 'Reflecting across the x-axis keeps the x-coordinate unchanged and negates the y-coordinate according to the rule (x, y) -> (x, -y). If the image coordinates are K\'(-6, -8), then x = -6 and -y = -8, which means y = 8. The pre-image vertex K was located at (-6, 8).',
+    hint: 'Reflecting across the x-axis negates only the y-coordinate. If the image y-coordinate is -8, the original pre-image y-coordinate was +8.',
   },
   {
     id: 'staar-t-q16',
@@ -594,17 +555,17 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     transformationType: 'reflection',
     category: 'word-problem',
     subtopic: 'Graphic Logo Symmetry & Reflection',
-    question: 'A graphic designer is creating a symmetrical corporate logo on a coordinate grid. The right half of the logo contains an anchor point at (-7, 4). The designer reflects this point across the vertical y-axis to create the matching anchor point on the opposite side. What are the coordinates of the reflected anchor point?',
-    context: 'Anchor Point: (-7, 4), Reflection across y-axis',
+    question: 'A graphic designer is creating a symmetrical corporate logo on a coordinate grid. The right half of the logo contains an anchor point at (7, 4). The designer reflects this point across the vertical y-axis to create the matching anchor point on the opposite (left) side of the logo. What are the coordinates of the reflected anchor point?',
+    context: 'Anchor Point: (7, 4), Reflection across y-axis',
     options: [
-      '(7, 4)',
-      '(-7, -4)',
+      '(-7, 4)',
       '(7, -4)',
-      '(4, -7)',
+      '(-7, -4)',
+      '(4, 7)',
     ],
     correctIndex: 0,
-    explanation: 'Reflecting across the vertical y-axis negates the x-coordinate while preserving the y-coordinate: (x, y) -> (-x, y). Negating x = -7 gives -(-7) = 7, and y remains 4. The mirrored anchor point is at (7, 4).',
-    hint: 'Across the y-axis, the horizontal coordinate changes sign: -(-7) = 7, while y stays 4.',
+    explanation: 'Reflecting across the vertical y-axis negates the x-coordinate while preserving the y-coordinate: (x, y) -> (-x, y). Applying this to the right-side anchor point (7, 4) gives -(7) = -7, while the y-coordinate remains 4. The reflected anchor point on the left side is located at (-7, 4).',
+    hint: 'Reflecting across the vertical y-axis changes the sign of the horizontal x-coordinate: 7 becomes -7, while y remains 4.',
   },
   {
     id: 'staar-t-q18',
@@ -628,7 +589,7 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
   },
 
   // ==========================================
-  // ROTATIONS (9 QUESTIONS: q19 - q27)
+  // ROTATIONS (8 QUESTIONS: q19 - q24, q26 - q27)
   // ==========================================
   {
     id: 'staar-t-q19',
@@ -835,26 +796,6 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     hint: 'A 180° rotation changes the signs of both coordinates: (x, y) -> (-x, -y).',
   },
   {
-    id: 'staar-t-q25',
-    teksCode: 'TEKS 8.10.C',
-    standardType: 'Readiness',
-    reportingCategory: 3,
-    transformationType: 'rotation',
-    category: 'coordinate',
-    subtopic: '270° Counterclockwise Rotation Calculation',
-    question: 'Point R is located at (3, -8). What are the coordinates of point R\' after a 270° counterclockwise rotation about the origin?',
-    context: 'Rotation: 270° counterclockwise about (0,0)',
-    options: [
-      '(-8, -3)',
-      '(8, 3)',
-      '(-3, 8)',
-      '(8, -3)',
-    ],
-    correctIndex: 0,
-    explanation: 'A 270° counterclockwise rotation about the origin is equivalent to a 90° clockwise rotation, with algebraic rule (x, y) -> (y, -x). Substituting x = 3 and y = -8 gives (y, -x) = (-8, -(3)) = (-8, -3).',
-    hint: 'A 270° counterclockwise rotation uses the rule (x, y) -> (y, -x). Put y first (-8) and negate x (-(3) = -3).',
-  },
-  {
     id: 'staar-t-q26',
     teksCode: 'TEKS 8.10.C',
     standardType: 'Readiness',
@@ -904,7 +845,7 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
   },
 
   // ==========================================
-  // DILATIONS (9 QUESTIONS: q28 - q36)
+  // DILATIONS (8 QUESTIONS: q28 - q33, q35 - q36)
   // ==========================================
   {
     id: 'staar-t-q28',
@@ -1121,26 +1062,6 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     hint: 'Multiply both -6 and 9 by 2/3: -6 * 2/3 = -4 and 9 * 2/3 = 6.',
   },
   {
-    id: 'staar-t-q34',
-    teksCode: 'TEKS 8.3.C',
-    standardType: 'Readiness',
-    reportingCategory: 3,
-    transformationType: 'dilation',
-    category: 'coordinate',
-    subtopic: 'Determine Scale Factor from Pre-image & Image Coordinates',
-    question: 'A polygon vertex located at (8, -12) is dilated centered at the origin to produce an image vertex at (2, -3). What is the scale factor of the dilation?',
-    context: 'Pre-image (8, -12) -> Image (2, -3)',
-    options: [
-      '1/4 (or 0.25)',
-      '4',
-      '1/2 (or 0.5)',
-      '3/4 (or 0.75)',
-    ],
-    correctIndex: 0,
-    explanation: 'Scale factor k = Image coordinate / Pre-image coordinate: k = 2 / 8 = 1/4 = 0.25 (or -3 / -12 = 1/4). The scale factor applied is 1/4.',
-    hint: 'Divide the image coordinate by the original coordinate: 2 / 8 = 1/4.',
-  },
-  {
     id: 'staar-t-q35',
     teksCode: 'TEKS 8.3.C',
     standardType: 'Readiness',
@@ -1179,5 +1100,89 @@ export const STAAR_TRANSFORMATIONS_QUESTIONS: StaarPracticeQuestion[] = [
     correctIndex: 0,
     explanation: 'In a dilation with scale factor k, linear dimensions (side lengths, perimeter) are multiplied by k (3x), while the area is multiplied by k² (3² = 9x). Angle measures are preserved, producing similar figures that are not congruent when k != 1.',
     hint: 'Side lengths scale by k = 3; area scales by k² = 9. Dilation creates similar figures.',
+  },
+
+  // ==========================================
+  // MULTI-STEP & COMBINED TRANSFORMATIONS (4 QUESTIONS: q09, q15, q25, q34)
+  // ==========================================
+  {
+    id: 'staar-t-q09',
+    teksCode: 'TEKS 8.10.C',
+    standardType: 'Readiness',
+    reportingCategory: 3,
+    transformationType: 'combined',
+    category: 'coordinate',
+    subtopic: 'Two-Step Transformation Sequence: Reflection then Translation',
+    question: 'Point A is located at (-3, 5). Point A is first reflected across the x-axis, and then the resulting point is translated using the rule (x, y) -> (x + 6, y - 2) to create point A\'\'. What are the coordinates of point A\'\'?',
+    context: 'Sequence: 1) Reflection across x-axis, 2) Translation (x + 6, y - 2)',
+    options: [
+      '(3, -7)',
+      '(3, 3)',
+      '(-9, -7)',
+      '(-3, -7)',
+    ],
+    correctIndex: 0,
+    explanation: 'Step 1: Reflecting across the x-axis negates the y-coordinate according to (x, y) -> (x, -y). Point A(-3, 5) becomes A\'(-3, -5). Step 2: Apply the translation rule (x + 6, y - 2) to A\'(-3, -5): x\'\' = -3 + 6 = 3, and y\'\' = -5 - 2 = -7. The final coordinates of A\'\' are (3, -7). If a student forgets the reflection, they would get (-3 + 6, 5 - 2) = (3, 3).',
+    hint: 'Perform the transformations in order: first negate the y-coordinate to get (-3, -5), then add 6 to x and subtract 2 from y.',
+  },
+  {
+    id: 'staar-t-q15',
+    teksCode: 'TEKS 8.10.C',
+    standardType: 'Readiness',
+    reportingCategory: 3,
+    transformationType: 'combined',
+    category: 'coordinate',
+    subtopic: 'Two-Step Transformation Sequence: Translation then Dilation',
+    question: 'A vertex of a polygon is located at (4, -2). The polygon is first translated according to the rule (x, y) -> (x - 2, y + 5). The image is then dilated with the origin as the center of dilation by a scale factor of 3. What are the final coordinates of this vertex?',
+    context: 'Sequence: 1) Translation (x - 2, y + 5), 2) Dilation centered at origin with k = 3',
+    options: [
+      '(6, 9)',
+      '(2, 3)',
+      '(10, -1)',
+      '(12, -6)',
+    ],
+    correctIndex: 0,
+    explanation: 'Step 1: Apply translation to (4, -2): x\' = 4 - 2 = 2, and y\' = -2 + 5 = 3, giving intermediate point (2, 3). Step 2: Dilate (2, 3) by scale factor 3: x\'\' = 2 * 3 = 6, and y\'\' = 3 * 3 = 9. The final coordinates are (6, 9). Notice (2, 3) is only the intermediate point, and (12, -6) comes from dilating before translating.',
+    hint: 'First translate: (4 - 2, -2 + 5) = (2, 3). Then dilate by multiplying both coordinates by 3: (2 * 3, 3 * 3) = (6, 9).',
+  },
+  {
+    id: 'staar-t-q25',
+    teksCode: 'TEKS 8.10.A',
+    standardType: 'Readiness',
+    reportingCategory: 3,
+    transformationType: 'combined',
+    category: 'concept',
+    subtopic: 'Congruence vs. Similarity Across Transformations',
+    question: 'A math student analyzes four different transformations on a coordinate plane:\n\nTransformation 1: (x, y) -> (x + 5, y - 7)\nTransformation 2: (x, y) -> (-x, y)\nTransformation 3: (x, y) -> (-y, x)\nTransformation 4: (x, y) -> (2.5x, 2.5y)\n\nWhich statement correctly classifies the relationship between each pre-image and its resulting image?',
+    context: 'Classifying Congruence and Similarity across Transformations',
+    options: [
+      'Transformations 1, 2, and 3 produce congruent figures that preserve side lengths and angle measures, while Transformation 4 produces a similar figure whose side lengths change.',
+      'Transformations 1, 2, 3, and 4 all produce figures that are both congruent and similar.',
+      'Transformations 1 and 4 produce congruent figures, while Transformations 2 and 3 do not.',
+      'Only Transformation 1 produces a congruent figure because the others change the orientation or size.',
+    ],
+    correctIndex: 0,
+    explanation: 'Transformations 1 (translation), 2 (reflection), and 3 (rotation) are rigid transformations (isometries) that preserve side lengths and angle measures, producing congruent figures (which are also similar with scale factor 1). Transformation 4 is a dilation with scale factor k = 2.5, which preserves angle measures and shape but changes side lengths by a factor of 2.5, producing a similar figure that is NOT congruent.',
+    hint: 'Translations, reflections, and rotations preserve size (congruence). Only dilations change side lengths while preserving angle measures (similarity).',
+  },
+  {
+    id: 'staar-t-q34',
+    teksCode: 'TEKS 8.10.A',
+    standardType: 'Readiness',
+    reportingCategory: 3,
+    transformationType: 'combined',
+    category: 'concept',
+    subtopic: 'Preservation of Angle Measure and Parallelism',
+    question: 'Triangle PQR has an interior angle measuring 42° and two sides that are parallel to coordinate grid lines. Triangle PQR is transformed to create triangle P\'Q\'R\'. Which transformations guarantee that the corresponding interior angle in triangle P\'Q\'R\' will measure 42° and parallel relationships between lines are preserved?',
+    context: 'Invariance of Angle Measures & Parallelism in Transformations',
+    options: [
+      'Translations, reflections, rotations, and dilations all preserve angle measures and parallelism.',
+      'Only translations and rotations preserve angle measures and parallelism.',
+      'Only dilations preserve angle measures; rigid transformations do not.',
+      'Translations preserve angle measures, but dilations change angle measures proportional to the scale factor.',
+    ],
+    correctIndex: 0,
+    explanation: 'All four transformations taught in Grade 8 (translations, reflections, rotations, and dilations) preserve interior angle measures and line parallelism. Under a dilation, side lengths and perimeter change by the scale factor k, but the corresponding angle measures remain strictly identical (42° remains 42°), which is why dilated figures are similar.',
+    hint: 'Dilations change lengths, but NEVER change angle measures or parallel relationships. All four transformations preserve angle measures!',
   },
 ];
