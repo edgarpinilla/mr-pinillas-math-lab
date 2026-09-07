@@ -412,7 +412,7 @@ export const TOPIC_3_SLOPE: TopicData = {
   practiceApp: {
     buttonText: 'Practice Slope & Linear Equations',
     appTitle: 'Interactive Slope & Linear Equation Explorer',
-    placeholderUrl: '',
+    placeholderUrl: 'https://mr-pinilla-slope-linear-equations.edgarpinilla.workers.dev',
     appDescription:
       'An interactive coordinate graphing lab to manipulate slope (m) and y-intercept (b), visualize rise/run slope triangles, test the four slope classifications, and formulate linear equations in real time.',
     features: [
