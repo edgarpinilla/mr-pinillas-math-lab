@@ -195,6 +195,19 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <Activity className="w-4 h-4 shrink-0" />
             <span>5. Practice App</span>
           </button>
+{topic.id === 'slope-linear-equations' && (
+  <button
+    onClick={() => window.open('https://mr-pinilla-slope-linear-equations.edgarpinilla.workers.dev', '_blank')}
+    className="col-span-2 sm:col-span-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all"
+  >
+    <ExternalLink className="w-4 h-4 inline mr-2" />
+    <span>6. Open Slope Practice Lab</span>
+  </button>
+)}
+
+
+</div>
+</div>
         </div>
       </div>
 
