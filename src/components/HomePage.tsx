@@ -373,6 +373,12 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic, onSelectTopic }) => {
               <Activity className="w-3.5 h-3.5 text-emerald-600" />
               Practice
             </button>
+            <button
+  onClick={() => window.open('https://mr-pinilla-slope-linear-equations.edgarpinilla.workers.dev', '_blank')}
+  className="py-2.5 px-2 text-xs font-extrabold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+>
+  Open Slope Lab
+</button>
           </div>
         </div>
       </div>
