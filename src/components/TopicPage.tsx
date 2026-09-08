@@ -208,8 +208,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
 </div>
 </div>
-        </div>
-      </div>
+        
 
       {/* TAB CONTENT 1: LEARN */}
       {activeTab === 'learn' && (
