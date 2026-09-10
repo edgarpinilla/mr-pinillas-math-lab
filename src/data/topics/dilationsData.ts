@@ -263,8 +263,8 @@ export const TOPIC_5_DILATIONS: TopicData = {
     subtitle: '8th Grade TEKS Aligned Video Lessons & Real-World Visual Walkthroughs',
     instructor: 'Edgar Pinilla · 8th Grade Math Video Library',
     duration: '4 Comprehensive Video Lessons',
-    youtubeEmbedUrl: 'https://www.youtube.com/embed/S43r8Q9W_xQ',
-    youtubeWatchUrl: 'https://www.youtube.com/watch?v=S43r8Q9W_xQ',
+    youtubeEmbedUrl: 'https://www.youtube.com/embed/8xg-kCrkG1Q',
+    youtubeWatchUrl: 'https://www.youtube.com/watch?v=8xg-kCrkG1Q',
     description:
       'Explore scale factors, coordinate plane dilations from the origin, similar figures, and perimeter vs. area scaling with engaging visual math demonstrations.',
     keyTakeaways: [
@@ -277,9 +277,9 @@ export const TOPIC_5_DILATIONS: TopicData = {
       {
         id: 'lesson-dilations-scale-factor',
         title: 'Scale Factor & Dilations Explained',
-        subtitle: 'Dilations and Scale Factor | Math with Mr. J',
-        youtubeEmbedUrl: 'https://www.youtube.com/embed/S43r8Q9W_xQ',
-        youtubeWatchUrl: 'https://www.youtube.com/watch?v=S43r8Q9W_xQ',
+        subtitle: 'Dilations and Scale Factor | 8th Grade Math Pre-Algebra',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/8xg-kCrkG1Q',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=8xg-kCrkG1Q',
         description:
           'Learn the definition of dilation, how to calculate scale factor k, and how to tell whether a transformation is a reduction or an enlargement.',
         badge: 'Scale Factor',
@@ -287,9 +287,9 @@ export const TOPIC_5_DILATIONS: TopicData = {
       {
         id: 'lesson-dilations-coordinate-plane',
         title: 'Dilations on the Coordinate Plane',
-        subtitle: 'Graphing Dilations Centered at the Origin | 8th Grade Math',
-        youtubeEmbedUrl: 'https://www.youtube.com/embed/84M_uK2pX58',
-        youtubeWatchUrl: 'https://www.youtube.com/watch?v=84M_uK2pX58',
+        subtitle: 'Dilations on the Coordinate Plane | 8th Grade Math Pre-Algebra',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/ahvUIQ1EINo',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=ahvUIQ1EINo',
         description:
           'Master applying the algebraic rule (x, y) → (kx, ky) to plot dilated vertices accurately on a coordinate grid.',
         badge: 'Coordinate Plane',
@@ -297,9 +297,9 @@ export const TOPIC_5_DILATIONS: TopicData = {
       {
         id: 'lesson-dilations-similarity-proportions',
         title: 'Similar Figures & Proportions',
-        subtitle: 'Similar Figures and Indirect Measurement | Math Antics',
-        youtubeEmbedUrl: 'https://www.youtube.com/embed/2_UpmZ_n_9U',
-        youtubeWatchUrl: 'https://www.youtube.com/watch?v=2_UpmZ_n_9U',
+        subtitle: 'Applying Relationships of Similar Figures | 8th Grade Math Pre-Algebra',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/lx9Px0Tn5R4',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=lx9Px0Tn5R4',
         description:
           'Discover why corresponding angles remain congruent and how to set up proportions to solve for missing side lengths.',
         badge: 'Similar Figures',
@@ -307,9 +307,9 @@ export const TOPIC_5_DILATIONS: TopicData = {
       {
         id: 'lesson-dilations-perimeter-area',
         title: 'Perimeter and Area of Similar Figures',
-        subtitle: 'How Scale Factor Affects Perimeter (k) and Area (k²)',
-        youtubeEmbedUrl: 'https://www.youtube.com/embed/eW30d6FkW_M',
-        youtubeWatchUrl: 'https://www.youtube.com/watch?v=eW30d6FkW_M',
+        subtitle: 'Dilations and Measurements | 8th Grade Math – Geometry',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/0TVqlIPlbfE',
+        youtubeWatchUrl: 'https://www.youtube.com/watch?v=0TVqlIPlbfE',
         description:
           'Compare linear 1D changes (perimeter × k) with 2D quadratic changes (area × k²) using clear visual area models.',
         badge: 'Perimeter vs. Area',
