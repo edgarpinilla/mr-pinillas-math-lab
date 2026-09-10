@@ -18,13 +18,17 @@ import {
   Check,
   Target,
   Calculator,
+  Laptop,
 } from 'lucide-react';
 import { TopicData, SectionTab } from '../types';
 import { TransformationsVisualizer } from './visualizers/TransformationsVisualizer';
 import { ProportionalVisualizer } from './visualizers/ProportionalVisualizer';
 import { SlopeVisualizer } from './visualizers/SlopeVisualizer';
 import { SystemsVisualizer } from './visualizers/SystemsVisualizer';
+import { DilationsVisualizer } from './visualizers/DilationsVisualizer';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
+import { DilationsPracticeLab } from './DilationsPracticeLab';
+import { DigitalStaarSimulator } from './DigitalStaarSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
@@ -32,6 +36,7 @@ import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
 import { StaarProportionalQuiz } from './StaarProportionalQuiz';
 import { StaarSlopeQuiz } from './StaarSlopeQuiz';
 import { StaarSystemsQuiz } from './StaarSystemsQuiz';
+import { StaarDilationsQuiz } from './StaarDilationsQuiz';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -46,7 +51,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
   onNavigateHome,
 }) => {
   const [activeTab, setActiveTab] = useState<SectionTab>(initialTab);
-  const [practicePathway, setPracticePathway] = useState<'self-check' | 'staar'>('self-check');
+  const [practicePathway, setPracticePathway] = useState<'self-check' | 'staar' | 'digital-staar'>('self-check');
   const [vocabSearch, setVocabSearch] = useState<string>('');
   const [selectedExampleIndex, setSelectedExampleIndex] = useState<number>(0);
   const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
@@ -233,6 +238,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <SlopeVisualizer />
           ) : topic.id === 'systems-of-linear-equations' ? (
             <SystemsVisualizer />
+          ) : topic.id === 'dilations-similarity' ? (
+            <DilationsVisualizer />
           ) : (
             <ProportionalVisualizer />
           )}
@@ -602,6 +609,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     <ArrowRight className="w-5 h-5 opacity-80" />
                   </button>
                 </div>
+              ) : topic.id === 'dilations-similarity' ? (
+                <div className="pt-4">
+                  <button
+                    id="large-practice-app-button"
+                    onClick={() => {
+                      document.getElementById('dilations-similarity-practice-lab')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
+                  >
+                    <Activity className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ArrowRight className="w-5 h-5 opacity-80" />
+                  </button>
+                </div>
               ) : (
                 <div className="pt-4 space-y-3">
                   <a
@@ -638,6 +659,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           {/* Embedded Interactive Practice Simulator for Slope & Linear Equations */}
           {topic.id === 'slope-linear-equations' && <SlopeLinearSimulator />}
 
+          {/* Embedded Interactive Practice Lab for Dilations & Similarity */}
+          {topic.id === 'dilations-similarity' && <DilationsPracticeLab />}
+
           {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -651,7 +675,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
               {/* Option 1: Self Check */}
               <button
                 id="pathway-selfcheck-btn"
@@ -725,6 +749,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                       <div className="text-[11px] text-indigo-700 font-bold">
                         {topic.id === 'systems-of-linear-equations'
                           ? 'TEKS 8.9A · 36 Original Questions'
+                          : topic.id === 'dilations-similarity'
+                          ? 'TEKS 8.3A/B/C & 8.10D · 36 Original Questions'
                           : 'Aligned to TEKS · STAAR-style practice'}
                       </div>
                     </div>
@@ -742,9 +768,58 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                   {topic.id === 'systems-of-linear-equations'
                     ? '36 Original STAAR-Style Questions · TEKS 8.9A · 6 Questions per Attempt'
+                    : topic.id === 'dilations-similarity'
+                    ? '36 Original STAAR-Style Questions · TEKS 8.3A/B/C & 8.10D · 6 Sequential Blocks'
                     : 'Practice STAAR-style questions aligned to this topic.'}
                 </p>
               </button>
+
+              {/* Option 3: Digital STAAR Simulator (Unit 5 Dilations & Similarity) */}
+              {topic.id === 'dilations-similarity' && (
+                <button
+                  id="pathway-digital-staar-btn"
+                  onClick={() => setPracticePathway('digital-staar')}
+                  className={`p-4 sm:p-5 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                    practicePathway === 'digital-staar'
+                      ? 'bg-cyan-50/90 border-cyan-600 text-cyan-950 shadow-md ring-4 ring-cyan-500/15 -translate-y-0.5'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-cyan-300 hover:bg-cyan-50/30 shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`p-2 rounded-xl flex items-center justify-center transition-colors ${
+                          practicePathway === 'digital-staar'
+                            ? 'bg-cyan-600 text-white shadow-2xs'
+                            : 'bg-cyan-100 text-cyan-700'
+                        }`}
+                      >
+                        <Laptop className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                          Digital STAAR Simulator
+                        </div>
+                        <div className="text-[11px] text-cyan-700 font-bold">
+                          12 Technology-Enhanced Questions
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                        practicePathway === 'digital-staar'
+                          ? 'bg-cyan-600 text-white'
+                          : 'bg-cyan-100 text-cyan-900 border border-cyan-200'
+                      }`}
+                    >
+                      {practicePathway === 'digital-staar' ? 'Active Mode' : 'Interactive'}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                    Practice Drag & Drop, Graphing, Inline Choice, Equation Editor, and Hot Spot items.
+                  </p>
+                </button>
+              )}
             </div>
           </div>
 
@@ -776,6 +851,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               topicTitle={topic.shortTitle}
               onSwitchToSelfCheck={() => setPracticePathway('self-check')}
             />
+          ) : topic.id === 'dilations-similarity' ? (
+            practicePathway === 'digital-staar' ? (
+              <div id="digital-staar-simulator-section">
+                <DigitalStaarSimulator
+                  topicTitle={topic.shortTitle}
+                  onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+                />
+              </div>
+            ) : (
+              <StaarDilationsQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            )
           ) : (
             <StaarPracticePlaceholder
               topicId={topic.id}

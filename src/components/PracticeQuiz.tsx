@@ -284,6 +284,93 @@ function generateQuizQuestions(
     });
   }
 
+  // Topic 5: Dilations & Similarity - Balanced across 6 core Grade 8 strands
+  const isDilationsTopic =
+    topicId === 'dilations-similarity' ||
+    pool.some((q) => q.id.startsWith('dil-sc-'));
+
+  if (isDilationsTopic) {
+    const strand1 = pool.filter((q) =>
+      ['dil-sc-q1', 'dil-sc-q7', 'dil-sc-q13'].includes(q.id)
+    );
+    const strand2 = pool.filter((q) =>
+      ['dil-sc-q2', 'dil-sc-q8', 'dil-sc-q14'].includes(q.id)
+    );
+    const strand3 = pool.filter((q) =>
+      ['dil-sc-q3', 'dil-sc-q9', 'dil-sc-q15'].includes(q.id)
+    );
+    const strand4 = pool.filter((q) =>
+      ['dil-sc-q4', 'dil-sc-q10', 'dil-sc-q16'].includes(q.id)
+    );
+    const strand5 = pool.filter((q) =>
+      ['dil-sc-q5', 'dil-sc-q11', 'dil-sc-q17'].includes(q.id)
+    );
+    const strand6 = pool.filter((q) =>
+      ['dil-sc-q6', 'dil-sc-q12', 'dil-sc-q18'].includes(q.id)
+    );
+
+    const pickRandom = (arr: PracticeQuestion[]) =>
+      arr[Math.floor(Math.random() * arr.length)];
+
+    let selected: PracticeQuestion[] = [];
+    let attempts = 0;
+
+    do {
+      const pickedSet = new Set<string>();
+      const temp: PracticeQuestion[] = [];
+
+      const addFrom = (group: PracticeQuestion[]) => {
+        const candidates = group.filter((item) => !pickedSet.has(item.id));
+        if (candidates.length > 0) {
+          const item = pickRandom(candidates);
+          pickedSet.add(item.id);
+          temp.push(item);
+        }
+      };
+
+      // Guarantee 1 question from each key domain for Grade 8 balance
+      if (strand1.length > 0) addFrom(strand1);
+      if (strand2.length > 0) addFrom(strand2);
+      if (strand3.length > 0) addFrom(strand3);
+      if (strand4.length > 0) addFrom(strand4);
+      if (strand5.length > 0) addFrom(strand5);
+      if (strand6.length > 0) addFrom(strand6);
+
+      // Fill remaining slots if count > 6
+      const remainingPool = pool.filter((item) => !pickedSet.has(item.id));
+      const shuffledRemaining = shuffleArray(remainingPool);
+      for (const item of shuffledRemaining) {
+        if (temp.length >= count) break;
+        temp.push(item);
+        pickedSet.add(item.id);
+      }
+
+      selected = temp;
+      attempts++;
+
+      const currentIdSet = new Set(selected.map((q) => q.id));
+      const isSameAsPrevious =
+        previousIds.length === count &&
+        previousIds.every((id) => currentIdSet.has(id));
+
+      if (!isSameAsPrevious) break;
+    } while (attempts < 25);
+
+    const shuffledSelected = shuffleArray(selected);
+
+    return shuffledSelected.map((q) => {
+      const correctOptionText = q.options[q.correctIndex];
+      const shuffledOptions = shuffleArray(q.options);
+      const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
+
+      return {
+        ...q,
+        options: shuffledOptions,
+        correctIndex: newCorrectIndex,
+      };
+    });
+  }
+
   // Identify core transformation categories for a balanced Grade 8 mix (Topic 1)
   const translations = pool.filter((q) => ['t-q3', 't-q9', 't-q14'].includes(q.id));
   const reflections = pool.filter((q) => ['t-q2', 't-q6', 't-q16', 't-q17'].includes(q.id));
