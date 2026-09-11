@@ -29,6 +29,7 @@ import { DilationsVisualizer } from './visualizers/DilationsVisualizer';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { DilationsPracticeLab } from './DilationsPracticeLab';
 import { DigitalStaarSimulator } from './DigitalStaarSimulator';
+import { DigitalStaarTransformationsSimulator } from './DigitalStaarTransformationsSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
@@ -675,7 +676,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </div>
             </div>
 
-            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
+            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
               {/* Option 1: Self Check */}
               <button
                 id="pathway-selfcheck-btn"
@@ -751,6 +752,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                           ? 'TEKS 8.9A · 36 Original Questions'
                           : topic.id === 'dilations-similarity'
                           ? 'TEKS 8.3A/B/C & 8.10D · 36 Original Questions'
+                          : topic.id === 'geometric-transformations'
+                          ? 'TEKS 8.10C, 8.3C & 8.10B · 36 Original Questions'
                           : 'Aligned to TEKS · STAAR-style practice'}
                       </div>
                     </div>
@@ -770,12 +773,14 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     ? '36 Original STAAR-Style Questions · TEKS 8.9A · 6 Questions per Attempt'
                     : topic.id === 'dilations-similarity'
                     ? '36 Original STAAR-Style Questions · TEKS 8.3A/B/C & 8.10D · 6 Sequential Blocks'
+                    : topic.id === 'geometric-transformations'
+                    ? '36 Original STAAR-Style Questions · 6 Sequential Blocks with 0% Overlap'
                     : 'Practice STAAR-style questions aligned to this topic.'}
                 </p>
               </button>
 
-              {/* Option 3: Digital STAAR Simulator (Unit 5 Dilations & Similarity) */}
-              {topic.id === 'dilations-similarity' && (
+              {/* Option 3: Digital STAAR Simulator (Unit 1 & Unit 5) */}
+              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -832,10 +837,19 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               topicTitle={topic.shortTitle}
             />
           ) : topic.id === 'geometric-transformations' ? (
-            <StaarTransformationsQuiz
-              topicTitle={topic.shortTitle}
-              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
-            />
+            practicePathway === 'digital-staar' ? (
+              <div id="digital-staar-transformations-simulator-section">
+                <DigitalStaarTransformationsSimulator
+                  topicTitle={topic.shortTitle}
+                  onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+                />
+              </div>
+            ) : (
+              <StaarTransformationsQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            )
           ) : topic.id === 'proportional-relationships' ? (
             <StaarProportionalQuiz
               topicTitle={topic.shortTitle}
