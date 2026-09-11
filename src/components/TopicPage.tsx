@@ -30,6 +30,7 @@ import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { DilationsPracticeLab } from './DilationsPracticeLab';
 import { DigitalStaarSimulator } from './DigitalStaarSimulator';
 import { DigitalStaarTransformationsSimulator } from './DigitalStaarTransformationsSimulator';
+import { DigitalStaarProportionalSimulator } from './DigitalStaarProportionalSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
@@ -676,7 +677,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </div>
             </div>
 
-            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
+            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
               {/* Option 1: Self Check */}
               <button
                 id="pathway-selfcheck-btn"
@@ -779,8 +780,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 </p>
               </button>
 
-              {/* Option 3: Digital STAAR Simulator (Unit 1 & Unit 5) */}
-              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations') && (
+              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2 & Unit 5) */}
+              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -851,10 +852,19 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               />
             )
           ) : topic.id === 'proportional-relationships' ? (
-            <StaarProportionalQuiz
-              topicTitle={topic.shortTitle}
-              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
-            />
+            practicePathway === 'digital-staar' ? (
+              <div id="digital-staar-proportional-simulator-section">
+                <DigitalStaarProportionalSimulator
+                  topicTitle={topic.shortTitle}
+                  onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+                />
+              </div>
+            ) : (
+              <StaarProportionalQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            )
           ) : topic.id === 'slope-linear-equations' ? (
             <StaarSlopeQuiz
               topicTitle={topic.shortTitle}
