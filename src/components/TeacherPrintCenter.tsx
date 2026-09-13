@@ -9,6 +9,7 @@ import {
   Compass,
   Layers,
   Sparkles,
+  Lock,
 } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 import { STAAR_TRANSFORMATIONS_QUESTIONS } from '../data/staar/staarQuestionsTransformations';
@@ -33,6 +34,7 @@ interface TeacherPrintCenterProps {
   initialTopicId?: string;
   onClose: () => void;
   onSelectTopic?: (topicId: string) => void;
+  onLock?: () => void;
 }
 
 /**
@@ -601,6 +603,7 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
   initialTopicId,
   onClose,
   onSelectTopic,
+  onLock,
 }) => {
   // Determine active unit (defaults to provided initialTopicId or first topic)
   const [selectedUnitId, setSelectedUnitId] = useState<string>(
@@ -693,6 +696,19 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5">
+            {onLock && (
+              <button
+                id="lock-teacher-access-btn"
+                type="button"
+                onClick={onLock}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-red-700 bg-slate-100 hover:bg-red-50 transition-colors border border-slate-200 cursor-pointer"
+                title="Lock Teacher Access"
+              >
+                <Lock className="w-3.5 h-3.5 text-slate-500" />
+                <span>Lock Teacher Access</span>
+              </button>
+            )}
+
             <button
               id="print-student-copy-btn"
               type="button"

@@ -4,6 +4,7 @@ import { Footer } from './components/Footer';
 import { HomePage } from './components/HomePage';
 import { TopicPage } from './components/TopicPage';
 import { TeacherPrintCenter } from './components/TeacherPrintCenter';
+import { TeacherPinModal, TEACHER_SESSION_KEY } from './components/TeacherPinModal';
 import { TOPICS_DATA } from './data/topicsData';
 import { SectionTab } from './types';
 
@@ -12,11 +13,20 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<SectionTab>('learn');
   const [isPrintCenterOpen, setIsPrintCenterOpen] = useState<boolean>(false);
   const [printCenterTopicId, setPrintCenterTopicId] = useState<string | null>(null);
+  const [isTeacherUnlocked, setIsTeacherUnlocked] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem(TEACHER_SESSION_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [showPinModal, setShowPinModal] = useState<boolean>(false);
 
   const handleNavigateHome = () => {
     setSelectedTopicId(null);
     setActiveTab('learn');
     setIsPrintCenterOpen(false);
+    setShowPinModal(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -24,13 +34,38 @@ export default function App() {
     setSelectedTopicId(topicId);
     setActiveTab((defaultTab as SectionTab) || 'learn');
     setIsPrintCenterOpen(false);
+    setShowPinModal(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenPrintCenter = (topicId?: string) => {
     const targetId = topicId || selectedTopicId || TOPICS_DATA[0].id;
     setPrintCenterTopicId(targetId);
+
+    if (isTeacherUnlocked) {
+      setIsPrintCenterOpen(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setShowPinModal(true);
+    }
+  };
+
+  const handlePinSuccess = () => {
+    setIsTeacherUnlocked(true);
+    setShowPinModal(false);
     setIsPrintCenterOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLockTeacherAccess = () => {
+    try {
+      sessionStorage.removeItem(TEACHER_SESSION_KEY);
+    } catch {
+      // ignore
+    }
+    setIsTeacherUnlocked(false);
+    setIsPrintCenterOpen(false);
+    setShowPinModal(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -49,6 +84,7 @@ export default function App() {
           setSelectedTopicId(topicId);
           setPrintCenterTopicId(topicId);
         }}
+        onLock={handleLockTeacherAccess}
       />
     );
   }
@@ -90,6 +126,13 @@ export default function App() {
         onSelectTopic={handleSelectTopic}
         onNavigateHome={handleNavigateHome}
         onOpenPrintCenter={() => handleOpenPrintCenter()}
+      />
+
+      {/* Teacher PIN Access Modal */}
+      <TeacherPinModal
+        isOpen={showPinModal}
+        onSuccess={handlePinSuccess}
+        onClose={() => setShowPinModal(false)}
       />
     </div>
   );
