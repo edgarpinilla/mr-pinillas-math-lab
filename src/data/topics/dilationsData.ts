@@ -413,6 +413,177 @@ export const TOPIC_5_DILATIONS: TopicData = {
           'The angle of the sun creates similar right triangles between objects and their shadows. Find the scale factor between shadow lengths: k = 18 ft ÷ 2 ft = 9. Multiplying the student\'s height by the scale factor gives the tree\'s height: 5 ft · 9 = 45 feet. (Or solve the proportion: h / 18 = 5 / 2 → 2h = 90 → h = 45 ft).',
         hint: 'Find the scale factor between the shadows (18 ÷ 2 = 9). Since the sun creates similar right triangles, multiply the student\'s height by 9.',
       },
+
+      // Question 7: Identifying Similar Figures & Proportional Side Ratios (Strand 1)
+      {
+        id: 'dil-sc-q7',
+        category: 'similarity-properties',
+        question:
+          'Which pair of rectangles is similar because their corresponding sides are proportional?',
+        options: [
+          'Rectangle 1 (length 6 cm, width 4 cm) and Rectangle 2 (length 9 cm, width 6 cm)',
+          'Rectangle 1 (length 8 cm, width 5 cm) and Rectangle 2 (length 12 cm, width 9 cm)',
+          'Rectangle 1 (length 10 cm, width 6 cm) and Rectangle 2 (length 15 cm, width 10 cm)',
+          'Rectangle 1 (length 12 cm, width 4 cm) and Rectangle 2 (length 16 cm, width 8 cm)',
+        ],
+        correctIndex: 0,
+        explanation:
+          'Two rectangles are similar if the ratios of their corresponding sides are equal. For Rectangle 1 (6 by 4) and Rectangle 2 (9 by 6): 9/6 = 1.5 and 6/4 = 1.5. Because the scale factor is consistent (1.5) and all corresponding interior angles are 90°, the rectangles are similar. In the other pairs, the side ratios are not equal (e.g., 12/8 = 1.5 but 9/5 = 1.8).',
+        hint: 'Test the ratio of corresponding sides: divide the larger length by the smaller length, and the larger width by the smaller width. For similar rectangles, both ratios must be equal.',
+      },
+
+      // Question 8: Algebraic Reduction Centered at Origin (x, y) → (kx, ky) (Strand 2)
+      {
+        id: 'dil-sc-q8',
+        category: 'algebraic-rules',
+        question:
+          'Under a dilation centered at the origin (0, 0) with a scale factor of k = 1/3, what are the coordinates of the image of vertex M(-9, 12)?',
+        options: ['M\'(-6, 9)', 'M\'(-27, 36)', 'M\'(-3, 4)', 'M\'(3, -4)'],
+        correctIndex: 2,
+        explanation:
+          'For a dilation centered at the origin with scale factor k = 1/3, multiply each coordinate by 1/3: x\' = -9 · (1/3) = -3, and y\' = 12 · (1/3) = 4. Therefore, the image vertex is M\'(-3, 4). (Notice that adding or subtracting numbers is a translation misconception, not a dilation).',
+        hint: 'Multiply both the x-coordinate and the y-coordinate by the scale factor 1/3: -9 × (1/3) and 12 × (1/3).',
+      },
+
+      // Question 9: Missing Side Lengths in Similar Figures Using Proportions (Strand 3)
+      {
+        id: 'dil-sc-q9',
+        category: 'missing-side-lengths',
+        question:
+          'Trapezoid ABCD is similar to trapezoid EFGH, where side AB corresponds to side EF, and side BC corresponds to side FG. If AB = 8 cm, EF = 20 cm, and BC = 6 cm, what is the length of side FG?',
+        options: ['18 cm', '15 cm', '14 cm', '2.4 cm'],
+        correctIndex: 1,
+        explanation:
+          'First determine the scale factor from ABCD to EFGH by dividing corresponding side lengths: k = EF / AB = 20 / 8 = 2.5. Then multiply corresponding side BC by 2.5: FG = 6 · 2.5 = 15 cm. Alternatively, set up the proportion: 8 / 20 = 6 / FG → 8 · FG = 120 → FG = 15 cm.',
+        hint: 'Find the scale factor by dividing EF by AB (20 ÷ 8 = 2.5). Then multiply side BC (6 cm) by 2.5 to find FG.',
+      },
+
+      // Question 10: Non-Origin Dilation Coordinate Reasoning (Strand 4)
+      {
+        id: 'dil-sc-q10',
+        category: 'non-origin-dilation',
+        question:
+          'Triangle JKL has vertex K located at (3, 7). A dilation with a scale factor of k = 3 is applied with the center of dilation at point C(3, 2). What are the coordinates of the dilated image point K\'?',
+        options: ['K\'(9, 21)', 'K\'(3, 15)', 'K\'(3, 17)', 'K\'(6, 9)'],
+        correctIndex: 2,
+        explanation:
+          'Find the directed distances from center C(3, 2) to vertex K(3, 7):\n• Horizontal change: 3 - 3 = 0 units.\n• Vertical change: 7 - 2 = 5 units up.\nMultiply each distance by scale factor k = 3:\n• New horizontal distance: 0 · 3 = 0 → x\' = 3 + 0 = 3.\n• New vertical distance: 5 · 3 = 15 units up from C(3, 2) → y\' = 2 + 15 = 17.\nTherefore, K\' has coordinates (3, 17). (Note: (9, 21) is the common mistake of dilating from the origin).',
+        hint: 'Find the vertical distance from center C(3, 2) to K(3, 7), which is 5 units. Multiply that distance by 3 (5 × 3 = 15), then add 15 to the center\'s y-coordinate (2 + 15 = 17).',
+      },
+
+      // Question 11: Classifying Scale Factors as Enlargements vs. Reductions (Strand 5)
+      {
+        id: 'dil-sc-q11',
+        category: 'enlargement-reduction',
+        question:
+          'Which scale factor k, when applied in a dilation centered at the origin, will produce an image that is a reduction of the original pre-image figure?',
+        options: ['k = 7/5', 'k = 1.05', 'k = 2.4', 'k = 3/8'],
+        correctIndex: 3,
+        explanation:
+          'In geometry, a dilation produces a reduction when the scale factor satisfies 0 < k < 1 (the image is smaller than the original). Because 3/8 = 0.375 (which is less than 1), it produces a reduction. The scale factors 7/5 (1.4), 1.05, and 2.4 are all greater than 1, so they produce enlargements.',
+        hint: 'A reduction creates a smaller image, which requires a scale factor between 0 and 1 (0 < k < 1). Look for the value that is less than 1.',
+      },
+
+      // Question 12: Architectural Blueprint & Scale Drawing Perimeter (Strand 6)
+      {
+        id: 'dil-sc-q12',
+        category: 'real-world',
+        question:
+          'An architect creates a blueprint of a new library where 1 inch represents 12 feet. If the main reading room on the blueprint measures 3.5 inches wide by 5 inches long, what is the actual perimeter of the reading room in feet?',
+        options: ['102 feet', '204 feet', '17 feet', '210 feet'],
+        correctIndex: 1,
+        explanation:
+          'Find the perimeter of the room on the blueprint: P = 2(length + width) = 2(5 + 3.5) = 2(8.5) = 17 inches. Using the blueprint scale factor of 12 feet per inch: Actual Perimeter = 17 inches · 12 feet/inch = 204 feet. (Alternatively, actual dimensions are 5 · 12 = 60 ft and 3.5 · 12 = 42 ft; P = 2(60 + 42) = 2(102) = 204 ft).',
+        hint: 'Find the perimeter on the blueprint in inches: 2 × (3.5 + 5) = 17 inches. Then multiply by 12 to convert inches to actual feet.',
+      },
+
+      // Question 13: Similarity Invariance Criteria & Corresponding Side Ratios (Strand 1)
+      {
+        id: 'dil-sc-q13',
+        category: 'similarity-properties',
+        question:
+          'Triangle DEF is dilated by a scale factor of k to create triangle D\'E\'F\', where △DEF ~ △D\'E\'F\'. Which statement about the two triangles MUST be true?',
+        options: [
+          'The corresponding angles are congruent, and the ratio of D\'E\' to DE is equal to k.',
+          'The corresponding angles are multiplied by k, and the corresponding side lengths remain equal.',
+          'The perimeter of △D\'E\'F\' is equal to the perimeter of △DEF divided by k².',
+          'Both the angle measures and the side lengths are multiplied by k.',
+        ],
+        correctIndex: 0,
+        explanation:
+          'By definition of dilations and geometric similarity, corresponding angles are always preserved and congruent (equal in measure), while corresponding side lengths are proportional with ratio (Image side / Pre-image side) = k. Angle measures are NEVER multiplied by the scale factor.',
+        hint: 'Recall the two fundamental rules of similar figures: corresponding angles stay equal (congruent), and corresponding sides are proportional with ratio equal to k.',
+      },
+
+      // Question 14: Calculating Scale Factor from Pre-Image and Image Coordinates (Strand 2)
+      {
+        id: 'dil-sc-q14',
+        category: 'algebraic-rules',
+        question:
+          'A polygon on a coordinate plane is dilated with the center of dilation at the origin (0, 0). Pre-image vertex R has coordinates (16, -12) and image vertex R\' has coordinates (4, -3). What is the scale factor of the dilation?',
+        options: ['k = 4', 'k = -12', 'k = 1/4', 'k = 1/3'],
+        correctIndex: 2,
+        explanation:
+          'To find scale factor k, divide an image coordinate by its corresponding pre-image coordinate: k = x\' / x = 4 / 16 = 1/4 (and y\' / y = -3 / -12 = 1/4). Because 0 < k < 1, this dilation is a reduction with a scale factor of 1/4. (Note: k = 4 is the reciprocal error of dividing pre-image by image).',
+        hint: 'Always use the formula: Scale Factor k = Image Coordinate ÷ Pre-Image Coordinate. Divide 4 by 16 and simplify the fraction.',
+      },
+
+      // Question 15: Missing Side Length of Dilation Image with Fraction Scale Factor (Strand 3)
+      {
+        id: 'dil-sc-q15',
+        category: 'missing-side-lengths',
+        question:
+          'Quadrilateral WXYZ is dilated by a scale factor of k = 3/4 to create quadrilateral W\'X\'Y\'Z\'. If side WX has a length of 28 units, what is the length of corresponding image side W\'X\'?',
+        options: ['37.33 units', '21 units', '27 units', '7 units'],
+        correctIndex: 1,
+        explanation:
+          'Under a dilation with scale factor k = 3/4, the image side length is found by multiplying the original side length by the scale factor: W\'X\' = WX · k = 28 · (3/4) = (28 / 4) · 3 = 7 · 3 = 21 units.',
+        hint: 'Multiply the pre-image length 28 by the scale factor 3/4: 28 × 3 ÷ 4.',
+      },
+
+      // Question 16: Reduction with Center of Dilation NOT at Origin (Strand 4)
+      {
+        id: 'dil-sc-q16',
+        category: 'non-origin-dilation',
+        question:
+          'Point A(8, 6) is dilated by a scale factor of k = 1/2 with the center of dilation at C(2, 2). What are the coordinates of the image point A\'?',
+        options: ['A\'(4, 3)', 'A\'(3, 2)', 'A\'(6, 4)', 'A\'(5, 4)'],
+        correctIndex: 3,
+        explanation:
+          'Because the center of dilation is C(2, 2):\n• Horizontal distance from C(2, 2) to A(8, 6): 8 - 2 = 6 units right.\n• Vertical distance from C(2, 2) to A(8, 6): 6 - 2 = 4 units up.\nMultiply distances by scale factor k = 1/2:\n• New horizontal distance: 6 · (1/2) = 3 units right from C → x\' = 2 + 3 = 5.\n• New vertical distance: 4 · (1/2) = 2 units up from C → y\' = 2 + 2 = 4.\nTherefore, the image point is A\'(5, 4). (Note: (4, 3) is the common misconception of multiplying coordinates by 1/2 from the origin).',
+        hint: 'Find the horizontal distance (8 - 2 = 6) and vertical distance (6 - 2 = 4) from C(2, 2). Multiply both by 1/2 to get 3 and 2, then add them to C(2, 2): (2 + 3, 2 + 2) = (5, 4).',
+      },
+
+      // Question 17: Area Scaling Under Reduction Dilation (k²) (Strand 5)
+      {
+        id: 'dil-sc-q17',
+        category: 'area-scaling',
+        question:
+          'A right triangle has an area of 72 square centimeters. The triangle is dilated by a scale factor of k = 1/2 to create a smaller triangle. What is the area of the dilated image triangle?',
+        options: ['36 sq cm', '18 sq cm', '9 sq cm', '144 sq cm'],
+        correctIndex: 1,
+        explanation:
+          'When any two-dimensional figure is dilated by scale factor k, its area changes by k²: New Area = Original Area · k² = 72 · (1/2)² = 72 · (1/4) = 18 square centimeters. (Notice that 36 sq cm is the common mistake of multiplying area by k instead of k²).',
+        hint: 'Remember that area scales by k² (scale factor squared). Calculate (1/2)² = 1/4, then multiply the original area 72 by 1/4 (72 ÷ 4 = 18).',
+      },
+
+      // Question 18: Real-World Dilation Scaling Dimensions (Strand 6)
+      {
+        id: 'dil-sc-q18',
+        category: 'real-world',
+        question:
+          'A photographer has a rectangular picture that is 4 inches wide and 6 inches long. She dilates the picture by a scale factor of k = 2.5 to create an enlarged framed print. What are the dimensions of the enlarged print?',
+        options: [
+          '6.5 inches wide by 8.5 inches long',
+          '1.6 inches wide by 2.4 inches long',
+          '10 inches wide by 12.5 inches long',
+          '10 inches wide by 15 inches long',
+        ],
+        correctIndex: 3,
+        explanation:
+          'Dilating the picture by scale factor k = 2.5 scales both linear dimensions by multiplying by 2.5:\n• Width: 4 in · 2.5 = 10 inches.\n• Length: 6 in · 2.5 = 15 inches.\nTherefore, the print measures 10 inches wide by 15 inches long. (Adding 2.5 to get 6.5 by 8.5 is an additive misconception).',
+        hint: 'Multiply both the width (4 inches) and length (6 inches) by the scale factor 2.5.',
+      },
     ],
   },
 };
