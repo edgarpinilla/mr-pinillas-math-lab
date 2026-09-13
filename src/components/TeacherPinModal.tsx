@@ -7,7 +7,7 @@ interface TeacherPinModalProps {
   onClose: () => void;
 }
 
-const TEACHER_PIN = '12345';
+const TEACHER_PIN = '43527';
 export const TEACHER_SESSION_KEY = 'math_lab_teacher_unlocked';
 
 export const TeacherPinModal: React.FC<TeacherPinModalProps> = ({
