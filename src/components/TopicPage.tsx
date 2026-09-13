@@ -33,6 +33,7 @@ import { DigitalStaarSimulator } from './DigitalStaarSimulator';
 import { DigitalStaarTransformationsSimulator } from './DigitalStaarTransformationsSimulator';
 import { DigitalStaarProportionalSimulator } from './DigitalStaarProportionalSimulator';
 import { DigitalStaarSlopeSimulator } from './DigitalStaarSlopeSimulator';
+import { DigitalStaarSystemsSimulator } from './DigitalStaarSystemsSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
@@ -798,8 +799,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 </p>
               </button>
 
-              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3 & Unit 5) */}
-              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations') && (
+              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4 & Unit 5) */}
+              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -898,10 +899,19 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               />
             )
           ) : topic.id === 'systems-of-linear-equations' ? (
-            <StaarSystemsQuiz
-              topicTitle={topic.shortTitle}
-              onSwitchToSelfCheck={() => setPracticePathway('self-check')}
-            />
+            practicePathway === 'digital-staar' ? (
+              <div id="digital-staar-systems-simulator-section">
+                <DigitalStaarSystemsSimulator
+                  topicTitle={topic.shortTitle}
+                  onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+                />
+              </div>
+            ) : (
+              <StaarSystemsQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            )
           ) : topic.id === 'dilations-similarity' ? (
             practicePathway === 'digital-staar' ? (
               <div id="digital-staar-simulator-section">
