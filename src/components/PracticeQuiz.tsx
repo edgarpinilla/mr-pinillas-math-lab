@@ -34,6 +34,135 @@ function shuffleArray<T>(array: T[]): T[] {
   return result;
 }
 
+// Unit 5 Dilations & Similarity: Non-repeating 18-question cycle state & persistence
+const DILATIONS_CYCLE_STORAGE_KEY = 'math_lab_dilations_self_check_cycle';
+
+interface DilationsCycleData {
+  sequence: string[]; // Exactly 18 unique question IDs in complete cycle order
+  currentSetIndex: number; // 0 for Set 1 (1-6), 1 for Set 2 (7-12), 2 for Set 3 (13-18)
+  lastCompletedQuestionId?: string;
+}
+
+let inMemoryDilationsCycle: DilationsCycleData | null = null;
+
+function generateDilationsCycleSequence(
+  pool: PracticeQuestion[],
+  lastQuestionId?: string
+): string[] {
+  const strand1 = pool.filter((q) =>
+    ['dil-sc-q1', 'dil-sc-q7', 'dil-sc-q13'].includes(q.id)
+  );
+  const strand2 = pool.filter((q) =>
+    ['dil-sc-q2', 'dil-sc-q8', 'dil-sc-q14'].includes(q.id)
+  );
+  const strand3 = pool.filter((q) =>
+    ['dil-sc-q3', 'dil-sc-q9', 'dil-sc-q15'].includes(q.id)
+  );
+  const strand4 = pool.filter((q) =>
+    ['dil-sc-q4', 'dil-sc-q10', 'dil-sc-q16'].includes(q.id)
+  );
+  const strand5 = pool.filter((q) =>
+    ['dil-sc-q5', 'dil-sc-q11', 'dil-sc-q17'].includes(q.id)
+  );
+  const strand6 = pool.filter((q) =>
+    ['dil-sc-q6', 'dil-sc-q12', 'dil-sc-q18'].includes(q.id)
+  );
+
+  let set1Ids: string[];
+  let set2Ids: string[];
+  let set3Ids: string[];
+
+  // If all 6 strands are present with 3 questions each, balance them across the 3 sets
+  if (
+    strand1.length === 3 &&
+    strand2.length === 3 &&
+    strand3.length === 3 &&
+    strand4.length === 3 &&
+    strand5.length === 3 &&
+    strand6.length === 3
+  ) {
+    const s1 = shuffleArray(strand1.map((q) => q.id));
+    const s2 = shuffleArray(strand2.map((q) => q.id));
+    const s3 = shuffleArray(strand3.map((q) => q.id));
+    const s4 = shuffleArray(strand4.map((q) => q.id));
+    const s5 = shuffleArray(strand5.map((q) => q.id));
+    const s6 = shuffleArray(strand6.map((q) => q.id));
+
+    // 1 question from each strand per set
+    set1Ids = shuffleArray([s1[0], s2[0], s3[0], s4[0], s5[0], s6[0]]);
+    set2Ids = shuffleArray([s1[1], s2[1], s3[1], s4[1], s5[1], s6[1]]);
+    set3Ids = shuffleArray([s1[2], s2[2], s3[2], s4[2], s5[2], s6[2]]);
+  } else {
+    // General fallback: shuffle all pool question IDs
+    const allShuffled = shuffleArray(pool.map((q) => q.id));
+    set1Ids = allShuffled.slice(0, 6);
+    set2Ids = allShuffled.slice(6, 12);
+    set3Ids = allShuffled.slice(12, 18);
+  }
+
+  const sequence = [...set1Ids, ...set2Ids, ...set3Ids];
+
+  // Prevent final question of previous cycle from immediately becoming first question of new cycle
+  if (lastQuestionId && sequence[0] === lastQuestionId && sequence.length > 1) {
+    const swapTarget = 1 + Math.floor(Math.random() * Math.min(5, sequence.length - 1));
+    const temp = sequence[0];
+    sequence[0] = sequence[swapTarget];
+    sequence[swapTarget] = temp;
+  }
+
+  return sequence;
+}
+
+function loadDilationsCycle(pool: PracticeQuestion[]): DilationsCycleData {
+  const poolIds = pool.map((q) => q.id);
+
+  try {
+    const stored = localStorage.getItem(DILATIONS_CYCLE_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as DilationsCycleData;
+      if (
+        Array.isArray(parsed.sequence) &&
+        parsed.sequence.length === pool.length &&
+        parsed.sequence.every((id) => poolIds.includes(id)) &&
+        new Set(parsed.sequence).size === pool.length &&
+        typeof parsed.currentSetIndex === 'number' &&
+        parsed.currentSetIndex >= 0 &&
+        parsed.currentSetIndex <= 2
+      ) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Fallback if localStorage unavailable
+  }
+
+  if (
+    inMemoryDilationsCycle &&
+    inMemoryDilationsCycle.sequence.length === pool.length &&
+    inMemoryDilationsCycle.sequence.every((id) => poolIds.includes(id)) &&
+    new Set(inMemoryDilationsCycle.sequence).size === pool.length
+  ) {
+    return inMemoryDilationsCycle;
+  }
+
+  const newSeq = generateDilationsCycleSequence(pool);
+  const initialData: DilationsCycleData = {
+    sequence: newSeq,
+    currentSetIndex: 0,
+  };
+  saveDilationsCycle(initialData);
+  return initialData;
+}
+
+function saveDilationsCycle(data: DilationsCycleData): void {
+  inMemoryDilationsCycle = data;
+  try {
+    localStorage.setItem(DILATIONS_CYCLE_STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Ignore storage write error
+  }
+}
+
 /**
  * Randomizes questions from the appropriate bank.
  * - If bank > 6, selects 6 unique questions.
@@ -48,7 +177,8 @@ function generateQuizQuestions(
   previousIds: string[] = [],
   mode?: PracticeMode,
   banks?: PracticeQuestionBanks,
-  topicId?: string
+  topicId?: string,
+  advanceDilationsCycle: boolean = false
 ): PracticeQuestion[] {
   // If dedicated banks are present (Topic 2: Proportional Relationships)
   if (banks && banks.proportional && banks.nonProportional) {
@@ -284,81 +414,45 @@ function generateQuizQuestions(
     });
   }
 
-  // Topic 5: Dilations & Similarity - Balanced across 6 core Grade 8 strands
+  // Topic 5: Dilations & Similarity - Non-repeating 18-question cycle (3 consecutive sets of 6)
   const isDilationsTopic =
     topicId === 'dilations-similarity' ||
     pool.some((q) => q.id.startsWith('dil-sc-'));
 
-  if (isDilationsTopic) {
-    const strand1 = pool.filter((q) =>
-      ['dil-sc-q1', 'dil-sc-q7', 'dil-sc-q13'].includes(q.id)
-    );
-    const strand2 = pool.filter((q) =>
-      ['dil-sc-q2', 'dil-sc-q8', 'dil-sc-q14'].includes(q.id)
-    );
-    const strand3 = pool.filter((q) =>
-      ['dil-sc-q3', 'dil-sc-q9', 'dil-sc-q15'].includes(q.id)
-    );
-    const strand4 = pool.filter((q) =>
-      ['dil-sc-q4', 'dil-sc-q10', 'dil-sc-q16'].includes(q.id)
-    );
-    const strand5 = pool.filter((q) =>
-      ['dil-sc-q5', 'dil-sc-q11', 'dil-sc-q17'].includes(q.id)
-    );
-    const strand6 = pool.filter((q) =>
-      ['dil-sc-q6', 'dil-sc-q12', 'dil-sc-q18'].includes(q.id)
-    );
+  if (isDilationsTopic && pool.length >= 18) {
+    let cycle = loadDilationsCycle(pool);
 
-    const pickRandom = (arr: PracticeQuestion[]) =>
-      arr[Math.floor(Math.random() * arr.length)];
-
-    let selected: PracticeQuestion[] = [];
-    let attempts = 0;
-
-    do {
-      const pickedSet = new Set<string>();
-      const temp: PracticeQuestion[] = [];
-
-      const addFrom = (group: PracticeQuestion[]) => {
-        const candidates = group.filter((item) => !pickedSet.has(item.id));
-        if (candidates.length > 0) {
-          const item = pickRandom(candidates);
-          pickedSet.add(item.id);
-          temp.push(item);
-        }
-      };
-
-      // Guarantee 1 question from each key domain for Grade 8 balance
-      if (strand1.length > 0) addFrom(strand1);
-      if (strand2.length > 0) addFrom(strand2);
-      if (strand3.length > 0) addFrom(strand3);
-      if (strand4.length > 0) addFrom(strand4);
-      if (strand5.length > 0) addFrom(strand5);
-      if (strand6.length > 0) addFrom(strand6);
-
-      // Fill remaining slots if count > 6
-      const remainingPool = pool.filter((item) => !pickedSet.has(item.id));
-      const shuffledRemaining = shuffleArray(remainingPool);
-      for (const item of shuffledRemaining) {
-        if (temp.length >= count) break;
-        temp.push(item);
-        pickedSet.add(item.id);
+    if (advanceDilationsCycle) {
+      if (cycle.currentSetIndex < 2) {
+        // Advance to next set within the stable 18-question sequence (Set 2 or Set 3)
+        cycle = {
+          ...cycle,
+          currentSetIndex: cycle.currentSetIndex + 1,
+        };
+      } else {
+        // After completing all 18 (Sets 1, 2, 3), start a brand new shuffled 18-question cycle
+        const lastQId = cycle.sequence[17];
+        const newSequence = generateDilationsCycleSequence(pool, lastQId);
+        cycle = {
+          sequence: newSequence,
+          currentSetIndex: 0,
+          lastCompletedQuestionId: lastQId,
+        };
       }
+      saveDilationsCycle(cycle);
+    }
 
-      selected = temp;
-      attempts++;
+    // Set 1: questions 1-6 (indices 0..5)
+    // Set 2: questions 7-12 (indices 6..11)
+    // Set 3: questions 13-18 (indices 12..17)
+    const startIdx = cycle.currentSetIndex * 6;
+    const currentSetIds = cycle.sequence.slice(startIdx, startIdx + 6);
+    const questionMap = new Map(pool.map((q) => [q.id, q]));
+    const setQuestions = currentSetIds
+      .map((id) => questionMap.get(id))
+      .filter((q): q is PracticeQuestion => q !== undefined);
 
-      const currentIdSet = new Set(selected.map((q) => q.id));
-      const isSameAsPrevious =
-        previousIds.length === count &&
-        previousIds.every((id) => currentIdSet.has(id));
-
-      if (!isSameAsPrevious) break;
-    } while (attempts < 25);
-
-    const shuffledSelected = shuffleArray(selected);
-
-    return shuffledSelected.map((q) => {
+    return setQuestions.map((q) => {
       const correctOptionText = q.options[q.correctIndex];
       const shuffledOptions = shuffleArray(q.options);
       const newCorrectIndex = shuffledOptions.indexOf(correctOptionText);
@@ -655,7 +749,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       [],
       'proportional',
       quizBanks,
-      topicId
+      topicId,
+      false
     );
     previousIdsRef.current = initial.map((q) => q.id);
     return initial;
@@ -664,7 +759,13 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [showHints, setShowHints] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
+  const [attemptCount, setAttemptCount] = useState<number>(() => {
+    if (topicId === 'dilations-similarity' && questions.length >= 18) {
+      const cycle = loadDilationsCycle(questions);
+      return cycle.currentSetIndex + 1;
+    }
+    return 1;
+  });
 
   // Sync state when topic or question bank changes
   useEffect(() => {
@@ -674,14 +775,20 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       [],
       currentMode,
       quizBanks,
-      topicId
+      topicId,
+      false
     );
     previousIdsRef.current = initial.map((q) => q.id);
     setActiveQuestions(initial);
     setSelectedAnswers({});
     setShowHints({});
     setSubmitted(false);
-    setAttemptCount(1);
+    if (topicId === 'dilations-similarity' && questions.length >= 18) {
+      const cycle = loadDilationsCycle(questions);
+      setAttemptCount(cycle.currentSetIndex + 1);
+    } else {
+      setAttemptCount(1);
+    }
   }, [questions, quizBanks, topicId]);
 
   const handleModeChange = (mode: PracticeMode) => {
@@ -693,7 +800,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       [],
       mode,
       quizBanks,
-      topicId
+      topicId,
+      false
     );
     previousIdsRef.current = newQuestions.map((q) => q.id);
     setActiveQuestions(newQuestions);
@@ -725,7 +833,8 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
       previousIdsRef.current,
       currentMode,
       quizBanks,
-      topicId
+      topicId,
+      true
     );
     previousIdsRef.current = nextQuestions.map((q) => q.id);
     setActiveQuestions(nextQuestions);
