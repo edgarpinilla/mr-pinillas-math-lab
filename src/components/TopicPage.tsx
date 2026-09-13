@@ -19,6 +19,7 @@ import {
   Target,
   Calculator,
   Laptop,
+  Printer,
 } from 'lucide-react';
 import { TopicData, SectionTab } from '../types';
 import { TransformationsVisualizer } from './visualizers/TransformationsVisualizer';
@@ -46,12 +47,14 @@ interface TopicPageProps {
   initialTab?: SectionTab;
   onNavigateHome: () => void;
   onSelectTopic: (topicId: string) => void;
+  onOpenPrintCenter?: (topicId?: string) => void;
 }
 
 export const TopicPage: React.FC<TopicPageProps> = ({
   topic,
   initialTab = 'learn',
   onNavigateHome,
+  onOpenPrintCenter,
 }) => {
   const [activeTab, setActiveTab] = useState<SectionTab>(initialTab);
   const [practicePathway, setPracticePathway] = useState<'self-check' | 'staar' | 'digital-staar'>('self-check');
@@ -101,21 +104,35 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
         <div className="relative z-10 space-y-4 max-w-4xl">
           {/* Breadcrumb & Navigation */}
-          <div className="flex flex-wrap items-center gap-2 text-xs text-white/90 font-medium">
-            <button
-              id="topic-page-back-home-btn"
-              onClick={onNavigateHome}
-              className="inline-flex items-center gap-1.5 hover:text-white bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl transition-all font-bold backdrop-blur-md shadow-2xs"
-            >
-              <Home className="w-3.5 h-3.5" />
-              <span>Math Lab Home</span>
-            </button>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span className="font-semibold">Unit {topic.number}</span>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span className="text-white font-black bg-black/20 px-2.5 py-0.5 rounded-md backdrop-blur-xs">
-              {topic.shortTitle}
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/90 font-medium">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                id="topic-page-back-home-btn"
+                onClick={onNavigateHome}
+                className="inline-flex items-center gap-1.5 hover:text-white bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl transition-all font-bold backdrop-blur-md shadow-2xs"
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span>Math Lab Home</span>
+              </button>
+              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              <span className="font-semibold">Unit {topic.number}</span>
+              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              <span className="text-white font-black bg-black/20 px-2.5 py-0.5 rounded-md backdrop-blur-xs">
+                {topic.shortTitle}
+              </span>
+            </div>
+
+            {onOpenPrintCenter && (
+              <button
+                id="topic-page-open-print-center-btn"
+                onClick={() => onOpenPrintCenter(topic.id)}
+                className="inline-flex items-center gap-1.5 hover:text-white bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl transition-all font-bold backdrop-blur-md shadow-2xs cursor-pointer"
+                title={`Print worksheets for Unit ${topic.number}`}
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Teacher Print Center</span>
+              </button>
+            )}
           </div>
 
           <div className="space-y-2">

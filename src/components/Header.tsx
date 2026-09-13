@@ -1,14 +1,20 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Home, Compass, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Home, Compass, ChevronRight, ChevronLeft, Printer } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 
 interface HeaderProps {
   currentTopicId?: string | null;
   onNavigateHome: () => void;
   onSelectTopic: (topicId: string) => void;
+  onOpenPrintCenter?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentTopicId, onNavigateHome, onSelectTopic }) => {
+export const Header: React.FC<HeaderProps> = ({
+  currentTopicId,
+  onNavigateHome,
+  onSelectTopic,
+  onOpenPrintCenter,
+}) => {
   const currentTopic = TOPICS_DATA.find((t) => t.id === currentTopicId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeTopicButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -118,6 +124,20 @@ export const Header: React.FC<HeaderProps> = ({ currentTopicId, onNavigateHome, 
               <span>Home</span>
             </button>
 
+            {/* Teacher Print Center Button */}
+            {onOpenPrintCenter && (
+              <button
+                id="header-teacher-print-center-button"
+                onClick={onOpenPrintCenter}
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-200 cursor-pointer shrink-0 bg-slate-100 hover:bg-slate-200/90 text-slate-700 hover:text-slate-900 hover:-translate-y-0.5 border border-slate-200/60"
+                title="Teacher Print Center"
+              >
+                <Printer className="w-4 h-4 text-blue-600" />
+                <span className="hidden md:inline">Print Center</span>
+                <span className="md:hidden">Print</span>
+              </button>
+            )}
+
             {/* Topic Navigation Container with horizontal scroll and indicators */}
             <div className="relative flex items-center min-w-0 pl-1 sm:pl-2 border-l border-slate-200/80">
               {/* Left scroll button & subtle fade when scrolled right */}
@@ -204,6 +224,16 @@ export const Header: React.FC<HeaderProps> = ({ currentTopicId, onNavigateHome, 
               </span>
             </div>
             <div className="hidden sm:flex items-center gap-3 shrink-0">
+              {onOpenPrintCenter && (
+                <button
+                  onClick={onOpenPrintCenter}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors cursor-pointer"
+                  title="Print questions for this unit"
+                >
+                  <Printer className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Print Unit</span>
+                </button>
+              )}
               <span className="font-extrabold text-[11px] bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full shadow-2xs">
                 {currentTopic.gradeLevel}
               </span>

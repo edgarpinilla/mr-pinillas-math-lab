@@ -3,24 +3,55 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './components/HomePage';
 import { TopicPage } from './components/TopicPage';
+import { TeacherPrintCenter } from './components/TeacherPrintCenter';
 import { TOPICS_DATA } from './data/topicsData';
 import { SectionTab } from './types';
 
 export default function App() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<SectionTab>('learn');
+  const [isPrintCenterOpen, setIsPrintCenterOpen] = useState<boolean>(false);
+  const [printCenterTopicId, setPrintCenterTopicId] = useState<string | null>(null);
 
   const handleNavigateHome = () => {
     setSelectedTopicId(null);
     setActiveTab('learn');
+    setIsPrintCenterOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectTopic = (topicId: string, defaultTab: string = 'learn') => {
     setSelectedTopicId(topicId);
     setActiveTab((defaultTab as SectionTab) || 'learn');
+    setIsPrintCenterOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleOpenPrintCenter = (topicId?: string) => {
+    const targetId = topicId || selectedTopicId || TOPICS_DATA[0].id;
+    setPrintCenterTopicId(targetId);
+    setIsPrintCenterOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleClosePrintCenter = () => {
+    setIsPrintCenterOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // If Teacher Print Center is open, render print center view
+  if (isPrintCenterOpen) {
+    return (
+      <TeacherPrintCenter
+        initialTopicId={printCenterTopicId || selectedTopicId || TOPICS_DATA[0].id}
+        onClose={handleClosePrintCenter}
+        onSelectTopic={(topicId) => {
+          setSelectedTopicId(topicId);
+          setPrintCenterTopicId(topicId);
+        }}
+      />
+    );
+  }
 
   const currentTopic = TOPICS_DATA.find((t) => t.id === selectedTopicId);
 
@@ -36,6 +67,7 @@ export default function App() {
         currentTopicId={selectedTopicId}
         onNavigateHome={handleNavigateHome}
         onSelectTopic={handleSelectTopic}
+        onOpenPrintCenter={() => handleOpenPrintCenter()}
       />
 
       {/* Main Page Content */}
@@ -46,6 +78,7 @@ export default function App() {
             initialTab={activeTab}
             onNavigateHome={handleNavigateHome}
             onSelectTopic={handleSelectTopic}
+            onOpenPrintCenter={handleOpenPrintCenter}
           />
         ) : (
           <HomePage onSelectTopic={handleSelectTopic} />
@@ -56,6 +89,7 @@ export default function App() {
       <Footer
         onSelectTopic={handleSelectTopic}
         onNavigateHome={handleNavigateHome}
+        onOpenPrintCenter={() => handleOpenPrintCenter()}
       />
     </div>
   );

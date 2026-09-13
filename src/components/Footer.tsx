@@ -1,13 +1,14 @@
 import React from 'react';
-import { Compass, ShieldCheck, Heart, Sparkles, BookOpen } from 'lucide-react';
+import { Compass, ShieldCheck, Heart, Sparkles, BookOpen, Printer } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 
 interface FooterProps {
   onSelectTopic: (topicId: string) => void;
   onNavigateHome: () => void;
+  onOpenPrintCenter?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectTopic, onNavigateHome }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectTopic, onNavigateHome, onOpenPrintCenter }) => {
   return (
     <footer className="bg-slate-950 text-slate-300 border-t border-slate-800/80 mt-20 relative overflow-hidden">
       {/* Background glow */}
@@ -59,6 +60,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTopic, onNavigateHome })
                   </button>
                 </li>
               ))}
+              {onOpenPrintCenter && (
+                <li className="pt-2">
+                  <button
+                    onClick={onOpenPrintCenter}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-blue-400 hover:text-white bg-blue-950/60 hover:bg-blue-900/60 border border-blue-800/80 transition-all cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Teacher Print Center</span>
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
 
