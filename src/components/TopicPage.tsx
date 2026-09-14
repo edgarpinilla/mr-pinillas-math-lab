@@ -696,7 +696,13 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </div>
             </div>
 
-            <div className={`grid grid-cols-1 ${topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
+            <div className={`grid grid-cols-1 ${
+              topic.id === 'systems-of-linear-equations'
+                ? 'sm:grid-cols-2 md:grid-cols-3'
+                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations'
+                ? 'sm:grid-cols-2 lg:grid-cols-3'
+                : 'sm:grid-cols-2'
+            } gap-3.5`}>
               {/* Option 1: Self Check */}
               <button
                 id="pathway-selfcheck-btn"
