@@ -27,8 +27,10 @@ import { ProportionalVisualizer } from './visualizers/ProportionalVisualizer';
 import { SlopeVisualizer } from './visualizers/SlopeVisualizer';
 import { SystemsVisualizer } from './visualizers/SystemsVisualizer';
 import { DilationsVisualizer } from './visualizers/DilationsVisualizer';
+import { EquationsInequalitiesVisualizer } from './visualizers/EquationsInequalitiesVisualizer';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { DilationsPracticeLab } from './DilationsPracticeLab';
+import { EquationsPracticeLab } from './EquationsPracticeLab';
 import { DigitalStaarSimulator } from './DigitalStaarSimulator';
 import { DigitalStaarTransformationsSimulator } from './DigitalStaarTransformationsSimulator';
 import { DigitalStaarProportionalSimulator } from './DigitalStaarProportionalSimulator';
@@ -36,12 +38,15 @@ import { DigitalStaarSlopeSimulator } from './DigitalStaarSlopeSimulator';
 import { DigitalStaarSystemsSimulator } from './DigitalStaarSystemsSimulator';
 import { VideoLessonPlayer } from './VideoLessonPlayer';
 import { PracticeQuiz } from './PracticeQuiz';
+import { Unit6SelfCheckPractice } from './Unit6SelfCheckPractice';
 import { StaarPracticePlaceholder } from './StaarPracticePlaceholder';
 import { StaarTransformationsQuiz } from './StaarTransformationsQuiz';
 import { StaarProportionalQuiz } from './StaarProportionalQuiz';
 import { StaarSlopeQuiz } from './StaarSlopeQuiz';
 import { StaarSystemsQuiz } from './StaarSystemsQuiz';
 import { StaarDilationsQuiz } from './StaarDilationsQuiz';
+import { StaarEquationsQuiz } from './StaarEquationsQuiz';
+import { DigitalStaarEquationsSimulator } from './DigitalStaarEquationsSimulator';
 
 interface TopicPageProps {
   topic: TopicData;
@@ -100,7 +105,15 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
         {/* Background Math watermark */}
         <div className="absolute right-4 -bottom-6 opacity-15 text-9xl font-serif select-none pointer-events-none">
-          {isTransformations ? '△' : topic.id === 'slope-linear-equations' ? 'm' : 'k'}
+          {isTransformations
+            ? '△'
+            : topic.id === 'slope-linear-equations'
+            ? 'm'
+            : topic.id === 'systems-of-linear-equations'
+            ? '{'
+            : topic.id === 'equations-inequalities'
+            ? '≠'
+            : 'k'}
         </div>
 
         <div className="relative z-10 space-y-4 max-w-4xl">
@@ -261,6 +274,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <SystemsVisualizer />
           ) : topic.id === 'dilations-similarity' ? (
             <DilationsVisualizer />
+          ) : topic.id === 'equations-inequalities' ? (
+            <EquationsInequalitiesVisualizer />
           ) : (
             <ProportionalVisualizer />
           )}
@@ -588,7 +603,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className="relative z-10 max-w-3xl space-y-5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-emerald-400" />
-                {topic.id === 'slope-linear-equations'
+                {topic.id === 'slope-linear-equations' || topic.id === 'dilations-similarity' || topic.id === 'equations-inequalities'
                   ? 'Interactive In-Portal Math Lab Simulator'
                   : 'Interactive Cloud Run Math Simulator'}
               </div>
@@ -644,6 +659,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     <ArrowRight className="w-5 h-5 opacity-80" />
                   </button>
                 </div>
+              ) : topic.id === 'equations-inequalities' ? (
+                <div className="pt-4">
+                  <button
+                    id="large-practice-app-button"
+                    onClick={() => {
+                      document.getElementById('equations-practice-lab-container')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
+                  >
+                    <Calculator className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ArrowRight className="w-5 h-5 opacity-80" />
+                  </button>
+                </div>
               ) : (
                 <div className="pt-4 space-y-3">
                   <a
@@ -683,6 +712,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           {/* Embedded Interactive Practice Lab for Dilations & Similarity */}
           {topic.id === 'dilations-similarity' && <DilationsPracticeLab />}
 
+          {/* Embedded Interactive Practice Lab for Equations & Inequalities */}
+          {topic.id === 'equations-inequalities' && <EquationsPracticeLab />}
+
           {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -699,7 +731,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className={`grid grid-cols-1 ${
               topic.id === 'systems-of-linear-equations'
                 ? 'sm:grid-cols-2 md:grid-cols-3'
-                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations'
+                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'equations-inequalities'
                 ? 'sm:grid-cols-2 lg:grid-cols-3'
                 : 'sm:grid-cols-2'
             } gap-3.5`}>
@@ -729,7 +761,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                         Self Check
                       </div>
                       <div className="text-[11px] text-blue-700 font-bold">
-                        Lesson Practice · 6 Questions
+                        {topic.id === 'equations-inequalities'
+                          ? 'Lesson Practice · 3 Rounds of 6 Questions'
+                          : 'Lesson Practice · 6 Questions'}
                       </div>
                     </div>
                   </div>
@@ -780,6 +814,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                           ? 'TEKS 8.3A/B/C & 8.10D · 36 Original Questions'
                           : topic.id === 'geometric-transformations'
                           ? 'TEKS 8.10C, 8.3C & 8.10B · 36 Original Questions'
+                          : topic.id === 'equations-inequalities'
+                          ? 'TEKS 8.8A/B/C · 36 Original Questions'
                           : 'Aligned to TEKS · STAAR-style practice'}
                       </div>
                     </div>
@@ -801,12 +837,14 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     ? '36 Original STAAR-Style Questions · TEKS 8.3A/B/C & 8.10D · 6 Sequential Blocks'
                     : topic.id === 'geometric-transformations'
                     ? '36 Original STAAR-Style Questions · 6 Sequential Blocks with 0% Overlap'
+                    : topic.id === 'equations-inequalities'
+                    ? '36 Original STAAR-Style Questions · TEKS 8.8A/B/C · 3 Progressive Rounds of 12'
                     : 'Practice STAAR-style questions aligned to this topic.'}
                 </p>
               </button>
 
-              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4 & Unit 5) */}
-              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations') && (
+              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4, Unit 5 & Unit 6) */}
+              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations' || topic.id === 'equations-inequalities') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -856,12 +894,16 @@ export const TopicPage: React.FC<TopicPageProps> = ({
 
           {/* Practice Component Container */}
           {practicePathway === 'self-check' ? (
-            <PracticeQuiz
-              topicId={topic.id}
-              questions={topic.practiceApp.quizQuestions}
-              quizBanks={topic.practiceApp.quizBanks}
-              topicTitle={topic.shortTitle}
-            />
+            topic.id === 'equations-inequalities' ? (
+              <Unit6SelfCheckPractice />
+            ) : (
+              <PracticeQuiz
+                topicId={topic.id}
+                questions={topic.practiceApp.quizQuestions}
+                quizBanks={topic.practiceApp.quizBanks}
+                topicTitle={topic.shortTitle}
+              />
+            )
           ) : topic.id === 'geometric-transformations' ? (
             practicePathway === 'digital-staar' ? (
               <div id="digital-staar-transformations-simulator-section">
@@ -928,6 +970,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </div>
             ) : (
               <StaarDilationsQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            )
+          ) : topic.id === 'equations-inequalities' ? (
+            practicePathway === 'digital-staar' ? (
+              <div id="digital-staar-equations-simulator-section">
+                <DigitalStaarEquationsSimulator
+                  topicTitle={topic.shortTitle}
+                  onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+                />
+              </div>
+            ) : (
+              <StaarEquationsQuiz
                 topicTitle={topic.shortTitle}
                 onSwitchToSelfCheck={() => setPracticePathway('self-check')}
               />

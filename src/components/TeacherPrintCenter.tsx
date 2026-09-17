@@ -28,6 +28,7 @@ const STAAR_QUESTIONS_BY_TOPIC: Record<string, any[]> = {
   'slope-linear-equations': STAAR_SLOPE_QUESTIONS,
   'systems-of-linear-equations': STAAR_SYSTEMS_QUESTIONS,
   'dilations-similarity': STAAR_DILATIONS_QUESTIONS,
+  'equations-inequalities': [],
 };
 
 interface TeacherPrintCenterProps {

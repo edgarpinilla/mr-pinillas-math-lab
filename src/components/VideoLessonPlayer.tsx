@@ -107,7 +107,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                     </span>
                   </div>
                 </a>
-              ) : (
+              ) : lesson.youtubeEmbedUrl ? (
                 <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 shadow-md">
                   <iframe
                     src={lesson.youtubeEmbedUrl}
@@ -118,20 +118,47 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                     loading="lazy"
                   />
                 </div>
+              ) : (
+                <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 shadow-md flex flex-col items-center justify-center p-6 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center justify-center">
+                    <Play className="w-6 h-6 fill-red-400 ml-0.5" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-500/30">
+                      Video Selection in Progress
+                    </span>
+                    <p className="text-xs text-slate-300 mt-2 max-w-xs leading-relaxed">
+                      Grade 8 aligned video lesson will be inserted here.
+                    </p>
+                  </div>
+                </div>
               )}
 
               {/* Action Button */}
               <div className="pt-1">
-                <a
-                  id={`open-youtube-${lesson.id}`}
-                  href={lesson.youtubeWatchUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs sm:text-sm font-black tracking-wide transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] active:scale-98"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>{lesson.directWatchOnly ? 'WATCH ON YOUTUBE' : 'Open on YouTube'}</span>
-                </a>
+                {lesson.youtubeWatchUrl ? (
+                  <a
+                    id={`open-youtube-${lesson.id}`}
+                    href={lesson.youtubeWatchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs sm:text-sm font-black tracking-wide transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] active:scale-98"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>
+                      {lesson.directWatchOnly
+                        ? 'WATCH ON YOUTUBE'
+                        : lesson.youtubeWatchUrl?.includes('khanacademy.org')
+                        ? 'Open on Khan Academy'
+                        : 'Open on YouTube'}
+                    </span>
+                  </a>
+                ) : (
+                  <div className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold border border-slate-200 cursor-default">
+                    <Clock className="w-4 h-4 text-slate-400" />
+                    <span>Video Link Coming Soon</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
