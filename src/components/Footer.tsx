@@ -1,14 +1,20 @@
 import React from 'react';
-import { Compass, ShieldCheck, Heart, Sparkles, BookOpen, Printer } from 'lucide-react';
+import { Compass, ShieldCheck, Heart, Sparkles, BookOpen, Printer, Calculator } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 
 interface FooterProps {
   onSelectTopic: (topicId: string) => void;
   onNavigateHome: () => void;
+  onOpenCalculatorLab?: () => void;
   onOpenPrintCenter?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectTopic, onNavigateHome, onOpenPrintCenter }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onSelectTopic,
+  onNavigateHome,
+  onOpenCalculatorLab,
+  onOpenPrintCenter,
+}) => {
   return (
     <footer className="bg-slate-950 text-slate-300 border-t border-slate-800/80 mt-20 relative overflow-hidden">
       {/* Background glow */}
@@ -50,6 +56,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTopic, onNavigateHome, o
                   Portal Overview (Home)
                 </button>
               </li>
+              {onOpenCalculatorLab && (
+                <li>
+                  <button
+                    onClick={onOpenCalculatorLab}
+                    className="hover:text-amber-400 transition-colors text-indigo-300 font-bold flex items-center gap-1.5"
+                  >
+                    <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>TI-Nspire CX Calculator Lab</span>
+                  </button>
+                </li>
+              )}
               {TOPICS_DATA.map((t) => (
                 <li key={t.id}>
                   <button

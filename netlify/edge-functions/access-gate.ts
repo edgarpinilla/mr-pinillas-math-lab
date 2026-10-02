@@ -1,3 +1,9 @@
+declare const Netlify: {
+  env: {
+    get: (key: string) => string | undefined;
+  };
+};
+
 const COOKIE_NAME = "mathlab_netlify_session";
 const SESSION_SECONDS = 8 * 60 * 60;
 

@@ -14,15 +14,17 @@ import {
   ChevronRight,
   Grid,
   TrendingUp,
+  Calculator,
 } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 import { TopicData } from '../types';
 
 interface HomePageProps {
   onSelectTopic: (topicId: string, defaultTab?: string) => void;
+  onOpenCalculatorLab?: () => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ onSelectTopic }) => {
+export const HomePage: React.FC<HomePageProps> = ({ onSelectTopic, onOpenCalculatorLab }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGrade, setSelectedGrade] = useState<'all' | 'Grade 8' | 'Grade 7'>('all');
 
@@ -125,6 +127,36 @@ export const HomePage: React.FC<HomePageProps> = ({ onSelectTopic }) => {
           </div>
         </div>
       </section>
+
+      {/* TI-Nspire CX Calculator Lab Feature Banner */}
+      {onOpenCalculatorLab && (
+        <section className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 border-2 border-indigo-500/40 shadow-xl text-white relative overflow-hidden">
+          <div className="absolute -right-6 -bottom-6 opacity-10 text-8xl font-mono select-none pointer-events-none text-sky-200">
+            [ (-)] vs [-]
+          </div>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-xs font-black uppercase tracking-wider">
+                <Calculator className="w-3.5 h-3.5 text-amber-300" />
+                <span>Classroom Hardware Tutorial</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white">
+                TI-Nspire CX Calculator Lab (Level 1)
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                Learn how to operate our classroom handhelds step-by-step: master negative numbers vs. subtraction, fraction conversions, exponents, and precise display settings across 16 interactive modules!
+              </p>
+            </div>
+            <button
+              onClick={onOpenCalculatorLab}
+              className="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 hover:scale-102 transition-all cursor-pointer inline-flex items-center gap-2 shrink-0"
+            >
+              <span>Open Calculator Lab</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Search and Filters Bar */}
       <section className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">

@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './components/HomePage';
 import { TopicPage } from './components/TopicPage';
+import { CalculatorLabHome } from './components/calculator/CalculatorLabHome';
 import { TeacherPrintCenter } from './components/TeacherPrintCenter';
 import { TeacherPinModal, TEACHER_SESSION_KEY } from './components/TeacherPinModal';
 import { TOPICS_DATA } from './data/topicsData';
@@ -10,6 +11,7 @@ import { SectionTab } from './types';
 
 export default function App() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [isCalculatorLabOpen, setIsCalculatorLabOpen] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<SectionTab>('learn');
   const [isPrintCenterOpen, setIsPrintCenterOpen] = useState<boolean>(false);
   const [printCenterTopicId, setPrintCenterTopicId] = useState<string | null>(null);
@@ -21,10 +23,20 @@ export default function App() {
     }
   });
   const [showPinModal, setShowPinModal] = useState<boolean>(false);
+  const [isTutorialActive, setIsTutorialActive] = useState<boolean>(true);
 
   const handleNavigateHome = () => {
     setSelectedTopicId(null);
+    setIsCalculatorLabOpen(false);
     setActiveTab('learn');
+    setIsPrintCenterOpen(false);
+    setShowPinModal(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenCalculatorLab = () => {
+    setSelectedTopicId(null);
+    setIsCalculatorLabOpen(true);
     setIsPrintCenterOpen(false);
     setShowPinModal(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -32,6 +44,7 @@ export default function App() {
 
   const handleSelectTopic = (topicId: string, defaultTab: string = 'learn') => {
     setSelectedTopicId(topicId);
+    setIsCalculatorLabOpen(false);
     setActiveTab((defaultTab as SectionTab) || 'learn');
     setIsPrintCenterOpen(false);
     setShowPinModal(false);
@@ -101,14 +114,24 @@ export default function App() {
       {/* Top Main Navigation Header */}
       <Header
         currentTopicId={selectedTopicId}
+        isCalculatorLabOpen={isCalculatorLabOpen}
         onNavigateHome={handleNavigateHome}
         onSelectTopic={handleSelectTopic}
+        onOpenCalculatorLab={handleOpenCalculatorLab}
         onOpenPrintCenter={() => handleOpenPrintCenter()}
       />
 
       {/* Main Page Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 relative z-10">
-        {currentTopic ? (
+      <main className={`flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 relative z-10 ${
+        isCalculatorLabOpen && isTutorialActive ? 'pt-1 pb-1 sm:pt-1.5' : 'pt-6 sm:pt-8'
+      }`}>
+        {isCalculatorLabOpen ? (
+          <CalculatorLabHome
+            onNavigateHome={handleNavigateHome}
+            onSelectTopic={handleSelectTopic}
+            onTutorialActiveChange={setIsTutorialActive}
+          />
+        ) : currentTopic ? (
           <TopicPage
             topic={currentTopic}
             initialTab={activeTab}
@@ -117,16 +140,22 @@ export default function App() {
             onOpenPrintCenter={handleOpenPrintCenter}
           />
         ) : (
-          <HomePage onSelectTopic={handleSelectTopic} />
+          <HomePage
+            onSelectTopic={handleSelectTopic}
+            onOpenCalculatorLab={handleOpenCalculatorLab}
+          />
         )}
       </main>
 
       {/* Global Student Safe Footer */}
-      <Footer
-        onSelectTopic={handleSelectTopic}
-        onNavigateHome={handleNavigateHome}
-        onOpenPrintCenter={() => handleOpenPrintCenter()}
-      />
+      {(!isCalculatorLabOpen || !isTutorialActive) && (
+        <Footer
+          onSelectTopic={handleSelectTopic}
+          onNavigateHome={handleNavigateHome}
+          onOpenCalculatorLab={handleOpenCalculatorLab}
+          onOpenPrintCenter={() => handleOpenPrintCenter()}
+        />
+      )}
 
       {/* Teacher PIN Access Modal */}
       <TeacherPinModal
