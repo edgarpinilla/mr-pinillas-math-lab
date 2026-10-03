@@ -10,6 +10,7 @@ import {
   Layers,
   Sparkles,
   Lock,
+  KeyRound,
 } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 import { STAAR_TRANSFORMATIONS_QUESTIONS } from '../data/staar/staarQuestionsTransformations';
@@ -17,6 +18,8 @@ import { STAAR_PROPORTIONAL_QUESTIONS } from '../data/staar/staarQuestionsPropor
 import { STAAR_SLOPE_QUESTIONS } from '../data/staar/staarQuestionsSlope';
 import { STAAR_SYSTEMS_QUESTIONS } from '../data/staar/staarQuestionsSystems';
 import { STAAR_DILATIONS_QUESTIONS } from '../data/staar/staarQuestionsDilations';
+import { STAAR_EQUATIONS_QUESTIONS } from '../data/staar/staarQuestionsEquations';
+import { UNIT_6_SELF_CHECK_QUESTIONS } from '../data/unit6SelfCheckQuestions';
 
 /**
  * Registry connecting topic IDs to existing local STAAR Practice question banks.
@@ -28,8 +31,102 @@ const STAAR_QUESTIONS_BY_TOPIC: Record<string, any[]> = {
   'slope-linear-equations': STAAR_SLOPE_QUESTIONS,
   'systems-of-linear-equations': STAAR_SYSTEMS_QUESTIONS,
   'dilations-similarity': STAAR_DILATIONS_QUESTIONS,
-  'equations-inequalities': [],
+  'equations-inequalities': STAAR_EQUATIONS_QUESTIONS,
 };
+
+/**
+ * Extracts the exact correct answer text for a question from the existing question bank.
+ */
+function getQuestionCorrectAnswerText(q: any, rawUnit6SelfCheck?: any): string {
+  // 1. Standard PracticeQuestion or StaarPracticeQuestion (options: string[], correctIndex: number)
+  if (
+    typeof q.correctIndex === 'number' &&
+    Array.isArray(q.options) &&
+    typeof q.options[0] === 'string'
+  ) {
+    // Special case for Unit 6 Self-Check multi-select questions
+    if (
+      rawUnit6SelfCheck &&
+      rawUnit6SelfCheck.type === 'multi-select' &&
+      Array.isArray(rawUnit6SelfCheck.correctAnswer) &&
+      Array.isArray(rawUnit6SelfCheck.options)
+    ) {
+      const selected = rawUnit6SelfCheck.options
+        .map((opt: any, idx: number) => ({
+          opt,
+          letter: ['A', 'B', 'C', 'D', 'E', 'F'][idx] || String(opt.id).toUpperCase(),
+        }))
+        .filter(({ opt }: any) => rawUnit6SelfCheck.correctAnswer.includes(opt.id))
+        .map(({ letter, opt }: any) => `${letter}. ${opt.text}`);
+      if (selected.length > 0) {
+        return selected.join(', ');
+      }
+    }
+
+    const letter = ['A', 'B', 'C', 'D', 'E', 'F'][q.correctIndex] || `${q.correctIndex + 1}`;
+    const optText = q.options[q.correctIndex] ?? '';
+    return `${letter}. ${optText}`;
+  }
+
+  const source = rawUnit6SelfCheck || q;
+
+  // 2. Unit 6 Multiple Choice / Error Analysis (options: { id, text }[], correctAnswer: string)
+  if (source.type === 'multiple-choice' || source.type === 'error-analysis') {
+    if (Array.isArray(source.options)) {
+      const idx = source.options.findIndex(
+        (opt: any) => opt.id === source.correctAnswer || opt.isCorrect
+      );
+      if (idx >= 0) {
+        const opt = source.options[idx];
+        const letter = ['A', 'B', 'C', 'D', 'E', 'F'][idx] || String(opt.id).toUpperCase();
+        return `${letter}. ${opt.text}`;
+      }
+    }
+  }
+
+  // 3. Multi-Select (correctAnswer: string[], options: { id, text }[])
+  if (
+    source.type === 'multi-select' &&
+    Array.isArray(source.correctAnswer) &&
+    Array.isArray(source.options)
+  ) {
+    const selected = source.options
+      .map((opt: any, idx: number) => ({
+        opt,
+        letter: ['A', 'B', 'C', 'D', 'E', 'F'][idx] || String(opt.id).toUpperCase(),
+      }))
+      .filter(({ opt }: any) => source.correctAnswer.includes(opt.id))
+      .map(({ letter, opt }: any) => `${letter}. ${opt.text}`);
+    if (selected.length > 0) {
+      return selected.join(', ');
+    }
+  }
+
+  // 4. Inequality Entry
+  if (source.type === 'inequality-entry') {
+    if (source.inequalityConfig) {
+      const sym =
+        source.inequalityConfig.symbol === '<='
+          ? '≤'
+          : source.inequalityConfig.symbol === '>='
+          ? '≥'
+          : source.inequalityConfig.symbol;
+      const variable = source.inequalityConfig.variable || 'x';
+      return `${variable} ${sym} ${source.inequalityConfig.boundary}`;
+    }
+    return String(source.correctAnswer ?? '')
+      .replace('<=', '≤')
+      .replace('>=', '≥');
+  }
+
+  // 5. Numeric Input
+  if (source.type === 'numeric-input') {
+    const val = source.numericAnswer ?? source.correctAnswer;
+    return `x = ${val}`;
+  }
+
+  return String(source.correctAnswer ?? '');
+}
 
 interface TeacherPrintCenterProps {
   initialTopicId?: string;
@@ -614,6 +711,9 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
   // Print mode: 'self-check' or 'staar'
   const [printMode, setPrintMode] = useState<'self-check' | 'staar'>('self-check');
 
+  // Document view: 'questions' (student test) or 'answer-key' (separate teacher answer key)
+  const [viewType, setViewType] = useState<'questions' | 'answer-key'>('questions');
+
   // Lookup topic data from existing repository
   const currentTopic = TOPICS_DATA.find((t) => t.id === selectedUnitId) || TOPICS_DATA[0];
 
@@ -633,9 +733,30 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
     }
   };
 
-  const handlePrint = () => {
-    window.focus();
-    window.print();
+  const handlePrintStudentCopy = () => {
+    if (viewType !== 'questions') {
+      setViewType('questions');
+      setTimeout(() => {
+        window.focus();
+        window.print();
+      }, 50);
+    } else {
+      window.focus();
+      window.print();
+    }
+  };
+
+  const handlePrintAnswerKey = () => {
+    if (viewType !== 'answer-key') {
+      setViewType('answer-key');
+      setTimeout(() => {
+        window.focus();
+        window.print();
+      }, 50);
+    } else {
+      window.focus();
+      window.print();
+    }
   };
 
   return (
@@ -713,11 +834,21 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
             <button
               id="print-student-copy-btn"
               type="button"
-              onClick={handlePrint}
+              onClick={handlePrintStudentCopy}
               className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-black text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 transition-all cursor-pointer active:scale-95"
             >
               <Printer className="w-4 h-4" />
               <span>Print Student Copy</span>
+            </button>
+
+            <button
+              id="print-answer-key-btn"
+              type="button"
+              onClick={handlePrintAnswerKey}
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/25 hover:shadow-lg hover:shadow-emerald-500/35 transition-all cursor-pointer active:scale-95"
+            >
+              <KeyRound className="w-4 h-4" />
+              <span>Print Answer Key</span>
             </button>
           </div>
         </div>
@@ -759,39 +890,84 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
             </div>
           </div>
 
-          {/* Mode Selector (Self Check vs. STAAR Practice) */}
+          {/* Mode Selector (Self Check vs. STAAR Practice) & Separate Answer Key Controls */}
           <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-500">
-                Question Bank:
-              </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-500">
+                  Question Bank:
+                </span>
+                <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+                  <button
+                    onClick={() => {
+                      setPrintMode('self-check');
+                      setViewType('questions');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      printMode === 'self-check' && viewType === 'questions'
+                        ? 'bg-white text-blue-700 shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Self Check ({selfCheckQuestions.length} Questions)
+                  </button>
+                  <button
+                    id="self-check-answer-key-btn"
+                    onClick={() => {
+                      setPrintMode('self-check');
+                      setViewType('answer-key');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                      printMode === 'self-check' && viewType === 'answer-key'
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50/70'
+                    }`}
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>Answer Key</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
                 <button
-                  onClick={() => setPrintMode('self-check')}
+                  onClick={() => {
+                    setPrintMode('staar');
+                    setViewType('questions');
+                  }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    printMode === 'self-check'
-                      ? 'bg-white text-blue-700 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Self Check ({selfCheckQuestions.length} Questions)
-                </button>
-                <button
-                  onClick={() => setPrintMode('staar')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    printMode === 'staar'
+                    printMode === 'staar' && viewType === 'questions'
                       ? 'bg-white text-blue-700 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   STAAR Practice ({staarQuestions.length} Questions)
                 </button>
+                <button
+                  id="staar-answer-key-btn"
+                  onClick={() => {
+                    setPrintMode('staar');
+                    setViewType('answer-key');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    printMode === 'staar' && viewType === 'answer-key'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50/70'
+                  }`}
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Answer Key</span>
+                </button>
               </div>
             </div>
 
             <div className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>Ready for Print: {activeQuestions.length} Total Questions</span>
+              <span>
+                {viewType === 'answer-key'
+                  ? `Showing Separate Answer Key (${activeQuestions.length} Answers)`
+                  : `Ready for Print: ${activeQuestions.length} Total Questions`}
+              </span>
             </div>
           </div>
         </div>
@@ -803,137 +979,192 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
           id="printable-student-copy"
           className="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 print:border-none print:shadow-none print:p-0"
         >
-          {/* Document Header */}
-          <div className="border-b-2 border-slate-900 pb-4 mb-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
-                  Mr. Pinilla’s Math Lab
-                </h1>
-                <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
-                  Unit {currentTopic.number}: {currentTopic.title}
-                </div>
-                <div className="text-xs font-semibold text-slate-600 mt-0.5">
-                  {printMode === 'self-check'
-                    ? `Self Check Practice (${activeQuestions.length} Questions)`
-                    : `STAAR Practice Review (${activeQuestions.length} Questions)`}
-                </div>
-              </div>
-              <div className="text-right text-xs text-slate-500 font-mono font-bold">
-                Student Copy
-              </div>
-            </div>
-
-            {/* Student Identification Lines */}
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
-              <div className="flex items-end gap-1.5">
-                <span>Name:</span>
-                <span className="flex-1 border-b border-slate-800 min-w-32 inline-block" />
-              </div>
-              <div className="flex items-end gap-1.5">
-                <span>Date:</span>
-                <span className="flex-1 border-b border-slate-800 min-w-20 inline-block" />
-              </div>
-              <div className="flex items-end gap-1.5">
-                <span>Period:</span>
-                <span className="flex-1 border-b border-slate-800 min-w-16 inline-block" />
-              </div>
-            </div>
-          </div>
-
-          {/* Rendered Questions */}
-          <div className="space-y-6">
-            {activeQuestions.map((q: any, index: number) => {
-              return (
-                <div
-                  key={q.id || `question-${index}`}
-                  className="print-question-item pb-6 border-b border-slate-200 last:border-b-0 break-inside-avoid"
-                >
-                  <div className="flex items-start gap-2.5">
-                    {/* Question Number */}
-                    <span className="font-black text-slate-900 text-sm sm:text-base shrink-0 pt-0.5">
-                      {index + 1}.
-                    </span>
-
-                    <div className="space-y-2.5 flex-1 min-w-0">
-                      {/* Question Text */}
-                      <p className="text-sm sm:text-base text-slate-900 font-medium leading-relaxed">
-                        {q.question}
-                      </p>
-
-                      {/* Optional Context Box (equations, scenarios) */}
-                      {q.context && (
-                        <div className="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-semibold text-slate-800 inline-block my-1">
-                          {q.context}
-                        </div>
-                      )}
-
-                      {/* Optional Table */}
-                      {q.tableData && Array.isArray(q.tableData.headers) && Array.isArray(q.tableData.rows) && (
-                        <div className="my-3 overflow-x-auto">
-                          <table className="border-collapse border border-slate-400 text-xs text-left bg-white">
-                            <thead>
-                              <tr className="bg-slate-100 text-slate-900 border-b border-slate-400">
-                                {q.tableData.headers.map((header: string, hIdx: number) => (
-                                  <th
-                                    key={hIdx}
-                                    className="px-3 py-1.5 border-r border-slate-300 last:border-r-0 font-bold whitespace-nowrap"
-                                  >
-                                    {header}
-                                  </th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {q.tableData.rows.map((row: any[], rIdx: number) => (
-                                <tr key={rIdx} className="border-b border-slate-300 last:border-b-0">
-                                  {row.map((cell: any, cIdx: number) => (
-                                    <td
-                                      key={cIdx}
-                                      className="px-3 py-1 border-r border-slate-300 last:border-r-0 font-mono text-slate-800 whitespace-nowrap"
-                                    >
-                                      {cell}
-                                    </td>
-                                  ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-
-                      {/* Optional Graph */}
-                      {q.graphData && (
-                        <div className="my-2">
-                          <PrintGraphView graph={q.graphData} />
-                        </div>
-                      )}
-
-                      {/* Multiple Choice Options (No answers revealed) */}
-                      {Array.isArray(q.options) && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
-                          {q.options.map((opt: string, optIdx: number) => {
-                            const letter = ['A', 'B', 'C', 'D', 'E', 'F'][optIdx] || `${optIdx + 1}`;
-                            return (
-                              <div
-                                key={optIdx}
-                                className="flex items-start gap-2 text-xs sm:text-sm text-slate-800 py-1 px-1.5 rounded-md"
-                              >
-                                <span className="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 bg-white text-slate-900">
-                                  {letter}
-                                </span>
-                                <span className="leading-snug pt-0.5">{opt}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+          {viewType === 'answer-key' ? (
+            /* SEPARATE TEACHER ANSWER KEY VIEW */
+            <div>
+              <div className="border-b-2 border-slate-900 pb-4 mb-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
+                      {printMode === 'self-check'
+                        ? 'SELF-CHECK ANSWER KEY'
+                        : 'STAAR PRACTICE ANSWER KEY'}
+                    </h1>
+                    <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
+                      Unit {currentTopic.number}: {currentTopic.title}
                     </div>
                   </div>
+                  <div className="text-right text-xs text-slate-500 font-mono font-bold">
+                    Teacher Answer Key ({activeQuestions.length} Questions)
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              <div className="space-y-2.5">
+                {activeQuestions.map((q: any, index: number) => {
+                  const rawU6SelfCheck =
+                    selectedUnitId === 'equations-inequalities' && printMode === 'self-check'
+                      ? UNIT_6_SELF_CHECK_QUESTIONS[index]
+                      : undefined;
+                  const answerText = getQuestionCorrectAnswerText(q, rawU6SelfCheck);
+
+                  return (
+                    <div
+                      key={q.id || `answer-${index}`}
+                      className="print-question-item py-1.5 border-b border-slate-200 last:border-b-0 flex items-baseline gap-2.5 text-sm sm:text-base text-slate-900 break-inside-avoid"
+                    >
+                      <span className="font-black shrink-0 w-7 text-right">{index + 1}.</span>
+                      <span className="font-semibold">{answerText}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            /* EXISTING STUDENT PRINT COPY (NO ANSWERS INCLUDED) */
+            <div>
+              {/* Document Header */}
+              <div className="border-b-2 border-slate-900 pb-4 mb-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
+                      Mr. Pinilla’s Math Lab
+                    </h1>
+                    <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
+                      Unit {currentTopic.number}: {currentTopic.title}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-600 mt-0.5">
+                      {printMode === 'self-check'
+                        ? `Self Check Practice (${activeQuestions.length} Questions)`
+                        : `STAAR Practice Review (${activeQuestions.length} Questions)`}
+                    </div>
+                  </div>
+                  <div className="text-right text-xs text-slate-500 font-mono font-bold">
+                    Student Copy
+                  </div>
+                </div>
+
+                {/* Student Identification Lines */}
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
+                  <div className="flex items-end gap-1.5">
+                    <span>Name:</span>
+                    <span className="flex-1 border-b border-slate-800 min-w-32 inline-block" />
+                  </div>
+                  <div className="flex items-end gap-1.5">
+                    <span>Date:</span>
+                    <span className="flex-1 border-b border-slate-800 min-w-20 inline-block" />
+                  </div>
+                  <div className="flex items-end gap-1.5">
+                    <span>Period:</span>
+                    <span className="flex-1 border-b border-slate-800 min-w-16 inline-block" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Rendered Questions */}
+              <div className="space-y-6">
+                {activeQuestions.map((q: any, index: number) => {
+                  const questionPrompt = q.question || q.prompt || '';
+                  return (
+                    <div
+                      key={q.id || `question-${index}`}
+                      className="print-question-item pb-6 border-b border-slate-200 last:border-b-0 break-inside-avoid"
+                    >
+                      <div className="flex items-start gap-2.5">
+                        {/* Question Number */}
+                        <span className="font-black text-slate-900 text-sm sm:text-base shrink-0 pt-0.5">
+                          {index + 1}.
+                        </span>
+
+                        <div className="space-y-2.5 flex-1 min-w-0">
+                          {/* Question Text */}
+                          <p className="text-sm sm:text-base text-slate-900 font-medium leading-relaxed whitespace-pre-line">
+                            {questionPrompt}
+                          </p>
+
+                          {/* Optional Equation Display (Unit 6 STAAR) */}
+                          {q.equationDisplay && !q.question && (
+                            <div className="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-semibold text-slate-800 inline-block my-1">
+                              {q.equationDisplay}
+                            </div>
+                          )}
+
+                          {/* Optional Context Box (equations, scenarios) */}
+                          {q.context && (
+                            <div className="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-semibold text-slate-800 inline-block my-1">
+                              {q.context}
+                            </div>
+                          )}
+
+                          {/* Optional Table */}
+                          {q.tableData && Array.isArray(q.tableData.headers) && Array.isArray(q.tableData.rows) && (
+                            <div className="my-3 overflow-x-auto">
+                              <table className="border-collapse border border-slate-400 text-xs text-left bg-white">
+                                <thead>
+                                  <tr className="bg-slate-100 text-slate-900 border-b border-slate-400">
+                                    {q.tableData.headers.map((header: string, hIdx: number) => (
+                                      <th
+                                        key={hIdx}
+                                        className="px-3 py-1.5 border-r border-slate-300 last:border-r-0 font-bold whitespace-nowrap"
+                                      >
+                                        {header}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {q.tableData.rows.map((row: any[], rIdx: number) => (
+                                    <tr key={rIdx} className="border-b border-slate-300 last:border-b-0">
+                                      {row.map((cell: any, cIdx: number) => (
+                                        <td
+                                          key={cIdx}
+                                          className="px-3 py-1 border-r border-slate-300 last:border-r-0 font-mono text-slate-800 whitespace-nowrap"
+                                        >
+                                          {cell}
+                                        </td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+
+                          {/* Optional Graph */}
+                          {q.graphData && (
+                            <div className="my-2">
+                              <PrintGraphView graph={q.graphData} />
+                            </div>
+                          )}
+
+                          {/* Multiple Choice Options (No answers revealed) */}
+                          {Array.isArray(q.options) && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                              {q.options.map((opt: any, optIdx: number) => {
+                                const letter = ['A', 'B', 'C', 'D', 'E', 'F'][optIdx] || `${optIdx + 1}`;
+                                const optText = typeof opt === 'string' ? opt : opt?.text ?? '';
+                                return (
+                                  <div
+                                    key={optIdx}
+                                    className="flex items-start gap-2 text-xs sm:text-sm text-slate-800 py-1 px-1.5 rounded-md"
+                                  >
+                                    <span className="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 bg-white text-slate-900">
+                                      {letter}
+                                    </span>
+                                    <span className="leading-snug pt-0.5">{optText}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

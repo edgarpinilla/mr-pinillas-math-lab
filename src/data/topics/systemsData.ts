@@ -535,12 +535,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'What does it mean for an ordered pair (x, y) to be a solution to a system of two linear equations?',
         options: [
-          'It makes both equations true statements at the same time.',
           'It makes at least one of the two equations true.',
+          'It makes both equations true statements at the same time.',
           'It is the y-intercept of the first equation.',
           'It is the point where one of the lines crosses the x-axis.',
         ],
-        correctIndex: 0,
+        correctIndex: 1,
         explanation:
           'A solution to a system of linear equations is an ordered pair (x, y) that satisfies BOTH equations simultaneously. On a coordinate plane, this corresponds to the point where both lines intersect.',
         hint: 'Think about what "system" means in math: both equations work together simultaneously. The solution must satisfy both.',
@@ -551,8 +551,8 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'Which of the following ordered pairs is a solution to the system of linear equations below?',
         context: 'Equation 1: y = 3x - 1  |  Equation 2: x + y = 7',
-        options: ['(2, 5)', '(1, 2)', '(3, 4)', '(4, 3)'],
-        correctIndex: 0,
+        options: ['(1, 2)', '(3, 4)', '(2, 5)', '(4, 3)'],
+        correctIndex: 2,
         explanation:
           'Check (2, 5) in both equations: In Equation 1: 3(2) - 1 = 6 - 1 = 5 ✓ (y = 5). In Equation 2: 2 + 5 = 7 ✓. Since (2, 5) satisfies both equations, it is the solution to the system. The other pairs only satisfy one equation.',
         hint: 'Substitute x and y into BOTH equations. (2, 5) gives 5 = 3(2) - 1 and 2 + 5 = 7. Test each option!',
@@ -564,12 +564,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'Marcus tested the point (3, 1) in the system below and claimed it was the solution. Is Marcus correct? Why or why not?',
         context: 'Equation 1: y = x - 2  |  Equation 2: 2x + y = 10',
         options: [
-          'Marcus is incorrect: (3, 1) satisfies y = x - 2 (since 1 = 3 - 2), but fails 2x + y = 10 because 2(3) + 1 = 7, not 10.',
           'Marcus is correct: substituting x = 3 and y = 1 satisfies both equations.',
           'Marcus is incorrect: (3, 1) does not satisfy either equation.',
           'Marcus is correct: a point only needs to satisfy one equation to be the solution to a system.',
+          'Marcus is incorrect: (3, 1) satisfies y = x - 2 (since 1 = 3 - 2), but fails 2x + y = 10 because 2(3) + 1 = 7, not 10.',
         ],
-        correctIndex: 0,
+        correctIndex: 3,
         explanation:
           'Test (3, 1) in both equations: In y = x - 2: 1 = 3 - 2 = 1 ✓ (True). In 2x + y = 10: 2(3) + 1 = 6 + 1 = 7 ≠ 10 ✗ (False). Because an ordered pair must make BOTH equations true simultaneously, Marcus is incorrect.',
         hint: 'Calculate 2(3) + 1 for Equation 2. Does it equal 10? Remember, a solution to a system MUST satisfy BOTH equations.',
@@ -642,8 +642,8 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           ],
           intersectionPoint: { x: 1, y: 4, label: '(1, 4)' },
         },
-        options: ['(1, 4)', '(4, 1)', '(0, 3)', '(2, 5)'],
-        correctIndex: 0,
+        options: ['(4, 1)', '(1, 4)', '(0, 3)', '(2, 5)'],
+        correctIndex: 1,
         explanation:
           'At the point of intersection, x = 1 and y = 4. Checking algebraically: For Line A: y = 1 + 3 = 4 ✓. For Line B: y = -2(1) + 6 = 4 ✓. Both equations equal 4 when x = 1, so the intersection point is (1, 4).',
         hint: 'Look at the coordinates where the teal line and rose line intersect: trace down to the x-axis and across to the y-axis.',
@@ -655,12 +655,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'Line 1 has the equation y = x - 2 and Line 2 has the equation y = -x + 4. In which quadrant of the coordinate plane do the two lines intersect?',
         context: 'Line 1: y = x - 2  |  Line 2: y = -x + 4',
         options: [
-          'Quadrant I, at (3, 1)',
           'Quadrant II, at (-3, 1)',
           'Quadrant IV, at (3, -1)',
+          'Quadrant I, at (3, 1)',
           'Quadrant III, at (-3, -1)',
         ],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation:
           'Find the intersection: x - 2 = -x + 4 → 2x = 6 → x = 3. Substitute x = 3 into y = x - 2: y = 3 - 2 = 1. The intersection point is (3, 1). Because both x and y are positive (x > 0, y > 0), this point is located in Quadrant I.',
         hint: 'Find the intersection point first by setting x - 2 = -x + 4. Then recall: Quadrant I has positive x and positive y (+, +).',
@@ -674,12 +674,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'Given the system of equations below, which expression correctly replaces y in the second equation when solving by substitution?',
         context: 'Equation 1: y = 4x  |  Equation 2: 2x + y = 18',
         options: [
-          '2x + (4x) = 18',
           '2(4x) + y = 18',
           '2x + 4 = 18',
           '4x + y = 18',
+          '2x + (4x) = 18',
         ],
-        correctIndex: 0,
+        correctIndex: 3,
         explanation:
           'Since Equation 1 gives y = 4x, you replace the variable y in Equation 2 with the expression (4x). This gives 2x + (4x) = 18, which simplifies to 6x = 18.',
         hint: 'Equation 1 tells you that y is equal to 4x. In Equation 2, substitute 4x in place of the variable y.',
@@ -690,8 +690,8 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'Use substitution to find the value of x in this system of equations:',
         context: 'Equation 1: y = 2x + 1  |  Equation 2: 3x + y = 16',
-        options: ['x = 3', 'x = 5', 'x = 7', 'x = 2'],
-        correctIndex: 0,
+        options: ['x = 5', 'x = 3', 'x = 7', 'x = 2'],
+        correctIndex: 1,
         explanation:
           'Substitute (2x + 1) for y into Equation 2: 3x + (2x + 1) = 16 → 5x + 1 = 16. Subtract 1 from both sides: 5x = 15. Divide by 5: x = 3. (If asked for y, y = 2(3) + 1 = 7).',
         hint: 'Substitute (2x + 1) in place of y into 3x + y = 16: 3x + (2x + 1) = 16. Combine like terms.',
@@ -721,8 +721,8 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'Use substitution to solve the system of linear equations below. What is the solution (x, y)?',
         context: 'Equation 1: y = x + 2  |  Equation 2: 2x + y = 11',
-        options: ['(3, 5)', '(5, 3)', '(2, 4)', '(4, 6)'],
-        correctIndex: 0,
+        options: ['(5, 3)', '(2, 4)', '(4, 6)', '(3, 5)'],
+        correctIndex: 3,
         explanation:
           'Substitute (x + 2) for y in Equation 2: 2x + (x + 2) = 11 → 3x + 2 = 11 → 3x = 9 → x = 3. Then find y: y = 3 + 2 = 5. Check in Equation 2: 2(3) + 5 = 6 + 5 = 11 ✓. The solution is (3, 5).',
         hint: 'Substitute (x + 2) in place of y into 2x + y = 11. Solve for x first, then substitute x back to find y.',
@@ -733,8 +733,8 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'What is the solution (x, y) to the system of equations where both equations are solved for y?',
         context: 'Equation 1: y = 5x - 3  |  Equation 2: y = 2x + 9',
-        options: ['(4, 17)', '(2, 7)', '(4, 13)', '(17, 4)'],
-        correctIndex: 0,
+        options: ['(2, 7)', '(4, 13)', '(4, 17)', '(17, 4)'],
+        correctIndex: 2,
         explanation:
           'Set the equations equal: 5x - 3 = 2x + 9. Subtract 2x from both sides: 3x - 3 = 9. Add 3: 3x = 12 → x = 4. Substitute x = 4 into Equation 2: y = 2(4) + 9 = 8 + 9 = 17. Check in Equation 1: y = 5(4) - 3 = 17 ✓. The solution is (4, 17).',
         hint: 'Since both equal y, set them equal to each other: 5x - 3 = 2x + 9. Subtract 2x from both sides and add 3.',
@@ -783,12 +783,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           ],
         },
         options: [
-          'No solution (the lines are parallel and will never intersect)',
           'Exactly one solution at (4, -2)',
           'Infinitely many solutions (the lines are identical)',
           'Two solutions (one for each equation)',
+          'No solution (the lines are parallel and will never intersect)',
         ],
-        correctIndex: 0,
+        correctIndex: 3,
         explanation:
           'Both equations have the identical slope (m = 3) but different y-intercepts (b = 4 and b = -2). Lines with the same slope and different intercepts are parallel lines that never intersect. Therefore, the system has NO SOLUTION.',
         hint: 'Notice that both lines have the exact same slope (m = 3), but different y-intercepts (4 and -2). Parallel lines never cross.',
@@ -800,12 +800,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'Consider the system of equations below. Which statement is completely accurate?',
         context: 'Equation 1: y = -2x + 5  |  Equation 2: 2x + y = 5',
         options: [
-          'The system has infinitely many solutions because rearranging Equation 2 gives y = -2x + 5, showing both equations represent the exact same line.',
           'The system has no solution because the slopes are opposite signs.',
+          'The system has infinitely many solutions because rearranging Equation 2 gives y = -2x + 5, showing both equations represent the exact same line.',
           'The system has exactly one solution at (0, 5) only.',
           'The system has exactly one solution at (2.5, 0) only.',
         ],
-        correctIndex: 0,
+        correctIndex: 1,
         explanation:
           'Subtract 2x from both sides of 2x + y = 5 to isolate y: y = -2x + 5. This is identical to Equation 1! Because both equations have the same slope (m = -2) and the same y-intercept (b = 5), they represent the exact same line. Every point on the line is a shared solution, giving INFINITELY MANY SOLUTIONS.',
         hint: 'Rearrange Equation 2 by subtracting 2x from both sides. Compare the resulting equation with Equation 1.',
@@ -816,12 +816,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
         question:
           'Without graphing, which of the following systems of equations has EXACTLY ONE solution?',
         options: [
-          'y = 4x + 1 and y = -x + 6',
           'y = 2x + 3 and y = 2x - 5',
           'y = -3x + 2 and 3x + y = 2',
+          'y = 4x + 1 and y = -x + 6',
           'y = x - 4 and y = x + 1',
         ],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation:
           'A system of two linear equations has exactly one solution if and only if the lines have different slopes (m₁ ≠ m₂). In "y = 4x + 1 and y = -x + 6", the slopes are m = 4 and m = -1. Since 4 ≠ -1, the lines must intersect at exactly one point. In the other choices, the lines have equal slopes (either parallel or identical).',
         hint: 'Compare the slopes (m). A linear system has exactly ONE solution if and only if the two lines have DIFFERENT slopes.',
@@ -852,12 +852,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'A middle school drama club sold student tickets for $3 each and adult tickets for $5 each. They sold a total of 100 tickets and collected $380. How many student tickets (s) and adult tickets (a) were sold?',
         context: 'Ticket count: s + a = 100  |  Revenue: 3s + 5a = 380',
         options: [
-          '60 student tickets and 40 adult tickets',
           '40 student tickets and 60 adult tickets',
+          '60 student tickets and 40 adult tickets',
           '50 student tickets and 50 adult tickets',
           '70 student tickets and 30 adult tickets',
         ],
-        correctIndex: 0,
+        correctIndex: 1,
         explanation:
           'Express s in terms of a: s = 100 - a. Substitute into the revenue equation: 3(100 - a) + 5a = 380 → 300 - 3a + 5a = 380 → 300 + 2a = 380 → 2a = 80 → a = 40 adult tickets. Then s = 100 - 40 = 60 student tickets. Check revenue: 3(60) + 5(40) = 180 + 200 = $380 ✓.',
         hint: 'From s + a = 100, we get s = 100 - a. Substitute (100 - a) into 3s + 5a = 380: 3(100 - a) + 5a = 380.',
@@ -869,12 +869,12 @@ export const TOPIC_4_SYSTEMS: TopicData = {
           'Runner A starts 10 meters ahead and runs at 3 m/s (y = 3x + 10). Runner B starts at the line and runs at 5 m/s (y = 5x), where x is time in seconds and y is distance in meters. What does the solution (5, 25) mean in this situation?',
         context: 'Runner A: y = 3x + 10  |  Runner B: y = 5x',
         options: [
-          'After 5 seconds, Runner B catches Runner A at a distance of 25 meters from the starting line.',
           'After 25 seconds, both runners have traveled a total of 5 meters.',
           'Runner A finishes the race 5 seconds ahead of Runner B at the 25-meter mark.',
+          'After 5 seconds, Runner B catches Runner A at a distance of 25 meters from the starting line.',
           'Runner B runs 5 meters per second and Runner A runs 25 meters per second.',
         ],
-        correctIndex: 0,
+        correctIndex: 2,
         explanation:
           'In this context, x represents elapsed time in seconds and y represents total distance in meters. The solution (x = 5, y = 25) means that after 5 seconds, both runners are at the exact same location: 25 meters from the starting line, meaning Runner B has caught up to Runner A.',
         hint: 'Identify what x and y stand for: x is time in seconds (5 seconds) and y is distance in meters (25 meters).',

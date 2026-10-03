@@ -46,12 +46,12 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     prompt: 'What value of x makes the equation true?',
     equationDisplay: '7x + 18 = 3x + 42',
     options: [
-      { id: 'a', text: 'x = 15' },
-      { id: 'b', text: 'x = 6' },
+      { id: 'a', text: 'x = 6' },
+      { id: 'b', text: 'x = 15' },
       { id: 'c', text: 'x = -6' },
       { id: 'd', text: 'x = 2.4' },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'a',
     hint: 'Collect variable terms on one side by subtracting 3x from both sides, then subtract 18 from both sides to isolate the variable term.',
     misconceptionFeedback:
       'Remember to perform the opposite operation on both sides. Subtracting 3x from 7x gives 4x, and subtracting 18 from 42 gives 24. Then divide 24 by 4.',
@@ -110,26 +110,26 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     options: [
       {
         id: 'a',
-        text: 'x > 3 (Open circle at 3, shaded to the right)',
-        numberLine: { boundary: 3, symbol: '>', minVal: 0, maxVal: 6 },
-      },
-      {
-        id: 'b',
         text: 'x < 3 (Open circle at 3, shaded to the left)',
         numberLine: { boundary: 3, symbol: '<', minVal: 0, maxVal: 6 },
       },
       {
-        id: 'c',
+        id: 'b',
         text: 'x ≥ 3 (Closed circle at 3, shaded to the right)',
         numberLine: { boundary: 3, symbol: '>=', minVal: 0, maxVal: 6 },
       },
       {
-        id: 'd',
+        id: 'c',
         text: 'x > -3 (Open circle at -3, shaded to the right)',
         numberLine: { boundary: -3, symbol: '>', minVal: -6, maxVal: 0 },
       },
+      {
+        id: 'd',
+        text: 'x > 3 (Open circle at 3, shaded to the right)',
+        numberLine: { boundary: 3, symbol: '>', minVal: 0, maxVal: 6 },
+      },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'd',
     hint: 'Subtract 15 from both sides: -4x < -12. When dividing both sides by negative 4, remember to reverse the inequality symbol.',
     misconceptionFeedback:
       'Dividing both sides of an inequality by a negative number reverses the inequality symbol from < to >. Also, strict inequalities (< or >) use an open circle.',
@@ -309,12 +309,12 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     prompt: 'What is the solution to the equation shown?',
     equationDisplay: '9x - 4 - 3x = 2x + 24',
     options: [
-      { id: 'a', text: 'x = 7' },
-      { id: 'b', text: 'x = 2.8' },
-      { id: 'c', text: 'x = 5' },
-      { id: 'd', text: 'x = -7' },
+      { id: 'a', text: 'x = 2.8' },
+      { id: 'b', text: 'x = 5' },
+      { id: 'c', text: 'x = -7' },
+      { id: 'd', text: 'x = 7' },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'd',
     hint: 'Combine the like terms on the left side first: 9x - 3x = 6x, so 6x - 4 = 2x + 24.',
     misconceptionFeedback:
       'Combine 9x - 3x to get 6x - 4. Subtract 2x from both sides to get 4x - 4 = 24. Add 4 to both sides: 4x = 28, so x = 7.',
@@ -335,12 +335,12 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     prompt: 'What is the solution to the equation shown?',
     equationDisplay: '(1/3)x + 5 = (5/6)x - 1',
     options: [
-      { id: 'a', text: 'x = 12' },
-      { id: 'b', text: 'x = 8' },
-      { id: 'c', text: 'x = 6' },
+      { id: 'a', text: 'x = 8' },
+      { id: 'b', text: 'x = 6' },
+      { id: 'c', text: 'x = 12' },
       { id: 'd', text: 'x = -12' },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'c',
     hint: 'Clear the denominators by multiplying every term on both sides by the least common denominator (LCD), which is 6.',
     misconceptionFeedback:
       'Be sure to multiply the integer terms by 6 as well! 6(1/3 x) + 6(5) = 6(5/6 x) - 6(1) gives 2x + 30 = 5x - 6.',
@@ -458,25 +458,25 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     options: [
       {
         id: 'a',
-        text: 'Water tank A has 120 gallons and drains at 15 gallons per minute. Tank B has 80 gallons and drains at 10 gallons per minute. At how many minutes, w, will both tanks have the same amount of water?',
-      },
-      {
-        id: 'b',
         text: 'Tank A starts with 120 gallons and fills at 15 gallons per minute, while Tank B starts with 80 gallons and fills at 10 gallons per minute.',
       },
       {
-        id: 'c',
+        id: 'b',
         text: 'A student with $120 earns $15 each week, while a student with $80 earns $10 each week.',
       },
       {
-        id: 'd',
+        id: 'c',
         text: 'A store has 120 items and receives 15 more daily, while another store has 80 items and sells 10 daily.',
       },
+      {
+        id: 'd',
+        text: 'Water tank A has 120 gallons and drains at 15 gallons per minute. Tank B has 80 gallons and drains at 10 gallons per minute. At how many minutes, w, will both tanks have the same amount of water?',
+      },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'd',
     hint: 'Notice the minus signs: subtracting 15w and 10w represents quantities decreasing over time, such as draining water tanks.',
     misconceptionFeedback:
-      'Options B and C represent quantities increasing (addition). Option D would have +15w on one side and -10w on the other.',
+      'Options A and B represent quantities increasing (addition). Option C would have +15w on one side and -10w on the other.',
     correctExplanation:
       'Both tanks start with an initial volume (120 and 80) and lose water at constant rates (-15w and -10w). Setting their remaining volumes equal matches 120 - 15w = 80 - 10w.',
   },
@@ -601,12 +601,12 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     prompt:
       'Paws & Whiskers pet care charges a $14 booking fee plus $18 per hour. Happy Tails pet care charges a $32 booking fee plus $12 per hour.\n\nAfter how many hours of pet care will the total cost of both services be the exact same?',
     options: [
-      { id: 'a', text: '3 hours' },
-      { id: 'b', text: '4 hours' },
-      { id: 'c', text: '6 hours' },
-      { id: 'd', text: '2 hours' },
+      { id: 'a', text: '4 hours' },
+      { id: 'b', text: '6 hours' },
+      { id: 'c', text: '2 hours' },
+      { id: 'd', text: '3 hours' },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'd',
     hint: 'Set up the equation 18h + 14 = 12h + 32, where h represents the number of hours.',
     misconceptionFeedback:
       'Subtract 12h from both sides: 6h + 14 = 32. Subtract 14: 6h = 18. Divide by 6 to get h = 3 hours.',
@@ -691,13 +691,13 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     options: [
       {
         id: 'a',
-        text: 'x ≤ 6 (Closed circle at 6, shaded to the left)',
-        numberLine: { boundary: 6, symbol: '<=', minVal: 0, maxVal: 10 },
+        text: 'x ≥ 6 (Closed circle at 6, shaded to the right)',
+        numberLine: { boundary: 6, symbol: '>=', minVal: 0, maxVal: 10 },
       },
       {
         id: 'b',
-        text: 'x ≥ 6 (Closed circle at 6, shaded to the right)',
-        numberLine: { boundary: 6, symbol: '>=', minVal: 0, maxVal: 10 },
+        text: 'x ≤ 6 (Closed circle at 6, shaded to the left)',
+        numberLine: { boundary: 6, symbol: '<=', minVal: 0, maxVal: 10 },
       },
       {
         id: 'c',
@@ -710,7 +710,7 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
         numberLine: { boundary: -6, symbol: '<=', minVal: -10, maxVal: 0 },
       },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'b',
     hint: 'Subtract 8 from both sides: -5x ≥ -30. Divide by -5 and remember that dividing by a negative reverses ≥ to ≤.',
     misconceptionFeedback:
       '-30 divided by -5 is positive 6. Dividing by a negative flips ≥ to ≤, requiring a closed circle at 6 shaded left.',
@@ -728,14 +728,14 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
       'Rectangle A has a length of (3x + 4) and a width of 5.\nRectangle B has a length of (x + 10) and a width of 7.\n\nThe perimeters of Rectangle A and Rectangle B are equal. Which equation models this relationship?',
     options: [
       { id: 'a', text: '(3x + 4) + 5 = (x + 10) + 7' },
-      { id: 'b', text: '2(3x + 4) + 10 = 2(x + 10) + 14' },
-      { id: 'c', text: '5(3x + 4) = 7(x + 10)' },
-      { id: 'd', text: '2(3x + 4) = 2(x + 10)' },
+      { id: 'b', text: '5(3x + 4) = 7(x + 10)' },
+      { id: 'c', text: '2(3x + 4) = 2(x + 10)' },
+      { id: 'd', text: '2(3x + 4) + 10 = 2(x + 10) + 14' },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'd',
     hint: 'Perimeter of a rectangle is 2(length) + 2(width). For Rectangle A, 2(3x + 4) + 2(5) = 2(3x + 4) + 10.',
     misconceptionFeedback:
-      'Option A only adds one length and one width (semi-perimeter). Option C multiplies length by width, which models area instead of perimeter.',
+      'Option A only adds one length and one width (semi-perimeter). Option B multiplies length by width, which models area instead of perimeter.',
     correctExplanation:
       'Perimeter of Rectangle A: 2(3x + 4) + 2(5) = 2(3x + 4) + 10. Perimeter of Rectangle B: 2(x + 10) + 2(7) = 2(x + 10) + 14. Setting perimeters equal yields 2(3x + 4) + 10 = 2(x + 10) + 14.',
   },
@@ -790,25 +790,25 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     options: [
       {
         id: 'a',
-        text: 'Plan A charges a $40 signup fee plus $15 per session. Plan B charges a $10 signup fee plus $20 per session. For what number of sessions, x, is Plan A no more expensive than Plan B?',
-      },
-      {
-        id: 'b',
         text: 'Plan A charges a $40 signup fee plus $15 per session. Plan B charges a $10 signup fee plus $20 per session. For what number of sessions, x, is Plan A strictly more expensive than Plan B?',
       },
       {
-        id: 'c',
+        id: 'b',
         text: 'Student A saves $15 per week starting with $40. Student B spends $20 per week starting with $10.',
+      },
+      {
+        id: 'c',
+        text: 'Plan A charges a $40 signup fee plus $15 per session. Plan B charges a $10 signup fee plus $20 per session. For what number of sessions, x, is Plan A no more expensive than Plan B?',
       },
       {
         id: 'd',
         text: 'Plan A costs $15 per session for 40 sessions. Plan B costs $20 per session for 10 sessions.',
       },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'c',
     hint: 'The symbol ≤ represents "less than or equal to" or "no more expensive than." Plan A is on the left and Plan B is on the right.',
     misconceptionFeedback:
-      'Option B uses "strictly more expensive" (>). Option A correctly pairs "no more expensive than" with ≤.',
+      'Option A uses "strictly more expensive" (>). Option C correctly pairs "no more expensive than" with ≤.',
     correctExplanation:
       'Plan A total: 15x + 40. Plan B total: 20x + 10. For Plan A to be no more expensive than Plan B (less than or equal to Plan B): 15x + 40 ≤ 20x + 10.',
   },
@@ -846,12 +846,12 @@ export const STAAR_EQUATIONS_QUESTIONS: StaarEquationsQuestion[] = [
     prompt:
       'A school club orders customized t-shirts from one of two vendors:\n\n• Print Pro charges a $150 setup fee plus $12 per shirt.\n• Custom Ink charges a $60 setup fee plus $15 per shirt.\n\nFor how many t-shirts, t, will the total cost charged by both vendors be exactly the same?',
     options: [
-      { id: 'a', text: '30 shirts' },
-      { id: 'b', text: '25 shirts' },
-      { id: 'c', text: '70 shirts' },
-      { id: 'd', text: '15 shirts' },
+      { id: 'a', text: '25 shirts' },
+      { id: 'b', text: '70 shirts' },
+      { id: 'c', text: '15 shirts' },
+      { id: 'd', text: '30 shirts' },
     ],
-    correctAnswer: 'a',
+    correctAnswer: 'd',
     hint: 'Set up the equation 12t + 150 = 15t + 60, where t is the number of t-shirts.',
     misconceptionFeedback:
       'Subtract 12t from both sides: 150 = 3t + 60. Subtract 60 from 150: 90 = 3t. Divide 90 by 3: t = 30.',

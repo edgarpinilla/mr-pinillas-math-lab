@@ -114,8 +114,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['2', '1/2', '4', '8'],
-    correctIndex: 0,
+    options: ['1/2', '4', '8', '2'],
+    correctIndex: 3,
     explanation:
       'Slope is the vertical change divided by the horizontal change: m = (y₂ - y₁) / (x₂ - x₁) = (10 - 2) / (5 - 1) = 8 / 4 = 2.',
     hint: 'Calculate vertical rise (10 - 2 = 8) and horizontal run (5 - 1 = 4), then compute rise / run.',
@@ -140,12 +140,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      '-5 meters per second',
       '5 meters per second',
+      '-5 meters per second',
       '-15 meters per second',
       '-1/5 meter per second',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'Select any two points from the table, such as (4, 142) and (7, 127). The rate of change is (127 - 142) / (7 - 4) = -15 / 3 = -5 meters per second. The negative sign represents a decreasing altitude.',
     hint: 'Find the change in altitude (-15 meters) and divide by the change in seconds (3 seconds).',
@@ -201,8 +201,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['6 / 4 = v / 10', '4 / 6 = v / 10', '6 / 10 = v / 4', '6 / 4 = 10 / v'],
-    correctIndex: 0,
+    options: ['4 / 6 = v / 10', '6 / 10 = v / 4', '6 / 4 = v / 10', '6 / 4 = 10 / v'],
+    correctIndex: 2,
     explanation:
       'Because both right triangles share hypotenuses along the same straight line, they are similar by AA similarity. The ratio of the vertical leg (rise) to the horizontal leg (run) is constant and equals the slope: 6 / 4 = v / 10.',
     hint: 'Set up the slope ratio for each triangle: (vertical leg) / (horizontal leg).',
@@ -233,8 +233,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     subtopic: 'Unit Rate as Slope in a Proportional Relationship',
     question:
       'A printing company operates a commercial press that produces 150 concert posters every 4 minutes and 375 posters every 10 minutes. What is the slope of the graph that models the total number of posters printed, y, as a function of time in minutes, x?',
-    options: ['37.5', '0.027', '150', '225'],
-    correctIndex: 0,
+    options: ['0.027', '150', '225', '37.5'],
+    correctIndex: 3,
     explanation:
       'The relationship is proportional through the origin (0, 0). The slope is the unit rate: m = 150 posters / 4 minutes = 37.5 posters per minute (or 375 / 10 = 37.5).',
     hint: 'Slope is the unit rate: divide total posters (150) by time (4 minutes).',
@@ -272,12 +272,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      'The slope is 0 because the vertical change between any two points is 0, resulting in 0 / run = 0.',
       'The slope is undefined because the line does not slant up or down.',
+      'The slope is 0 because the vertical change between any two points is 0, resulting in 0 / run = 0.',
       'The slope is -4 because the line crosses the y-axis at -4.',
       'The slope is 5 because the horizontal distance between the points is 5 units.',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'For any two points on a horizontal line, y₂ - y₁ = -4 - (-4) = 0. The slope is 0 / 5 = 0. (A vertical line with run = 0 has an undefined slope).',
     hint: 'Horizontal lines have zero vertical rise. 0 divided by any non-zero run equals 0.',
@@ -322,8 +322,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     subtopic: 'Slope from Coordinates as a Simplified Fraction',
     question:
       'A straight line on a coordinate plane passes through the points (-2, -3) and (6, 1). What is the slope of the line expressed as a simplified fraction?',
-    options: ['1/2', '2', '-1/2', '4/8'],
-    correctIndex: 0,
+    options: ['2', '-1/2', '1/2', '4/8'],
+    correctIndex: 2,
     explanation:
       'm = (y₂ - y₁) / (x₂ - x₁) = (1 - (-3)) / (6 - (-2)) = (1 + 3) / (6 + 2) = 4 / 8 = 1/2.',
     hint: 'Subtract the y-coordinates on top: 1 - (-3) = 4. Subtract the x-coordinates on bottom: 6 - (-2) = 8. Then simplify 4/8.',
@@ -339,12 +339,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'Landscaper A charges for mowing according to the equation c = 28h, where c is the total charge in dollars for h hours. Landscaper B charges according to a table with points (3, 96) and (7, 224). Which statement correctly compares the hourly rates of change?',
     options: [
-      'Landscaper B charges $4 more per hour than Landscaper A because the slope for Landscaper B is $32/hr and Landscaper A is $28/hr.',
       'Landscaper A charges $4 more per hour than Landscaper B because 28 is greater than 24.',
+      'Landscaper B charges $4 more per hour than Landscaper A because the slope for Landscaper B is $32/hr and Landscaper A is $28/hr.',
       'Both landscapers charge the same rate per hour because both relationships are linear.',
       'Landscaper B charges $68 more per hour than Landscaper A because 96 - 28 = 68.',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'Landscaper A hourly rate (slope) is $28/hr. For Landscaper B, rate = (224 - 96) / (7 - 3) = 128 / 4 = $32/hr. Landscaper B charges $32 - $28 = $4 more per hour.',
     hint: 'Compute Landscaper B rate: (224 - 96) / (7 - 3) = 128 / 4 = 32. Compare 32 with Landscaper A rate of 28.',
@@ -392,8 +392,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['-2/3', '-3/2', '2/3', '-4/7'],
-    correctIndex: 0,
+    options: ['-3/2', '2/3', '-4/7', '-2/3'],
+    correctIndex: 3,
     explanation:
       'm = (y₂ - y₁) / (x₂ - x₁) = (4 - 8) / (7 - 1) = -4 / 6 = -2/3. The line slants downward from left to right, confirming a negative slope.',
     hint: 'Notice the vertical change is down 4 (-4) and horizontal change is right 6 (+6). Simplify -4/6.',
@@ -408,8 +408,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     subtopic: 'Identifying Slope from Real-World Verbal Description',
     question:
       'A weather balloon is released from an elevation of 1,200 feet and ascends at a constant rate of 45 feet per minute. What is the slope of the linear graph that models the balloon elevation over time?',
-    options: ['45', '1,200', '1/45', '-45'],
-    correctIndex: 0,
+    options: ['1,200', '1/45', '45', '-45'],
+    correctIndex: 2,
     explanation:
       'In a linear model, the slope represents the constant rate of change per unit of time. Because the balloon ascends 45 feet every minute, the slope m = 45. The initial elevation (1,200) is the y-intercept.',
     hint: 'The slope is the rate per minute, while 1,200 is the initial height (y-intercept).',
@@ -472,8 +472,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['Undefined', '0', '-4', '1/4'],
-    correctIndex: 0,
+    options: ['0', '-4', '1/4', 'Undefined'],
+    correctIndex: 3,
     explanation:
       'The slope of a line is calculated as m = (y₂ - y₁) / (x₂ - x₁). For the vertical line passing through (-4, -2) and (-4, 4), the slope is (4 - (-2)) / (-4 - (-4)) = 6 / 0. Because division by zero is mathematically undefined, any vertical line on a coordinate grid has an undefined slope.',
     hint: 'Notice the line is vertical. The horizontal change (run) between the points is -4 - (-4) = 0. Division by zero is undefined.',
@@ -488,8 +488,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     subtopic: 'Multi-Step Rate of Drainage to Empty',
     question:
       'A community swimming pool contains 9,600 gallons of water. After 3 hours of continuous pumping, 7,800 gallons remain. After 7 hours, 5,400 gallons remain. How many total hours from the start will it take for the pool to be completely empty?',
-    options: ['16 hours', '12 hours', '24 hours', '14 hours'],
-    correctIndex: 0,
+    options: ['12 hours', '16 hours', '24 hours', '14 hours'],
+    correctIndex: 1,
     explanation:
       'First determine the rate of drainage: m = (5,400 - 7,800) / (7 - 3) = -2,400 / 4 = -600 gallons per hour. At a rate of 600 gallons per hour, draining all 9,600 gallons requires 9,600 / 600 = 16 hours.',
     hint: 'Find the rate of change: (7,800 - 5,400) / (7 - 3) = 600 gal/hr. Divide starting volume (9,600) by 600.',
@@ -535,12 +535,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      '7 miles per week',
       '21 miles per week',
       '8.67 miles per week',
+      '7 miles per week',
       '1/7 mile per week',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'Rate of change = (47 - 26) / (6 - 3) = 21 / 3 = 7 miles per week. Verification: (68 - 47) / (9 - 6) = 21 / 3 = 7.',
     hint: 'Divide the change in miles (47 - 26 = 21) by the change in weeks (6 - 3 = 3).',
@@ -588,12 +588,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      '(15 - 3) / (8 - 2) = 2',
       '(8 - 2) / (15 - 3) = 1/2',
       '(15 - 8) / (3 - 2) = 7',
       '(15 + 3) / (8 + 2) = 1.8',
+      '(15 - 3) / (8 - 2) = 2',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'Slope is the vertical change (length of leg KL = 15 - 3 = 12) divided by horizontal change (length of leg JL = 8 - 2 = 6): m = (15 - 3) / (8 - 2) = 12 / 6 = 2.',
     hint: 'Vertical change is y₂ - y₁ on top; horizontal change is x₂ - x₁ on the bottom.',
@@ -609,12 +609,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'The linear equation c = 3.25w + 14 represents the total cost c in dollars of shipping a package that weighs w pounds. What does the value 3.25 represent in this situation?',
     options: [
-      'The additional shipping charge of $3.25 for each additional pound of weight',
       'The fixed packaging fee charged regardless of package weight',
+      'The additional shipping charge of $3.25 for each additional pound of weight',
       'The total cost to ship a package that weighs 1 pound',
       'The maximum allowable package weight in pounds',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'In c = 3.25w + 14, 3.25 is the coefficient of w (the slope/rate of change). It represents the cost per pound: $3.25 for every 1-pound increase in weight. The constant 14 is the initial base fee.',
     hint: '3.25 is multiplied by the number of pounds w, so it is the rate per pound.',
@@ -656,8 +656,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['y = 2x + 4', 'y = 4x + 2', 'y = 1/2 x + 4', 'y = 2x - 4'],
-    correctIndex: 0,
+    options: ['y = 4x + 2', 'y = 1/2 x + 4', 'y = 2x + 4', 'y = 2x - 4'],
+    correctIndex: 2,
     explanation:
       'The line crosses the y-axis at (0, 4), which gives the y-intercept b = 4. Using points (0, 4) and (3, 10), the slope is m = (10 - 4) / (3 - 0) = 6 / 3 = 2. In y = mx + b form, the equation is y = 2x + 4.',
     hint: 'Find where the line crosses the vertical y-axis (b = 4), then count rise over run to find m = 2.',
@@ -721,8 +721,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['y = 15x + 25', 'y = 25x + 15', 'y = 15x - 25', 'y = 40x'],
-    correctIndex: 0,
+    options: ['y = 25x + 15', 'y = 15x - 25', 'y = 40x', 'y = 15x + 25'],
+    correctIndex: 3,
     explanation:
       'The line crosses the vertical y-axis at (0, 25), indicating an initial fee (y-intercept) of b = 25. Using points (0, 25) and (2, 55), the rate of change is m = (55 - 25) / (2 - 0) = 30 / 2 = 15 dollars per hour. In slope-intercept form (y = mx + b), the equation is y = 15x + 25.',
     hint: 'Find the y-intercept where the line begins at x = 0 (b = 25). Find the hourly rate of change: (55 - 25) / 2 = 15.',
@@ -738,12 +738,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'In the linear equation y = -5/2 x - 6, what are the slope and the y-intercept of the line?',
     options: [
-      'Slope = -5/2; y-intercept = (0, -6)',
       'Slope = -6; y-intercept = (0, -5/2)',
+      'Slope = -5/2; y-intercept = (0, -6)',
       'Slope = 5/2; y-intercept = (0, 6)',
       'Slope = -5/2; y-intercept = (-6, 0)',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'In slope-intercept form y = mx + b, the slope m is the coefficient of x (m = -5/2), and the y-intercept point is (0, b) = (0, -6).',
     hint: 'm is the number in front of x, and (0, b) is the constant term at the end.',
@@ -782,12 +782,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      'y = -3/4 x + 9',
       'y = -4/3 x + 9',
       'y = 3/4 x + 9',
+      'y = -3/4 x + 9',
       'y = -3/4 x + 12',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'The line crosses the y-axis at (0, 9), so b = 9. Calculating slope between (0, 9) and (4, 6): m = (6 - 9) / (4 - 0) = -3 / 4. In slope-intercept form, the equation is y = -3/4 x + 9.',
     hint: 'b = 9 from the y-intercept. For slope: vertical change is -3 and horizontal change is 4.',
@@ -828,12 +828,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'Marcus receives a $120 movie gift card. Each time he purchases a movie ticket, $12.50 is deducted from the card balance. Which equation represents the remaining balance on the card, b, after Marcus purchases t movie tickets?',
     options: [
-      'b = -12.50t + 120',
       'b = 12.50t + 120',
+      'b = -12.50t + 120',
       'b = 120t - 12.50',
       'b = -12.50t - 120',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'The starting gift card amount is $120 (the positive y-intercept). Each ticket purchase reduces the balance by $12.50 (a negative rate of change m = -12.50). The equation is b = -12.50t + 120.',
     hint: 'Balance starts at +120 and decreases by 12.50 for every ticket t.',
@@ -848,8 +848,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     subtopic: 'Writing Equation from Two Coordinate Pairs',
     question:
       'A line passes through the coordinate points (-2, -9) and (4, 9). Which equation represents this line in y = mx + b form?',
-    options: ['y = 3x - 3', 'y = 3x + 3', 'y = 1/3 x - 3', 'y = 3x - 9'],
-    correctIndex: 0,
+    options: ['y = 3x + 3', 'y = 1/3 x - 3', 'y = 3x - 9', 'y = 3x - 3'],
+    correctIndex: 3,
     explanation:
       'First calculate slope: m = (9 - (-9)) / (4 - (-2)) = 18 / 6 = 3. Next substitute (4, 9) into y = mx + b: 9 = 3(4) + b → 9 = 12 + b → b = -3. The equation is y = 3x - 3.',
     hint: 'Find slope m = 18 / 6 = 3. Substitute (4, 9) into y = 3x + b to solve for b = -3.',
@@ -912,12 +912,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      'Plan B initial sign-up fee is $10 greater than Plan A.',
       'Plan A initial sign-up fee is $25 less than Plan B.',
       'Both plans have the exact same initial sign-up fee.',
+      'Plan B initial sign-up fee is $10 greater than Plan A.',
       'Plan B initial sign-up fee is $5 greater than Plan A.',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'For Plan A: slope m = (80 - 50) / 2 = 15. Sign-up fee b = 50 - 15(2) = $20. For Plan B: slope m = (90 - 60) / 2 = 15. Sign-up fee b = 60 - 15(2) = $30. Plan B fee ($30) is $10 greater than Plan A fee ($20).',
     hint: 'Find the monthly rate for each plan (15). Work back to Month 0: Plan A is 50 - 30 = 20; Plan B is 60 - 30 = 30.',
@@ -933,12 +933,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'A laboratory burns a test candle and tracks its remaining height with the equation h = -0.75t + 9, where h is the candle height in inches and t is hours burned. What does the number 9 represent in this equation?',
     options: [
-      'The initial height of the candle in inches before it was burned',
       'The number of inches the candle burns each hour',
+      'The initial height of the candle in inches before it was burned',
       'The total number of hours until the candle burns down completely',
       'The diameter of the candle base in inches',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'When t = 0 (before burning begins), h = -0.75(0) + 9 = 9 inches. In y = mx + b, the constant b = 9 represents the starting height (y-intercept).',
     hint: 'The y-intercept occurs when t = 0 hours, representing the starting condition.',
@@ -987,12 +987,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
       ],
     },
     options: [
-      'y = 3/4 x + 2',
       'y = 4/3 x + 2',
       'y = 2x + 3/4',
       'y = 3/4 x - 2',
+      'y = 3/4 x + 2',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'The line crosses the vertical y-axis at (0, 2), which gives the y-intercept b = 2. Using points (0, 2) and (4, 5), the vertical rise is 5 - 2 = 3 and the horizontal run is 4 - 0 = 4, so the slope is m = 3/4. In slope-intercept form (y = mx + b), the equation is y = 3/4 x + 2.',
     hint: 'Identify the y-intercept (b = 2). Then calculate the rise over run between (0, 2) and (4, 5) to find slope m = 3/4.',
@@ -1061,8 +1061,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         },
       ],
     },
-    options: ['y = 2x - 4', 'y = 2x + 4', 'y = -2x - 4', 'y = 1/2 x - 4'],
-    correctIndex: 0,
+    options: ['y = 2x + 4', 'y = -2x - 4', 'y = 2x - 4', 'y = 1/2 x - 4'],
+    correctIndex: 2,
     explanation:
       'The line crosses the vertical y-axis at (0, -4), giving b = -4. Using points (0, -4) and (2, 0), the slope is m = (0 - (-4)) / (2 - 0) = 4 / 2 = 2. In slope-intercept form, the equation is y = 2x - 4.',
     hint: 'b = -4 from the y-intercept. For slope: (0 - (-4)) / 2 = 2.',
@@ -1078,12 +1078,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'A line has a slope of -3/5 and passes through the coordinate point (10, -2). What is the equation of the line in slope-intercept form?',
     options: [
-      'y = -3/5 x + 4',
       'y = -3/5 x - 8',
       'y = 3/5 x + 4',
       'y = -3/5 x - 2',
+      'y = -3/5 x + 4',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'Substitute m = -3/5, x = 10, and y = -2 into y = mx + b: -2 = (-3/5)(10) + b → -2 = -6 + b → b = 4. The equation is y = -3/5 x + 4.',
     hint: 'Multiply (-3/5) by 10 to get -6. Add 6 to -2 to find b = 4.',
@@ -1099,12 +1099,12 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
     question:
       'An aircraft cruises at an altitude of 32,000 feet and descends toward an airport at a constant rate of 1,600 feet per minute. Which equation models the altitude A in feet after m minutes, and how many minutes will it take for the aircraft to reach ground level (A = 0)?',
     options: [
-      'A = -1,600m + 32,000; 20 minutes to land',
       'A = 1,600m + 32,000; 20 minutes to land',
+      'A = -1,600m + 32,000; 20 minutes to land',
       'A = -1,600m + 32,000; 50 minutes to land',
       'A = 32,000m - 1,600; 0.05 minute to land',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'Starting altitude is 32,000 (y-intercept) and altitude decreases at 1,600 ft/min (slope m = -1,600). Equation: A = -1,600m + 32,000. To find landing time, set A = 0: 0 = -1,600m + 32,000 → 1,600m = 32,000 → m = 20 minutes.',
     hint: 'Descent means negative slope (-1,600). Divide 32,000 by 1,600 to find the landing time.',
@@ -1128,8 +1128,8 @@ export const STAAR_SLOPE_QUESTIONS: StaarPracticeQuestion[] = [
         [6, 5],
       ],
     },
-    options: ['y = 1/2 x + 2', 'y = 2x + 2', 'y = 1/2 x - 1', 'y = x + 2'],
-    correctIndex: 0,
+    options: ['y = 2x + 2', 'y = 1/2 x - 1', 'y = 1/2 x + 2', 'y = x + 2'],
+    correctIndex: 2,
     explanation:
       'Calculate slope: m = (3 - 1) / (2 - (-2)) = 2 / 4 = 1/2. Substitute (2, 3) into y = 1/2 x + b: 3 = (1/2)(2) + b → 3 = 1 + b → b = 2. The equation is y = 1/2 x + 2.',
     hint: 'Slope m = 2 / 4 = 1/2. Test point (2, 3): 3 = 1/2(2) + 2 = 1 + 2 = 3.',

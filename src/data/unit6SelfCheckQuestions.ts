@@ -89,11 +89,11 @@ export const UNIT_6_SELF_CHECK_QUESTIONS: Unit6SelfCheckQuestion[] = [
       'Fitness Zone charges a $30 signup fee plus $15 per month. Power Gym charges no signup fee but costs $20 per month. Which equation can be used to determine m, the number of months for which the total cost at both gyms is the same?',
     options: [
       { id: 'a', text: '30m + 15 = 20m' },
-      { id: 'b', text: '15m + 30 = 20m', isCorrect: true },
-      { id: 'c', text: '15m - 30 = 20m' },
-      { id: 'd', text: '15 + 30 + m = 20m' },
+      { id: 'b', text: '15m - 30 = 20m' },
+      { id: 'c', text: '15 + 30 + m = 20m' },
+      { id: 'd', text: '15m + 30 = 20m', isCorrect: true },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'd',
     hint: 'Identify which number is the recurring monthly rate (multiplied by m) and which is the one-time flat fee (added once).',
     misconceptionFeedback:
       'The monthly rate of $15 applies each month, so it multiplies m (15m). The $30 signup fee is paid only once (+ 30).',
@@ -174,12 +174,12 @@ export const UNIT_6_SELF_CHECK_QUESTIONS: Unit6SelfCheckQuestion[] = [
     prompt: 'Solve the equation with fractional coefficients for x:',
     equationDisplay: '1/2 x + 4 = 3/4 x + 1',
     options: [
-      { id: 'a', text: 'x = 6' },
-      { id: 'b', text: 'x = 12', isCorrect: true },
+      { id: 'a', text: 'x = 12', isCorrect: true },
+      { id: 'b', text: 'x = 6' },
       { id: 'c', text: 'x = -12' },
       { id: 'd', text: 'x = 20' },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'a',
     hint: 'Multiply every single term on both sides by the least common denominator 4 to eliminate all fractions in one step.',
     misconceptionFeedback:
       'When multiplying by the LCM of 4, make sure to multiply every term, including the constants: 4(1/2 x) + 4(4) = 4(3/4 x) + 4(1), which gives 2x + 16 = 3x + 4.',
@@ -213,11 +213,11 @@ export const UNIT_6_SELF_CHECK_QUESTIONS: Unit6SelfCheckQuestion[] = [
       'Elena has $120 saved and deposits $15 per week. Marcus has $40 saved and deposits $25 per week. Which inequality can be used to find w, the number of weeks it will take for Marcus’s savings to exceed Elena’s savings?',
     options: [
       { id: 'a', text: '25w + 40 < 15w + 120' },
-      { id: 'b', text: '25w + 40 > 15w + 120', isCorrect: true },
-      { id: 'c', text: '25w + 40 ≥ 15w + 120' },
+      { id: 'b', text: '25w + 40 ≥ 15w + 120' },
+      { id: 'c', text: '25w + 40 > 15w + 120', isCorrect: true },
       { id: 'd', text: '40w + 25 > 120w + 15' },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'c',
     hint: 'The word "exceed" means strictly greater than (>), not less than or equal to.',
     misconceptionFeedback:
       'Marcus starts with $40 and adds $25 each week (25w + 40). Elena starts with $120 and adds $15 each week (15w + 120). To exceed means strictly greater than (>).',
@@ -319,11 +319,11 @@ export const UNIT_6_SELF_CHECK_QUESTIONS: Unit6SelfCheckQuestion[] = [
     equationDisplay: '-5x + 12 > -2x - 9',
     options: [
       { id: 'a', text: 'x > 7' },
-      { id: 'b', text: 'x < 7', isCorrect: true },
-      { id: 'c', text: 'x < -7' },
-      { id: 'd', text: 'x > -7' },
+      { id: 'b', text: 'x < -7' },
+      { id: 'c', text: 'x > -7' },
+      { id: 'd', text: 'x < 7', isCorrect: true },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'd',
     hint: 'Add 2x to both sides to get -3x + 12 > -9. Subtract 12 from both sides, then divide by -3 and flip the inequality symbol.',
     misconceptionFeedback:
       'Adding 2x gives -3x + 12 > -9. Subtracting 12 gives -3x > -21. Dividing by -3 reverses > to < and makes -21 / -3 = +7, so x < 7.',
@@ -403,12 +403,12 @@ export const UNIT_6_SELF_CHECK_QUESTIONS: Unit6SelfCheckQuestion[] = [
     prompt:
       'A plumber charges a $55 diagnostic fee plus $40 per hour of labor. An electrician charges a $30 service fee plus $45 per hour of labor. For how many hours of work, h, do both professionals charge the exact same total amount?',
     options: [
-      { id: 'a', text: '55h + 40 = 30h + 45; equal at 5 hours' },
-      { id: 'b', text: '40h + 55 = 45h + 30; equal at 5 hours', isCorrect: true },
+      { id: 'a', text: '40h + 55 = 45h + 30; equal at 5 hours', isCorrect: true },
+      { id: 'b', text: '55h + 40 = 30h + 45; equal at 5 hours' },
       { id: 'c', text: '40h + 55 = 45h + 30; equal at 2.5 hours' },
       { id: 'd', text: '40h - 55 = 45h - 30; equal at 5 hours' },
     ],
-    correctAnswer: 'b',
+    correctAnswer: 'a',
     hint: 'The plumber’s cost is 40h + 55 and the electrician’s cost is 45h + 30. Set them equal and solve for h.',
     misconceptionFeedback:
       'Set 40h + 55 = 45h + 30. Subtract 40h from both sides to get 55 = 5h + 30. Subtract 30 to get 25 = 5h, so h = 5 hours.',
@@ -431,8 +431,19 @@ export function getUnit6RoundQuestions(round: 1 | 2 | 3): Unit6SelfCheckQuestion
  * Adapter that converts Unit6SelfCheckQuestions to PracticeQuestion format
  * for TeacherPrintCenter and legacy component consumers.
  */
+const UNIT_6_ADAPTER_TARGET_INDEX: Record<string, number> = {
+  'u6-sc-q2': 2, // C
+  'u6-sc-q4': 0, // A
+  'u6-sc-q5': 2, // C
+  'u6-sc-q8': 3, // D
+  'u6-sc-q10': 0, // A
+  'u6-sc-q12': 3, // D
+  'u6-sc-q13': 1, // B
+  'u6-sc-q16': 1, // B
+};
+
 export const UNIT_6_PRACTICE_QUESTIONS: PracticeQuestion[] = UNIT_6_SELF_CHECK_QUESTIONS.map(
-  (q, idx) => {
+  (q) => {
     let options: string[] = [];
     let correctIndex = 0;
 
@@ -440,15 +451,35 @@ export const UNIT_6_PRACTICE_QUESTIONS: PracticeQuestion[] = UNIT_6_SELF_CHECK_Q
       options = q.options.map((opt) => opt.text);
       const foundIdx = q.options.findIndex((opt) => opt.isCorrect);
       correctIndex = foundIdx >= 0 ? foundIdx : 0;
+    } else if (q.type === 'inequality-entry' && q.inequalityConfig) {
+      const { variable, symbol, boundary } = q.inequalityConfig;
+      const sym = symbol === '<=' ? '≤' : symbol === '>=' ? '≥' : symbol;
+      const oppSym =
+        symbol === '<' ? '>' : symbol === '>' ? '<' : symbol === '<=' ? '≥' : '≤';
+      const baseOptions = [
+        `${variable} ${sym} ${boundary}`,
+        `${variable} ${oppSym} ${boundary}`,
+        `${variable} ${sym} ${-boundary}`,
+        `${variable} ${oppSym} ${-boundary}`,
+      ];
+      const targetIdx = UNIT_6_ADAPTER_TARGET_INDEX[q.id] ?? 0;
+      const [correctItem] = baseOptions.splice(0, 1);
+      baseOptions.splice(targetIdx, 0, correctItem);
+      options = baseOptions;
+      correctIndex = targetIdx;
     } else if (typeof q.correctAnswer === 'number' || typeof q.correctAnswer === 'string') {
       const correctStr = String(q.correctAnswer);
-      options = [
+      const baseOptions = [
         `x = ${correctStr}`,
         `x = ${Number(correctStr) + 2}`,
         `x = -${correctStr}`,
         `x = ${Number(correctStr) - 1}`,
       ];
-      correctIndex = 0;
+      const targetIdx = UNIT_6_ADAPTER_TARGET_INDEX[q.id] ?? 0;
+      const [correctItem] = baseOptions.splice(0, 1);
+      baseOptions.splice(targetIdx, 0, correctItem);
+      options = baseOptions;
+      correctIndex = targetIdx;
     }
 
     return {

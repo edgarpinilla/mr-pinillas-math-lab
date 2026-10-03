@@ -90,8 +90,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 2, y: 3, label: '(2, 3)' },
     },
-    options: ['(2, 3)', '(3, 2)', '(0, 1)', '(0, 5)'],
-    correctIndex: 0,
+    options: ['(3, 2)', '(2, 3)', '(0, 1)', '(0, 5)'],
+    correctIndex: 1,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. In this graph, the lines cross at (2, 3). Option (3, 2) reverses the x and y coordinates, while (0, 1) and (0, 5) are y-intercepts of the individual lines.',
     hint: 'Find the point where both lines cross. Trace straight down to the x-axis to read x = 2, and trace across to the y-axis to read y = 3.',
@@ -134,8 +134,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 3, y: 5, label: '(3, 5)' },
     },
-    options: ['(3, 5)', '(5, 3)', '(0, 8)', '(4, 7)'],
-    correctIndex: 0,
+    options: ['(5, 3)', '(0, 8)', '(3, 5)', '(4, 7)'],
+    correctIndex: 2,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. The two lines cross exactly at (3, 5). Reversing the coordinates gives (5, 3), and (0, 8) is only the y-intercept of the rose line.',
     hint: 'Locate the intersection point of the teal and rose lines. Read the horizontal coordinate x first (3), then the vertical coordinate y (5).',
@@ -222,8 +222,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 2, y: 4, label: '(2, 4)' },
     },
-    options: ['(2, 4)', '(4, 2)', '(0, 6)', '(0, -2)'],
-    correctIndex: 0,
+    options: ['(4, 2)', '(0, 6)', '(0, -2)', '(2, 4)'],
+    correctIndex: 3,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. The lines intersect at (2, 4). Be careful not to reverse the coordinates as (4, 2). The points (0, 6) and (0, -2) are y-intercepts.',
     hint: 'Follow the intersection point straight down to the x-axis to find x = 2, and straight across to the y-axis to find y = 4.',
@@ -266,8 +266,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 3, y: 0, label: '(3, 0)' },
     },
-    options: ['(3, 0)', '(0, 3)', '(0, -6)', '(1, 2)'],
-    correctIndex: 0,
+    options: ['(0, 3)', '(0, -6)', '(3, 0)', '(1, 2)'],
+    correctIndex: 2,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. Both lines cross each other directly on the x-axis at (3, 0). The point (0, 3) is a y-intercept, not the intersection point.',
     hint: 'Notice where the two lines cross: the point lies directly on the horizontal x-axis where y = 0.',
@@ -310,8 +310,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 2, y: 4, label: '(2, 4)' },
     },
-    options: ['(2, 4)', '(4, 2)', '(0, 3)', '(0, 6)'],
-    correctIndex: 0,
+    options: ['(4, 2)', '(2, 4)', '(0, 3)', '(0, 6)'],
+    correctIndex: 1,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. The teal line and rose line meet at (2, 4). Testing algebraically: 0.5(2) + 3 = 4 and -(2) + 6 = 4.',
     hint: 'Look at the point where the two lines intersect. Trace down to the x-axis to find x = 2 and across to the y-axis to find y = 4.',
@@ -354,8 +354,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 3, y: 1, label: '(3, 1)' },
     },
-    options: ['(3, 1)', '(1, 3)', '(0, 4)', '(0, -5)'],
-    correctIndex: 0,
+    options: ['(1, 3)', '(0, 4)', '(0, -5)', '(3, 1)'],
+    correctIndex: 3,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. The lines intersect at (3, 1). The points (0, 4) and (0, -5) are y-intercepts of the individual lines.',
     hint: 'Find the intersection point of the blue and purple lines. Check the coordinates: x = 3 and y = 1.',
@@ -442,8 +442,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: -2, y: 0, label: '(-2, 0)' },
     },
-    options: ['(-2, 0)', '(0, -2)', '(0, 4)', '(-1, 2)'],
-    correctIndex: 0,
+    options: ['(0, -2)', '(0, 4)', '(-2, 0)', '(-1, 2)'],
+    correctIndex: 2,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. The lines intersect on the horizontal axis at (-2, 0). Distractor (0, -2) is on the vertical y-axis.',
     hint: 'The intersection is on the x-axis to the left of the origin at x = -2. The y-value on the x-axis is 0.',
@@ -486,8 +486,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 2, y: 3, label: '(2, 3)' },
     },
-    options: ['(2, 3)', '(3, 2)', '(0, 3)', '(0, -1)'],
-    correctIndex: 0,
+    options: ['(3, 2)', '(0, 3)', '(0, -1)', '(2, 3)'],
+    correctIndex: 3,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. Since Line 1 has the constant value y = 3, the intersection must have y = 3. Substituting into Line 2: 3 = 2x - 1 gives x = 2, so the intersection is (2, 3).',
     hint: 'Any point on the horizontal line has y = 3. Find the x-coordinate where the slanted line crosses this height: x = 2.',
@@ -530,8 +530,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
       intersectionPoint: { x: 2, y: -1, label: '(2, -1)' },
     },
-    options: ['(2, -1)', '(-1, 2)', '(0, 1)', '(0, -5)'],
-    correctIndex: 0,
+    options: ['(-1, 2)', '(2, -1)', '(0, 1)', '(0, -5)'],
+    correctIndex: 1,
     explanation:
       'The solution to a system of linear equations on a coordinate plane is the ordered pair where both lines intersect. In Quadrant IV (lower right), x is positive and y is negative. The lines cross at (2, -1).',
     hint: 'Look in Quadrant IV (below the x-axis, to the right of the y-axis). The intersection point has x = 2 and y = -1.',
@@ -595,8 +595,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Which ordered pair is a solution to the system of linear equations shown below?',
     context: 'Equation 1: y = 2x + 3  |  Equation 2: x + y = 9',
-    options: ['(2, 7)', '(1, 5)', '(4, 5)', '(7, 2)'],
-    correctIndex: 0,
+    options: ['(1, 5)', '(4, 5)', '(2, 7)', '(7, 2)'],
+    correctIndex: 2,
     explanation:
       'Check (2, 7) in both equations: In Equation 1: 2(2) + 3 = 4 + 3 = 7 ✓ (y = 7). In Equation 2: 2 + 7 = 9 ✓. Because (2, 7) satisfies both equations, it is the solution to the system. Notice that (1, 5) only satisfies Equation 1, and (4, 5) only satisfies Equation 2.',
     hint: 'Substitute x and y into BOTH equations. The solution must make both statements true.',
@@ -611,8 +611,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Which ordered pair satisfies both equations in the system?',
     context: 'Equation 1: y = 4x - 5  |  Equation 2: 2x + y = 7',
-    options: ['(2, 3)', '(3, 2)', '(1, -1)', '(0, 7)'],
-    correctIndex: 0,
+    options: ['(3, 2)', '(2, 3)', '(1, -1)', '(0, 7)'],
+    correctIndex: 1,
     explanation:
       'Substitute (2, 3): In Equation 1: 4(2) - 5 = 8 - 5 = 3 ✓ (y = 3). In Equation 2: 2(2) + 3 = 4 + 3 = 7 ✓. Since (2, 3) satisfies both equations, it is the solution. Distractor (3, 2) reverses the coordinates.',
     hint: 'Test x = 2 and y = 3 in both equations: 4(2) - 5 = 3 and 2(2) + 3 = 7. Does it satisfy both?',
@@ -628,12 +628,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       'A student tests the point (2, 4) in the system below. Which statement correctly evaluates whether (2, 4) is the solution?',
     context: 'Equation 1: y = -3x + 10  |  Equation 2: y = x + 2',
     options: [
-      '(2, 4) is the solution because it makes both equations true statements simultaneously.',
       '(2, 4) is not the solution because it only satisfies y = x + 2.',
       '(2, 4) is not the solution because it only satisfies y = -3x + 10.',
       '(2, 4) is not the solution because a solution cannot have equal even numbers.',
+      '(2, 4) is the solution because it makes both equations true statements simultaneously.',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'Substitute x = 2 and y = 4: In Equation 1: -3(2) + 10 = -6 + 10 = 4 ✓. In Equation 2: 2 + 2 = 4 ✓. Because (2, 4) makes both equations true, it is the true solution to the system.',
     hint: 'Calculate -3(2) + 10 and 2 + 2. Do both equal 4? If so, (2, 4) satisfies both equations.',
@@ -664,8 +664,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Which ordered pair is the solution to the system of equations?',
     context: 'Equation 1: x + 2y = 14  |  Equation 2: y = -2x + 10',
-    options: ['(2, 6)', '(6, 2)', '(4, 5)', '(1, 8)'],
-    correctIndex: 0,
+    options: ['(6, 2)', '(2, 6)', '(4, 5)', '(1, 8)'],
+    correctIndex: 1,
     explanation:
       'Test (2, 6): In Equation 1: 2 + 2(6) = 2 + 12 = 14 ✓. In Equation 2: -2(2) + 10 = -4 + 10 = 6 ✓. Point (4, 5) satisfies x + 2y = 14 but fails Equation 2 (-2(4) + 10 = 2 ≠ 5). Only (2, 6) satisfies both.',
     hint: 'Be careful with points that only work in one equation. Test (2, 6) in both: 2 + 2(6) = 14 and 6 = -2(2) + 10.',
@@ -680,8 +680,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Which ordered pair satisfies both equations in the system?',
     context: 'Equation 1: y = 5x - 4  |  Equation 2: 2x + y = 17',
-    options: ['(3, 11)', '(11, 3)', '(2, 6)', '(1, 15)'],
-    correctIndex: 0,
+    options: ['(11, 3)', '(2, 6)', '(1, 15)', '(3, 11)'],
+    correctIndex: 3,
     explanation:
       'Test (3, 11): In Equation 1: 5(3) - 4 = 15 - 4 = 11 ✓. In Equation 2: 2(3) + 11 = 6 + 11 = 17 ✓. Both are true, so (3, 11) is the solution.',
     hint: 'Test (3, 11): 5(3) - 4 = 11 and 2(3) + 11 = 17. Both equations must balance.',
@@ -697,12 +697,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       'Elena tests the point (3, 2) in the system below. Which statement correctly describes her findings?',
     context: 'Equation 1: y = -x + 5  |  Equation 2: 3x + y = 11',
     options: [
-      '(3, 2) is the solution because substituting x = 3 and y = 2 yields true equations for both lines: 2 = 2 and 11 = 11.',
       '(3, 2) is not the solution because 3(3) + 2 = 11 does not equal 5.',
       '(3, 2) is not the solution because it only satisfies Equation 1.',
+      '(3, 2) is the solution because substituting x = 3 and y = 2 yields true equations for both lines: 2 = 2 and 11 = 11.',
       '(3, 2) is not the solution because the coordinates must be equal for a linear system.',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'For Equation 1: 2 = -(3) + 5 = 2 ✓. For Equation 2: 3(3) + 2 = 9 + 2 = 11 ✓. Because substituting x = 3 and y = 2 makes both equations true statements simultaneously, (3, 2) is the solution.',
     hint: 'Substitute 3 for x and 2 for y in both equations. Does 2 = -3 + 5? Does 3(3) + 2 = 11? Both statements are true.',
@@ -738,8 +738,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'At what coordinate point do the graphs of the two linear equations intersect?',
     context: 'Equation 1: y = 2x + 1  |  Equation 2: y = -3x + 16',
-    options: ['(3, 7)', '(7, 3)', '(1, 3)', '(5, 11)'],
-    correctIndex: 0,
+    options: ['(7, 3)', '(1, 3)', '(5, 11)', '(3, 7)'],
+    correctIndex: 3,
     explanation:
       'Set the two equations equal to find the intersection: 2x + 1 = -3x + 16. Add 3x to both sides: 5x + 1 = 16. Subtract 1: 5x = 15, so x = 3. Now find y: y = 2(3) + 1 = 7. The graphs intersect at (3, 7).',
     hint: 'Since both equations equal y, set them equal to each other: 2x + 1 = -3x + 16. Solve for x, then substitute back to find y.',
@@ -754,8 +754,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Which ordered pair represents the point of intersection for the graphs of the two linear equations?',
     context: 'Equation 1: y = -x + 8  |  Equation 2: y = 3x - 4',
-    options: ['(3, 5)', '(5, 3)', '(0, 8)', '(2, 6)'],
-    correctIndex: 0,
+    options: ['(5, 3)', '(3, 5)', '(0, 8)', '(2, 6)'],
+    correctIndex: 1,
     explanation:
       'Set the equations equal: -x + 8 = 3x - 4. Add x to both sides: 8 = 4x - 4. Add 4: 12 = 4x, so x = 3. Find y: y = -(3) + 8 = 5. Check in Equation 2: 3(3) - 4 = 5 ✓. The lines intersect at (3, 5).',
     hint: 'Set -x + 8 = 3x - 4. Add x to both sides and add 4 to both sides to solve for x.',
@@ -786,8 +786,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'At what point on the coordinate plane will the graphs of these two equations intersect?',
     context: 'Equation 1: y = -2x + 9  |  Equation 2: y = 0.5x - 1',
-    options: ['(4, 1)', '(1, 4)', '(0, 9)', '(2, 5)'],
-    correctIndex: 0,
+    options: ['(1, 4)', '(0, 9)', '(4, 1)', '(2, 5)'],
+    correctIndex: 2,
     explanation:
       'Set the equations equal: -2x + 9 = 0.5x - 1. Add 2x to both sides: 9 = 2.5x - 1. Add 1: 10 = 2.5x, so x = 4. Substitute x = 4 to find y: y = -2(4) + 9 = -8 + 9 = 1. The lines intersect at (4, 1).',
     hint: 'Set -2x + 9 = 0.5x - 1. Add 2x to both sides to get 9 = 2.5x - 1, then add 1 to get 10 = 2.5x.',
@@ -803,12 +803,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       'In which quadrant of the coordinate plane do the graphs of the two linear equations intersect, and at what point?',
     context: 'Equation 1: y = x - 5  |  Equation 2: y = -2x + 4',
     options: [
-      'Quadrant IV, at (3, -2)',
       'Quadrant II, at (-2, 3)',
+      'Quadrant IV, at (3, -2)',
       'Quadrant I, at (3, 2)',
       'Quadrant III, at (-3, -2)',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'Find the intersection: x - 5 = -2x + 4. Add 2x to both sides: 3x - 5 = 4. Add 5: 3x = 9, so x = 3. Substitute x = 3 to find y: y = 3 - 5 = -2. The point is (3, -2). Because x is positive (3) and y is negative (-2), the point is located in Quadrant IV.',
     hint: 'Solve x - 5 = -2x + 4 to find x = 3 and y = -2. Points with (+x, -y) are in Quadrant IV.',
@@ -823,8 +823,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'What is the y-coordinate of the point of intersection for the graphs of the two linear equations below?',
     context: 'Equation 1: y = 3x - 8  |  Equation 2: y = -x + 4',
-    options: ['1', '3', '-8', '4'],
-    correctIndex: 0,
+    options: ['3', '-8', '4', '1'],
+    correctIndex: 3,
     explanation:
       'Set the equations equal: 3x - 8 = -x + 4. Add x to both sides: 4x - 8 = 4. Add 8: 4x = 12, so x = 3. The question asks specifically for the y-coordinate: y = -(3) + 4 = 1. Distractor 3 is the x-coordinate, and -8 and 4 are y-intercepts.',
     hint: 'Solve 3x - 8 = -x + 4 for x first (x = 3). Then substitute x = 3 into y = -x + 4 to find the y-coordinate.',
@@ -844,12 +844,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Two streaming services offer monthly movie plans. StreamPass charges a $12 device setup fee plus $6 per month (y = 6x + 12). CineBox charges $0 setup fee plus $9 per month (y = 9x). What is the point of intersection for the graphs of these two plans, and what does it represent?',
     options: [
-      '(4, 36); after 4 months, both plans cost the same total amount of $36.',
       '(36, 4); after 36 months, both plans cost the same total amount of $4.',
       '(4, 24); after 4 months, CineBox costs $24 less than StreamPass.',
+      '(4, 36); after 4 months, both plans cost the same total amount of $36.',
       '(0, 12); both plans have an initial sign-up fee of $12.',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'Set the two cost equations equal: 9x = 6x + 12. Subtract 6x from both sides: 3x = 12, so x = 4 months. Calculate the total cost: y = 9(4) = $36. The point of intersection is (4, 36), which means that at 4 months, both plans cost the exact same amount ($36).',
     hint: 'Set 9x = 6x + 12. Solve for months (x), then find the total cost (y). Remember that x represents months and y represents total dollars.',
@@ -884,12 +884,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Two bicycle rental shops charge different hourly rates for renting an electric bike for x hours. PedalFast charges y = 8x + 10 (a $10 equipment fee plus $8 per hour). CityCruiser charges y = 10x + 4 (a $4 equipment fee plus $10 per hour). After how many hours of rental will the total cost for both shops be equal, and what will be the total cost?',
     options: [
-      '3 hours, with a total cost of $34',
       '4 hours, with a total cost of $42',
       '2 hours, with a total cost of $26',
       '3 hours, with a total cost of $24',
+      '3 hours, with a total cost of $34',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'Set the total cost equations equal: 10x + 4 = 8x + 10. Subtract 8x: 2x + 4 = 10. Subtract 4: 2x = 6, so x = 3 hours. Total cost: y = 8(3) + 10 = $34 (or y = 10(3) + 4 = $34). At 3 hours, both rentals cost $34.',
     hint: 'Set 10x + 4 = 8x + 10 to find hours (x). Then substitute x = 3 back into either equation to find total cost.',
@@ -905,12 +905,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       'A school carnival sells wristbands. Child wristbands cost $4 each (c) and adult wristbands cost $7 each (a). The ticket booth sold 80 wristbands in total and collected $410. Which ordered pair (c, a) represents the solution to this system of equations, and what does it tell the school?',
     context: 'Total wristbands: c + a = 80  |  Total revenue: 4c + 7a = 410',
     options: [
-      '(50, 30); the booth sold 50 child wristbands and 30 adult wristbands.',
       '(30, 50); the booth sold 30 child wristbands and 50 adult wristbands.',
+      '(50, 30); the booth sold 50 child wristbands and 30 adult wristbands.',
       '(40, 40); the booth sold 40 child wristbands and 40 adult wristbands.',
       '(50, 30); the booth sold 50 adult wristbands and 30 child wristbands.',
     ],
-    correctIndex: 0,
+    correctIndex: 1,
     explanation:
       'From c + a = 80, we have c = 80 - a. Substitute into revenue: 4(80 - a) + 7a = 410 → 320 - 4a + 7a = 410 → 320 + 3a = 410 → 3a = 90 → a = 30 adult wristbands. Then c = 80 - 30 = 50 child wristbands. Total revenue check: 4(50) + 7(30) = 200 + 210 = $410 ✓.',
     hint: 'From c + a = 80, replace c with (80 - a) in 4c + 7a = 410: 4(80 - a) + 7a = 410.',
@@ -945,12 +945,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Two mobile carriers offer prepaid plans with international calling. Plan TalkMore charges y = 0.10x + 25 ($25 base fee plus $0.10 per minute). Plan GlobalConnect charges y = 0.20x + 15 ($15 base fee plus $0.20 per minute). For how many minutes of international calling (x) will both plans cost the exact same amount, and what will that total cost be?',
     options: [
-      '100 minutes, with a total cost of $35',
       '80 minutes, with a total cost of $33',
       '120 minutes, with a total cost of $37',
+      '100 minutes, with a total cost of $35',
       '50 minutes, with a total cost of $30',
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
       'Set the plan cost equations equal: 0.20x + 15 = 0.10x + 25. Subtract 0.10x: 0.10x + 15 = 25. Subtract 15: 0.10x = 10. Divide by 0.10: x = 100 minutes. Total cost: y = 0.10(100) + 25 = $35. At 100 minutes, both plans cost $35.',
     hint: 'Set 0.20x + 15 = 0.10x + 25. Subtract 0.10x and subtract 15 to solve for minutes (x).',
@@ -979,8 +979,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
       ],
     },
     context: 'Line A: Table above (slope = 2, y-intercept = 1)  |  Line B: y = -x + 7',
-    options: ['(2, 5)', '(5, 2)', '(1, 3)', '(3, 4)'],
-    correctIndex: 0,
+    options: ['(5, 2)', '(2, 5)', '(1, 3)', '(3, 4)'],
+    correctIndex: 1,
     explanation:
       'From the table, Line A has y-intercept b = 1 and slope m = (3 - 1)/(1 - 0) = 2, so its equation is y = 2x + 1. Set the equations equal: 2x + 1 = -x + 7 → 3x = 6 → x = 2. Looking at the table for x = 2, y = 5. Checking Line B: y = -(2) + 7 = 5 ✓. The lines intersect at (2, 5).',
     hint: 'Find which (x, y) pair in the table makes y = -x + 7 true. Test x = 2: does 5 = -2 + 7?',
@@ -995,12 +995,12 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
     question:
       'Line 1 has the equation y = 2x + 3. Line 2 passes through the points (0, -1) and (2, 3). If both lines are graphed on the same coordinate plane, how many points of intersection will they have?',
     options: [
-      '0 points of intersection (no solution), because both lines have a slope of 2 but different y-intercepts, meaning they are parallel.',
       'Exactly 1 point of intersection at (2, 3).',
       'Infinitely many points of intersection, because both equations represent the exact same line.',
       '2 points of intersection, one on each axis.',
+      '0 points of intersection (no solution), because both lines have a slope of 2 but different y-intercepts, meaning they are parallel.',
     ],
-    correctIndex: 0,
+    correctIndex: 3,
     explanation:
       'Find the slope of Line 2: m = (3 - (-1))/(2 - 0) = 4/2 = 2, and its y-intercept is (0, -1), giving y = 2x - 1. Line 1 has the equation y = 2x + 3. Because both lines have the identical slope (m = 2) but different y-intercepts (3 and -1), they are parallel lines that will never cross. Therefore, they have 0 points of intersection (no solution).',
     hint: 'Calculate the slope of Line 2 using (3 - (-1))/(2 - 0). Compare this slope with the slope of Line 1.',
@@ -1023,8 +1023,8 @@ export const STAAR_SYSTEMS_QUESTIONS: StaarSystemsQuestion[] = [
         [4, 13, 9],
       ],
     },
-    options: ['(3, 10)', '(10, 3)', '(2, 7)', '(4, 9)'],
-    correctIndex: 0,
+    options: ['(10, 3)', '(2, 7)', '(3, 10)', '(4, 9)'],
+    correctIndex: 2,
     explanation:
       'The solution to a system of linear equations is the ordered pair that satisfies both relationships. In the table, when x = 3, Line J has y = 10 and Line K also has y = 10. Because both lines share the point (3, 10), this ordered pair is the solution to the system.',
     hint: 'Look for the row in the table where the y-value for Line J equals the y-value for Line K.',
