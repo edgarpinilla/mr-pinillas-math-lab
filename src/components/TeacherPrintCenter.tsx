@@ -19,7 +19,10 @@ import { STAAR_SLOPE_QUESTIONS } from '../data/staar/staarQuestionsSlope';
 import { STAAR_SYSTEMS_QUESTIONS } from '../data/staar/staarQuestionsSystems';
 import { STAAR_DILATIONS_QUESTIONS } from '../data/staar/staarQuestionsDilations';
 import { STAAR_EQUATIONS_QUESTIONS } from '../data/staar/staarQuestionsEquations';
+import { STAAR_ANGLE_RELATIONSHIPS_QUESTIONS } from '../data/staar/staarQuestionsAngleRelationships';
 import { UNIT_6_SELF_CHECK_QUESTIONS } from '../data/unit6SelfCheckQuestions';
+import { UNIT_7_SELF_CHECK_QUESTIONS } from '../data/unit7SelfCheckQuestions';
+import { Unit7SelfCheckDiagram } from './visualizers/Unit7SelfCheckDiagram';
 
 /**
  * Registry connecting topic IDs to existing local STAAR Practice question banks.
@@ -32,6 +35,7 @@ const STAAR_QUESTIONS_BY_TOPIC: Record<string, any[]> = {
   'systems-of-linear-equations': STAAR_SYSTEMS_QUESTIONS,
   'dilations-similarity': STAAR_DILATIONS_QUESTIONS,
   'equations-inequalities': STAAR_EQUATIONS_QUESTIONS,
+  'angle-relationships-parallel-lines-triangles': STAAR_ANGLE_RELATIONSHIPS_QUESTIONS,
 };
 
 /**
@@ -122,6 +126,10 @@ function getQuestionCorrectAnswerText(q: any, rawUnit6SelfCheck?: any): string {
   // 5. Numeric Input
   if (source.type === 'numeric-input') {
     const val = source.numericAnswer ?? source.correctAnswer;
+    const promptText = String(source.prompt || source.question || '');
+    if (promptText.toLowerCase().includes('in degrees') || promptText.toLowerCase().includes('measure of')) {
+      return `${val}°`;
+    }
     return `x = ${val}`;
   }
 
@@ -708,8 +716,8 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
     initialTopicId || TOPICS_DATA[0].id
   );
 
-  // Print mode: 'self-check' or 'staar'
-  const [printMode, setPrintMode] = useState<'self-check' | 'staar'>('self-check');
+  // Print mode: 'self-check', 'staar', or 'both' (all 54 Unit 7 questions)
+  const [printMode, setPrintMode] = useState<'self-check' | 'staar' | 'both'>('self-check');
 
   // Document view: 'questions' (student test) or 'answer-key' (separate teacher answer key)
   const [viewType, setViewType] = useState<'questions' | 'answer-key'>('questions');
@@ -717,14 +725,25 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
   // Lookup topic data from existing repository
   const currentTopic = TOPICS_DATA.find((t) => t.id === selectedUnitId) || TOPICS_DATA[0];
 
-  // Self Check questions dynamically pulled from topic.practiceApp.quizQuestions
-  const selfCheckQuestions = currentTopic.practiceApp?.quizQuestions || [];
+  // Self Check questions dynamically pulled from topic.practiceApp.quizQuestions (or Unit 7 Self-Check bank)
+  const selfCheckQuestions =
+    selectedUnitId === 'angle-relationships-parallel-lines-triangles'
+      ? UNIT_7_SELF_CHECK_QUESTIONS
+      : currentTopic.practiceApp?.quizQuestions || [];
 
   // STAAR Practice questions dynamically pulled from existing question banks
   const staarQuestions = STAAR_QUESTIONS_BY_TOPIC[selectedUnitId] || [];
 
+  // Combined question bank (Self Check + STAAR Practice)
+  const combinedQuestions = [...selfCheckQuestions, ...staarQuestions];
+
   // Active question set for current mode
-  const activeQuestions = printMode === 'self-check' ? selfCheckQuestions : staarQuestions;
+  const activeQuestions =
+    printMode === 'self-check'
+      ? selfCheckQuestions
+      : printMode === 'staar'
+      ? staarQuestions
+      : combinedQuestions;
 
   const handleUnitChange = (topicId: string) => {
     setSelectedUnitId(topicId);
@@ -959,6 +978,37 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                   <span>Answer Key</span>
                 </button>
               </div>
+
+              <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+                <button
+                  onClick={() => {
+                    setPrintMode('both');
+                    setViewType('questions');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    printMode === 'both' && viewType === 'questions'
+                      ? 'bg-white text-blue-700 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Both Banks ({combinedQuestions.length} Questions)
+                </button>
+                <button
+                  id="both-answer-key-btn"
+                  onClick={() => {
+                    setPrintMode('both');
+                    setViewType('answer-key');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    printMode === 'both' && viewType === 'answer-key'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50/70'
+                  }`}
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Answer Key</span>
+                </button>
+              </div>
             </div>
 
             <div className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
@@ -988,7 +1038,9 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                     <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
                       {printMode === 'self-check'
                         ? 'SELF-CHECK ANSWER KEY'
-                        : 'STAAR PRACTICE ANSWER KEY'}
+                        : printMode === 'staar'
+                        ? 'STAAR PRACTICE ANSWER KEY'
+                        : 'COMPLETE QUESTION BANK ANSWER KEY'}
                     </h1>
                     <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
                       Unit {currentTopic.number}: {currentTopic.title}
@@ -1003,7 +1055,9 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
               <div className="space-y-2.5">
                 {activeQuestions.map((q: any, index: number) => {
                   const rawU6SelfCheck =
-                    selectedUnitId === 'equations-inequalities' && printMode === 'self-check'
+                    selectedUnitId === 'equations-inequalities' &&
+                    (printMode === 'self-check' ||
+                      (printMode === 'both' && index < selfCheckQuestions.length))
                       ? UNIT_6_SELF_CHECK_QUESTIONS[index]
                       : undefined;
                   const answerText = getQuestionCorrectAnswerText(q, rawU6SelfCheck);
@@ -1036,7 +1090,9 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                     <div className="text-xs font-semibold text-slate-600 mt-0.5">
                       {printMode === 'self-check'
                         ? `Self Check Practice (${activeQuestions.length} Questions)`
-                        : `STAAR Practice Review (${activeQuestions.length} Questions)`}
+                        : printMode === 'staar'
+                        ? `STAAR Practice Review (${activeQuestions.length} Questions)`
+                        : `Complete Practice Packet: Self Check + STAAR Practice (${activeQuestions.length} Questions)`}
                     </div>
                   </div>
                   <div className="text-right text-xs text-slate-500 font-mono font-bold">
@@ -1137,8 +1193,15 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                             </div>
                           )}
 
-                          {/* Multiple Choice Options (No answers revealed) */}
-                          {Array.isArray(q.options) && (
+                          {/* Optional Unit 7 Geometry Diagram */}
+                          {q.diagram && (
+                            <div className="my-2 max-w-md">
+                              <Unit7SelfCheckDiagram diagram={q.diagram} />
+                            </div>
+                          )}
+
+                          {/* Multiple Choice Options or Numeric Response Line (No answers revealed) */}
+                          {Array.isArray(q.options) && q.options.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                               {q.options.map((opt: any, optIdx: number) => {
                                 const letter = ['A', 'B', 'C', 'D', 'E', 'F'][optIdx] || `${optIdx + 1}`;
@@ -1156,7 +1219,12 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                                 );
                               })}
                             </div>
-                          )}
+                          ) : q.type === 'numeric-input' ? (
+                            <div className="pt-3 flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800">
+                              <span>Answer:</span>
+                              <span className="inline-block w-36 border-b-2 border-slate-700 h-5" />
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     </div>
