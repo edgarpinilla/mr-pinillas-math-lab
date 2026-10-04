@@ -28,9 +28,16 @@ import { SlopeVisualizer } from './visualizers/SlopeVisualizer';
 import { SystemsVisualizer } from './visualizers/SystemsVisualizer';
 import { DilationsVisualizer } from './visualizers/DilationsVisualizer';
 import { EquationsInequalitiesVisualizer } from './visualizers/EquationsInequalitiesVisualizer';
+import { AngleRelationshipsVisualizer } from './visualizers/AngleRelationshipsVisualizer';
+import { Unit7WorkedExampleDiagram } from './visualizers/Unit7WorkedExampleDiagram';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { DilationsPracticeLab } from './DilationsPracticeLab';
 import { EquationsPracticeLab } from './EquationsPracticeLab';
+import { AngleRelationshipsPracticeLab } from './AngleRelationshipsPracticeLab';
+import { Unit7AssessmentPlaceholder } from './Unit7AssessmentPlaceholder';
+import { Unit7SelfCheckPractice } from './Unit7SelfCheckPractice';
+import { StaarAngleRelationshipsQuiz } from './StaarAngleRelationshipsQuiz';
+import { DigitalStaarAngleRelationshipsSimulator } from './DigitalStaarAngleRelationshipsSimulator';
 import { DigitalStaarSimulator } from './DigitalStaarSimulator';
 import { DigitalStaarTransformationsSimulator } from './DigitalStaarTransformationsSimulator';
 import { DigitalStaarProportionalSimulator } from './DigitalStaarProportionalSimulator';
@@ -276,6 +283,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <DilationsVisualizer />
           ) : topic.id === 'equations-inequalities' ? (
             <EquationsInequalitiesVisualizer />
+          ) : topic.id === 'angle-relationships-parallel-lines-triangles' ? (
+            <AngleRelationshipsVisualizer />
           ) : (
             <ProportionalVisualizer />
           )}
@@ -505,6 +514,13 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 )}
               </div>
 
+              {/* Visual Geometry Diagram for Unit 7 Worked Examples */}
+              {topic.id === 'angle-relationships-parallel-lines-triangles' && (
+                <Unit7WorkedExampleDiagram
+                  exampleId={topic.workedExamples[selectedExampleIndex].id}
+                />
+              )}
+
               {/* Strategy */}
               <div className="p-4 rounded-xl bg-blue-50/80 border border-blue-200 text-xs sm:text-sm text-blue-950 flex items-start gap-3">
                 <Lightbulb className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
@@ -603,7 +619,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className="relative z-10 max-w-3xl space-y-5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-emerald-400" />
-                {topic.id === 'slope-linear-equations' || topic.id === 'dilations-similarity' || topic.id === 'equations-inequalities'
+                {topic.id === 'slope-linear-equations' || topic.id === 'dilations-similarity' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
                   ? 'Interactive In-Portal Math Lab Simulator'
                   : 'Interactive Cloud Run Math Simulator'}
               </div>
@@ -673,6 +689,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     <ArrowRight className="w-5 h-5 opacity-80" />
                   </button>
                 </div>
+              ) : topic.id === 'angle-relationships-parallel-lines-triangles' ? (
+                <div className="pt-4">
+                  <button
+                    id="large-practice-app-button"
+                    onClick={() => {
+                      document.getElementById('angle-relationships-practice-lab')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
+                  >
+                    <Activity className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ArrowRight className="w-5 h-5 opacity-80" />
+                  </button>
+                </div>
               ) : (
                 <div className="pt-4 space-y-3">
                   <a
@@ -715,6 +745,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           {/* Embedded Interactive Practice Lab for Equations & Inequalities */}
           {topic.id === 'equations-inequalities' && <EquationsPracticeLab />}
 
+          {/* Embedded Interactive Practice Lab for Module 7: Angle Relationships */}
+          {topic.id === 'angle-relationships-parallel-lines-triangles' && <AngleRelationshipsPracticeLab />}
+
           {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -731,7 +764,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className={`grid grid-cols-1 ${
               topic.id === 'systems-of-linear-equations'
                 ? 'sm:grid-cols-2 md:grid-cols-3'
-                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'equations-inequalities'
+                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
                 ? 'sm:grid-cols-2 lg:grid-cols-3'
                 : 'sm:grid-cols-2'
             } gap-3.5`}>
@@ -761,7 +794,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                         Self Check
                       </div>
                       <div className="text-[11px] text-blue-700 font-bold">
-                        {topic.id === 'equations-inequalities'
+                        {topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
                           ? 'Lesson Practice · 3 Rounds of 6 Questions'
                           : 'Lesson Practice · 6 Questions'}
                       </div>
@@ -816,6 +849,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                           ? 'TEKS 8.10C, 8.3C & 8.10B · 36 Original Questions'
                           : topic.id === 'equations-inequalities'
                           ? 'TEKS 8.8A/B/C · 36 Original Questions'
+                          : topic.id === 'angle-relationships-parallel-lines-triangles'
+                          ? 'TEKS 8.8D · 36 Questions (3 Rounds × 12)'
                           : 'Aligned to TEKS · STAAR-style practice'}
                       </div>
                     </div>
@@ -843,8 +878,8 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 </p>
               </button>
 
-              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4, Unit 5 & Unit 6) */}
-              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations' || topic.id === 'equations-inequalities') && (
+              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6 & Unit 7) */}
+              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -893,7 +928,21 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           </div>
 
           {/* Practice Component Container */}
-          {practicePathway === 'self-check' ? (
+          {topic.id === 'angle-relationships-parallel-lines-triangles' ? (
+            practicePathway === 'self-check' ? (
+              <Unit7SelfCheckPractice />
+            ) : practicePathway === 'staar' ? (
+              <StaarAngleRelationshipsQuiz
+                topicTitle={topic.shortTitle}
+                onSwitchToSelfCheck={() => setPracticePathway('self-check')}
+              />
+            ) : (
+              <DigitalStaarAngleRelationshipsSimulator
+                topicTitle={topic.shortTitle}
+                onSwitchPathway={(pathway) => setPracticePathway(pathway)}
+              />
+            )
+          ) : practicePathway === 'self-check' ? (
             topic.id === 'equations-inequalities' ? (
               <Unit6SelfCheckPractice />
             ) : (

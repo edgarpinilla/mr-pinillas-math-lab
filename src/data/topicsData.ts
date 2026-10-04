@@ -3,6 +3,7 @@ import { TOPIC_3_SLOPE } from './topics/slopeData';
 import { TOPIC_4_SYSTEMS } from './topics/systemsData';
 import { TOPIC_5_DILATIONS } from './topics/dilationsData';
 import { TOPIC_6_EQUATIONS_INEQUALITIES } from './topics/equationsInequalitiesData';
+import { TOPIC_7_ANGLE_RELATIONSHIPS } from './topics/angleRelationshipsData';
 
 export const TOPICS_DATA: TopicData[] = [
   {
@@ -1504,4 +1505,5 @@ export const TOPICS_DATA: TopicData[] = [
   TOPIC_4_SYSTEMS,
   TOPIC_5_DILATIONS,
   TOPIC_6_EQUATIONS_INEQUALITIES,
+  TOPIC_7_ANGLE_RELATIONSHIPS,
 ];
