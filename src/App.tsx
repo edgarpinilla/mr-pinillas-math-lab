@@ -4,7 +4,7 @@ import { Footer } from './components/Footer';
 import { HomePage } from './components/HomePage';
 import { TopicPage } from './components/TopicPage';
 import { CalculatorLabHome } from './components/calculator/CalculatorLabHome';
-import { TeacherPrintCenter } from './components/TeacherPrintCenter';
+import { TeacherAccessPortal } from './components/TeacherAccessPortal';
 import { TeacherPinModal, TEACHER_SESSION_KEY } from './components/TeacherPinModal';
 import { TOPICS_DATA } from './data/topicsData';
 import { SectionTab } from './types';
@@ -87,10 +87,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // If Teacher Print Center is open, render print center view
+  // If Teacher Access is open, render Teacher Access Portal (Print Center + STAAR Analysis)
   if (isPrintCenterOpen) {
     return (
-      <TeacherPrintCenter
+      <TeacherAccessPortal
         initialTopicId={printCenterTopicId || selectedTopicId || TOPICS_DATA[0].id}
         onClose={handleClosePrintCenter}
         onSelectTopic={(topicId) => {

@@ -1,0 +1,375 @@
+import React, { useState } from 'react';
+import {
+  ShieldAlert,
+  Info,
+  BarChart3,
+  CheckCircle2,
+  Filter,
+  Search,
+  Layers,
+  BookOpen,
+  FileSpreadsheet,
+} from 'lucide-react';
+import {
+  UNIT_7_STAAR_HISTORICAL_SUMMARY,
+  UNIT_7_STAAR_REFERENCE_DATA,
+  Unit7MatchLevel,
+  Unit7SkillCategory,
+} from '../data/staar/unit7StaarReferenceData';
+
+export const Unit7StaarAnalysis: React.FC = () => {
+  const [selectedRound, setSelectedRound] = useState<'all' | 1 | 2 | 3>('all');
+  const [selectedMatchLevel, setSelectedMatchLevel] = useState<'all' | Unit7MatchLevel>('all');
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState<'all' | Unit7SkillCategory>(
+    'all'
+  );
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredItems = UNIT_7_STAAR_REFERENCE_DATA.filter((item) => {
+    if (selectedRound !== 'all' && item.round !== selectedRound) return false;
+    if (selectedMatchLevel !== 'all' && item.matchLevel !== selectedMatchLevel) return false;
+    if (selectedSkillCategory !== 'all' && item.skillCategory !== selectedSkillCategory)
+      return false;
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase();
+      return (
+        String(item.questionNumber).includes(q) ||
+        item.questionSkill.toLowerCase().includes(q) ||
+        item.comparableReleasedStaar.toLowerCase().includes(q) ||
+        item.whyItIsComparable.toLowerCase().includes(q) ||
+        item.mathLabAdaptation.toLowerCase().includes(q) ||
+        item.skillCategory.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  const getMatchBadgeClasses = (level: Unit7MatchLevel): string => {
+    switch (level) {
+      case 'STRONG MATCH':
+        return 'bg-emerald-100 text-emerald-900 border-emerald-300';
+      case 'MODERATE MATCH':
+        return 'bg-blue-100 text-blue-900 border-blue-300';
+      case 'TEKS HISTORY':
+        return 'bg-amber-100 text-amber-900 border-amber-300';
+      case 'NO DIRECT MATCH IDENTIFIED':
+        return 'bg-slate-200 text-slate-800 border-slate-300';
+    }
+  };
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      {/* PROMINENT MANDATORY DISCLAIMERS */}
+      <div className="bg-amber-50/95 border-2 border-amber-300 rounded-2xl p-5 sm:p-6 shadow-xs space-y-3">
+        <div className="flex items-start gap-3">
+          <ShieldAlert className="w-6 h-6 text-amber-700 shrink-0 mt-0.5" />
+          <div className="space-y-2.5 text-xs sm:text-sm text-amber-950">
+            <div className="font-black uppercase tracking-wider text-amber-900 text-xs">
+              Important Teacher Reference & Alignment Notice
+            </div>
+            <p className="font-semibold leading-relaxed">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.disclaimers.primaryDisclaimer}
+            </p>
+            <div className="p-3 rounded-xl bg-white/80 border border-amber-200 font-bold text-amber-950">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.disclaimers.classificationDisclaimer}
+            </div>
+            <p className="text-xs font-medium text-amber-900 leading-relaxed flex items-start gap-1.5">
+              <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <span>{UNIT_7_STAAR_HISTORICAL_SUMMARY.disclaimers.frequencyDisclaimer}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* COMPACT UNIT 7 STAAR HISTORICAL ANALYSIS SUMMARY */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div className="flex items-center gap-2 text-indigo-600 font-extrabold text-xs uppercase tracking-wider mb-1">
+              <BarChart3 className="w-4 h-4" /> Teacher Curriculum Alignment Reference
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+              Unit 7 STAAR Historical Analysis
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.teksCode} ({UNIT_7_STAAR_HISTORICAL_SUMMARY.standardType}{' '}
+              Standard • Reporting Category {UNIT_7_STAAR_HISTORICAL_SUMMARY.reportingCategory})
+            </p>
+          </div>
+          <div className="px-3.5 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-right shrink-0">
+            <div className="text-[10px] font-black uppercase tracking-wider text-indigo-700">
+              Historical Released-Form Frequency
+            </div>
+            <div className="text-xs sm:text-sm font-black text-indigo-950">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.teksFrequencyLabel}
+            </div>
+          </div>
+        </div>
+
+        {/* TEKS 8.8D Administration Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+              Released Administrations Reviewed
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.administrationsReviewed.map((yr) => {
+                const isIdentified =
+                  UNIT_7_STAAR_HISTORICAL_SUMMARY.teksIdentifiedYears.includes(yr);
+                return (
+                  <span
+                    key={yr}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-black border ${
+                      isIdentified
+                        ? 'bg-indigo-600 text-white border-indigo-700'
+                        : 'bg-white text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    {yr}
+                  </span>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-slate-500 pt-1">
+              2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-indigo-50/60 border border-indigo-200 space-y-1.5">
+            <div className="text-[11px] font-black uppercase tracking-wider text-indigo-700">
+              8.8D Identified in Released Forms
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.teksIdentifiedYears.map((yr) => (
+                <span
+                  key={yr}
+                  className="px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-2xs flex items-center gap-1"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{yr}</span>
+                </span>
+              ))}
+            </div>
+            <p className="text-xs font-bold text-indigo-950 pt-1">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.teksFrequencyLabel}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+              TEKS 8.8D Standard Text
+            </div>
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
+              {UNIT_7_STAAR_HISTORICAL_SUMMARY.teksDescription}
+            </p>
+          </div>
+        </div>
+
+        {/* Major Unit 7 Skill Categories */}
+        <div className="space-y-2.5 pt-1">
+          <div className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Major Unit 7 Skill Categories Represented in Research</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {UNIT_7_STAAR_HISTORICAL_SUMMARY.skillCategories.map((cat) => (
+              <div
+                key={cat.name}
+                className="p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/90 flex flex-col justify-between gap-2"
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-black text-slate-900">{cat.name}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">{cat.description}</p>
+                </div>
+                <div className="pt-1.5 border-t border-slate-200/70 flex items-center gap-1 text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider">
+                  <BookOpen className="w-3 h-3" />
+                  <span>{cat.lessonsCovered}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FILTER BAR & 36-QUESTION REFERENCE TABLE */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/70 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5 text-indigo-600" />
+                <span>Unit 7 STAAR Practice Question Bank Reference Table (Q1–Q36)</span>
+              </h3>
+              <p className="text-xs text-slate-600">
+                Showing {filteredItems.length} of {UNIT_7_STAAR_REFERENCE_DATA.length} original Math
+                Lab STAAR Practice questions
+              </p>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Filter by skill, question #, or keyword..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+            <div className="flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-slate-500" />
+              <span className="font-bold text-slate-600">Round:</span>
+              {(['all', 1, 2, 3] as const).map((r) => (
+                <button
+                  key={String(r)}
+                  onClick={() => setSelectedRound(r)}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                    selectedRound === r
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {r === 'all' ? 'All (36)' : `Round ${r}`}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="font-bold text-slate-600">Match Level:</span>
+              {(
+                [
+                  'all',
+                  'STRONG MATCH',
+                  'MODERATE MATCH',
+                  'TEKS HISTORY',
+                  'NO DIRECT MATCH IDENTIFIED',
+                ] as const
+              ).map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setSelectedMatchLevel(level)}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                    selectedMatchLevel === level
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {level === 'all' ? 'All Levels' : level}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="font-bold text-slate-600">Skill Category:</span>
+              {(
+                [
+                  'all',
+                  'Parallel Lines & Transversals',
+                  'Triangle Angle Theorems',
+                  'AA Similarity',
+                  'Integrated Angle Relationships',
+                ] as const
+              ).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedSkillCategory(cat)}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                    selectedSkillCategory === cat
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {cat === 'all' ? 'All Categories' : cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Responsive Horizontal-Scrollable Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left text-xs">
+            <thead>
+              <tr className="bg-slate-900 text-white border-b border-slate-800 uppercase tracking-wider text-[11px] font-black">
+                <th className="py-3 px-3 sticky left-0 bg-slate-900 z-10 whitespace-nowrap">
+                  Question
+                </th>
+                <th className="py-3 px-3 whitespace-nowrap">TEKS</th>
+                <th className="py-3 px-3 min-w-[180px]">Question Skill</th>
+                <th className="py-3 px-3 min-w-[130px]">Item Format</th>
+                <th className="py-3 px-3 min-w-[190px]">Comparable Released STAAR</th>
+                <th className="py-3 px-3 whitespace-nowrap">Match Level</th>
+                <th className="py-3 px-3 min-w-[240px]">Why It Is Comparable</th>
+                <th className="py-3 px-3 min-w-[240px]">Math Lab Adaptation</th>
+                <th className="py-3 px-3 min-w-[170px]">TEKS Frequency</th>
+                <th className="py-3 px-3 min-w-[190px]">Question Skill Frequency</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {filteredItems.map((row) => (
+                <tr
+                  key={row.questionId}
+                  className="hover:bg-indigo-50/40 transition-colors align-top bg-white"
+                >
+                  <td className="py-3.5 px-3 font-black text-slate-900 sticky left-0 bg-white z-10 border-r border-slate-100 whitespace-nowrap">
+                    <div className="inline-flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-xs font-black">
+                        Q{row.questionNumber}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">
+                        R{row.round} • {row.lesson.replace('Lesson ', '')}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-3 font-mono font-bold text-indigo-700 whitespace-nowrap">
+                    {row.teks}
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <div className="font-bold text-slate-900 leading-snug">{row.questionSkill}</div>
+                    <div className="text-[11px] font-semibold text-indigo-600 mt-0.5">
+                      {row.skillCategory}
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-3 font-semibold text-slate-700 leading-snug">
+                    {row.itemFormat}
+                  </td>
+                  <td className="py-3.5 px-3 font-semibold text-slate-800 leading-snug">
+                    {row.comparableReleasedStaar}
+                  </td>
+                  <td className="py-3.5 px-3 whitespace-nowrap">
+                    <span
+                      className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${getMatchBadgeClasses(
+                        row.matchLevel
+                      )}`}
+                    >
+                      {row.matchLevel}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-700 leading-relaxed">
+                    {row.whyItIsComparable}
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-700 leading-relaxed">
+                    {row.mathLabAdaptation}
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-700 font-medium leading-snug">
+                    {row.teksFrequency}
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-600 leading-snug">
+                    {row.questionSkillFrequency}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
