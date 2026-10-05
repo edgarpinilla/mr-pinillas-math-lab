@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { flushSync } from 'react-dom';
 import {
   Printer,
   ArrowLeft,
@@ -721,6 +722,7 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
 
   // Document view: 'questions' (student test) or 'answer-key' (separate teacher answer key)
   const [viewType, setViewType] = useState<'questions' | 'answer-key'>('questions');
+  const [printErrorNotice, setPrintErrorNotice] = useState<string | null>(null);
 
   // Lookup topic data from existing repository
   const currentTopic = TOPICS_DATA.find((t) => t.id === selectedUnitId) || TOPICS_DATA[0];
@@ -752,30 +754,339 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
     }
   };
 
-  const handlePrintStudentCopy = () => {
-    if (viewType !== 'questions') {
-      setViewType('questions');
-      setTimeout(() => {
-        window.focus();
-        window.print();
-      }, 50);
-    } else {
+  const buildPrintableHtmlDocument = (
+    printableNode: HTMLElement,
+    targetElementId: 'printable-student-copy' | 'printable-answer-key'
+  ): string => {
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((el) => {
+        if (el.tagName.toLowerCase() === 'link') {
+          const href = (el as HTMLLinkElement).href;
+          return `<link rel="stylesheet" href="${href}" />`;
+        }
+        return el.outerHTML;
+      })
+      .join('\n');
+
+    const clonedNode = printableNode.cloneNode(true) as HTMLElement;
+    clonedNode.classList.remove('hidden');
+
+    return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mr. Pinilla's Math Lab — ${targetElementId === 'printable-answer-key' ? 'Answer Key' : 'Print'}</title>
+    ${styles}
+    <style>
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 auto !important;
+        padding: 24px !important;
+        max-width: 900px !important;
+      }
+      #printable-student-copy, #printable-answer-key {
+        display: block !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+    </style>
+  </head>
+  <body class="bg-white text-black">
+    ${clonedNode.outerHTML}
+    <script>
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          window.focus();
+          window.print();
+        }, 250);
+      });
+      window.addEventListener('afterprint', function () {
+        setTimeout(function () {
+          window.close();
+        }, 300);
+      });
+    </script>
+  </body>
+</html>`;
+  };
+
+  const executeBrowserPrint = (
+    preOpenedPrintWin: Window | null = null,
+    targetElementId: 'printable-student-copy' | 'printable-answer-key' = 'printable-student-copy'
+  ) => {
+    setPrintErrorNotice(null);
+
+    // 1. If a top-level print window was synchronously opened (embedded iframe / AI Studio Preview mode)
+    if (preOpenedPrintWin) {
+      const printableNode = document.getElementById(targetElementId);
+      if (!printableNode) {
+        preOpenedPrintWin.close();
+        setPrintErrorNotice(`Unable to locate the printable document element (#${targetElementId}).`);
+        return;
+      }
+
+      try {
+        const htmlDoc = buildPrintableHtmlDocument(printableNode, targetElementId);
+        preOpenedPrintWin.document.open();
+        preOpenedPrintWin.document.write(htmlDoc);
+        preOpenedPrintWin.document.close();
+        preOpenedPrintWin.focus();
+      } catch (err) {
+        setPrintErrorNotice(
+          `Print window could not be written (${err instanceof Error ? err.message : 'Browser restriction'}).`
+        );
+      }
+      return;
+    }
+
+    // 2. Normal top-level browser printing (Cloudflare / Netlify deployed builds)
+    let beforePrintTriggered = false;
+    const onBeforePrint = () => {
+      beforePrintTriggered = true;
+    };
+    window.addEventListener('beforeprint', onBeforePrint, { once: true });
+
+    try {
       window.focus();
       window.print();
+    } catch (err) {
+      setPrintErrorNotice(
+        `Direct browser print failed (${err instanceof Error ? err.message : 'Print blocked'}).`
+      );
+    }
+
+    window.removeEventListener('beforeprint', onBeforePrint);
+
+    // 3. Fallback if direct window.print() did not trigger beforeprint
+    if (!beforePrintTriggered) {
+      const printableNode = document.getElementById(targetElementId);
+      if (!printableNode) return;
+
+      const popupWin = window.open('', '_blank');
+      if (popupWin) {
+        const htmlDoc = buildPrintableHtmlDocument(printableNode, targetElementId);
+        popupWin.document.open();
+        popupWin.document.write(htmlDoc);
+        popupWin.document.close();
+        popupWin.focus();
+        return;
+      }
+
+      setPrintErrorNotice(
+        'The print window was blocked by your browser. Please allow pop-ups for this site and click Print again.'
+      );
     }
   };
 
-  const handlePrintAnswerKey = () => {
-    if (viewType !== 'answer-key') {
-      setViewType('answer-key');
-      setTimeout(() => {
-        window.focus();
-        window.print();
-      }, 50);
-    } else {
-      window.focus();
-      window.print();
+  const isRunningInIframe = (): boolean => {
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true;
     }
+  };
+
+  const handlePrintStudentCopy = () => {
+    const preOpenedWin = isRunningInIframe() ? window.open('', '_blank') : null;
+    if (isRunningInIframe() && !preOpenedWin) {
+      setPrintErrorNotice(
+        'The print window was blocked by your browser. Please allow pop-ups for this site and click Print Student Copy again.'
+      );
+      return;
+    }
+
+    if (viewType !== 'questions') {
+      flushSync(() => {
+        setViewType('questions');
+      });
+    }
+
+    executeBrowserPrint(preOpenedWin, 'printable-student-copy');
+  };
+
+  const handlePrintAnswerKey = () => {
+    setPrintErrorNotice(null);
+
+    // 1. Open a new top-level browser window synchronously from the user click
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+      setPrintErrorNotice(
+        'The print window was blocked by your browser. Please allow pop-ups for this site and click Print Answer Key again.'
+      );
+      return;
+    }
+
+    // 2. Build Answer Key document DIRECTLY from activeQuestions and getQuestionCorrectAnswerText(...)
+    const escapeHtml = (str: string) =>
+      String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const selectedBankLabel =
+      printMode === 'self-check'
+        ? `Self Check (${activeQuestions.length} Questions)`
+        : printMode === 'staar'
+        ? `STAAR Practice (${activeQuestions.length} Questions)`
+        : `Both Banks: Self Check + STAAR Practice (${activeQuestions.length} Questions)`;
+
+    const answerRowsHtml = activeQuestions
+      .map((q: any, index: number) => {
+        const rawU6SelfCheck =
+          selectedUnitId === 'equations-inequalities' &&
+          (printMode === 'self-check' ||
+            (printMode === 'both' && index < selfCheckQuestions.length))
+            ? UNIT_6_SELF_CHECK_QUESTIONS[index]
+            : undefined;
+        const correctText = escapeHtml(getQuestionCorrectAnswerText(q, rawU6SelfCheck));
+        return `<div class="answer-row">
+          <span class="q-num">${index + 1}.</span>
+          <span class="q-ans">${correctText}</span>
+        </div>`;
+      })
+      .join('\n');
+
+    const answerKeyDocumentHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mr. Pinilla's Math Lab — Answer Key (Unit ${currentTopic.number})</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #ffffff;
+        color: #0f172a;
+        margin: 0 auto;
+        padding: 32px;
+        max-width: 820px;
+      }
+      .header {
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 14px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .lab-title {
+        font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+        font-size: 22px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0;
+      }
+      .unit-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 4px;
+      }
+      .bank-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+        margin-top: 3px;
+      }
+      .badge {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+        font-weight: 800;
+        color: #0f172a;
+        text-align: right;
+        text-transform: uppercase;
+      }
+      .section-heading {
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #0f172a;
+        margin: 0 0 12px 0;
+      }
+      .answer-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .answer-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+        line-height: 1.45;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .answer-row:last-child {
+        border-bottom: none;
+      }
+      .q-num {
+        font-weight: 900;
+        width: 30px;
+        text-align: right;
+        flex-shrink: 0;
+        color: #0f172a;
+      }
+      .q-ans {
+        font-weight: 600;
+        color: #0f172a;
+      }
+      @media print {
+        body {
+          padding: 0;
+          max-width: 100%;
+        }
+        @page {
+          margin: 0.5in;
+          size: letter portrait;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div>
+        <h1 class="lab-title">Mr. Pinilla's Math Lab</h1>
+        <div class="unit-title">Unit ${escapeHtml(String(currentTopic.number))}: ${escapeHtml(currentTopic.title)}</div>
+        <div class="bank-label">Selected Bank: ${escapeHtml(selectedBankLabel)}</div>
+      </div>
+      <div class="badge">ANSWER KEY</div>
+    </div>
+    <h2 class="section-heading">ANSWER KEY</h2>
+    <div class="answer-list">
+      ${answerRowsHtml}
+    </div>
+    <script>
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          window.focus();
+          window.print();
+        }, 200);
+      });
+      window.addEventListener('afterprint', function () {
+        setTimeout(function () {
+          window.close();
+        }, 300);
+      });
+    </script>
+  </body>
+</html>`;
+
+    printWin.document.open();
+    printWin.document.write(answerKeyDocumentHtml);
+    printWin.document.close();
+    printWin.focus();
   };
 
   return (
@@ -790,8 +1101,8 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
           .no-print {
             display: none !important;
           }
-          #printable-student-copy {
-            display: block !important;
+          #printable-student-copy,
+          #printable-answer-key {
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
@@ -874,7 +1185,19 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
       </header>
 
       {/* Screen-Only Unit & Mode Configuration Bar */}
-      <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-3">
+        {printErrorNotice && (
+          <div className="p-3.5 rounded-xl bg-amber-50 border-2 border-amber-300 text-amber-950 flex items-center justify-between gap-3 text-xs sm:text-sm font-bold shadow-2xs">
+            <span>{printErrorNotice}</span>
+            <button
+              type="button"
+              onClick={() => setPrintErrorNotice(null)}
+              className="px-2.5 py-1 rounded-lg bg-amber-200/80 hover:bg-amber-300 text-amber-950 text-xs font-black cursor-pointer shrink-0"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
           {/* Unit Selector */}
           <div>
@@ -1025,79 +1348,87 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
 
       {/* Main Printable Document Area */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        {/* SEPARATE TEACHER ANSWER KEY CONTAINER */}
         <div
-          id="printable-student-copy"
-          className="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 print:border-none print:shadow-none print:p-0"
+          id="printable-answer-key"
+          className={`bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 print:border-none print:shadow-none print:p-0 ${
+            viewType === 'answer-key' ? '' : 'hidden'
+          }`}
         >
-          {viewType === 'answer-key' ? (
-            /* SEPARATE TEACHER ANSWER KEY VIEW */
-            <div>
-              <div className="border-b-2 border-slate-900 pb-4 mb-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
-                      {printMode === 'self-check'
-                        ? 'SELF-CHECK ANSWER KEY'
-                        : printMode === 'staar'
-                        ? 'STAAR PRACTICE ANSWER KEY'
-                        : 'COMPLETE QUESTION BANK ANSWER KEY'}
-                    </h1>
-                    <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
-                      Unit {currentTopic.number}: {currentTopic.title}
-                    </div>
-                  </div>
-                  <div className="text-right text-xs text-slate-500 font-mono font-bold">
-                    Teacher Answer Key ({activeQuestions.length} Questions)
+          <div>
+            <div className="border-b-2 border-slate-900 pb-4 mb-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
+                    {printMode === 'self-check'
+                      ? 'SELF-CHECK ANSWER KEY'
+                      : printMode === 'staar'
+                      ? 'STAAR PRACTICE ANSWER KEY'
+                      : 'COMPLETE QUESTION BANK ANSWER KEY'}
+                  </h1>
+                  <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
+                    Unit {currentTopic.number}: {currentTopic.title}
                   </div>
                 </div>
-              </div>
-
-              <div className="space-y-2.5">
-                {activeQuestions.map((q: any, index: number) => {
-                  const rawU6SelfCheck =
-                    selectedUnitId === 'equations-inequalities' &&
-                    (printMode === 'self-check' ||
-                      (printMode === 'both' && index < selfCheckQuestions.length))
-                      ? UNIT_6_SELF_CHECK_QUESTIONS[index]
-                      : undefined;
-                  const answerText = getQuestionCorrectAnswerText(q, rawU6SelfCheck);
-
-                  return (
-                    <div
-                      key={q.id || `answer-${index}`}
-                      className="print-question-item py-1.5 border-b border-slate-200 last:border-b-0 flex items-baseline gap-2.5 text-sm sm:text-base text-slate-900 break-inside-avoid"
-                    >
-                      <span className="font-black shrink-0 w-7 text-right">{index + 1}.</span>
-                      <span className="font-semibold">{answerText}</span>
-                    </div>
-                  );
-                })}
+                <div className="text-right text-xs text-slate-500 font-mono font-bold">
+                  Teacher Answer Key ({activeQuestions.length} Questions)
+                </div>
               </div>
             </div>
-          ) : (
-            /* EXISTING STUDENT PRINT COPY (NO ANSWERS INCLUDED) */
-            <div>
-              {/* Document Header */}
-              <div className="border-b-2 border-slate-900 pb-4 mb-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
-                      Mr. Pinilla’s Math Lab
-                    </h1>
-                    <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
-                      Unit {currentTopic.number}: {currentTopic.title}
-                    </div>
-                    <div className="text-xs font-semibold text-slate-600 mt-0.5">
-                      {printMode === 'self-check'
-                        ? `Self Check Practice (${activeQuestions.length} Questions)`
-                        : printMode === 'staar'
-                        ? `STAAR Practice Review (${activeQuestions.length} Questions)`
-                        : `Complete Practice Packet: Self Check + STAAR Practice (${activeQuestions.length} Questions)`}
-                    </div>
+
+            <div className="space-y-2.5">
+              {activeQuestions.map((q: any, index: number) => {
+                const rawU6SelfCheck =
+                  selectedUnitId === 'equations-inequalities' &&
+                  (printMode === 'self-check' ||
+                    (printMode === 'both' && index < selfCheckQuestions.length))
+                    ? UNIT_6_SELF_CHECK_QUESTIONS[index]
+                    : undefined;
+                const answerText = getQuestionCorrectAnswerText(q, rawU6SelfCheck);
+
+                return (
+                  <div
+                    key={q.id || `answer-${index}`}
+                    className="print-question-item py-1.5 border-b border-slate-200 last:border-b-0 flex items-baseline gap-2.5 text-sm sm:text-base text-slate-900 break-inside-avoid"
+                  >
+                    <span className="font-black shrink-0 w-7 text-right">{index + 1}.</span>
+                    <span className="font-semibold">{answerText}</span>
                   </div>
-                  <div className="text-right text-xs text-slate-500 font-mono font-bold">
-                    Student Copy
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* STUDENT PRINT COPY CONTAINER (NO ANSWERS INCLUDED) */}
+        <div
+          id="printable-student-copy"
+          className={`bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 print:border-none print:shadow-none print:p-0 ${
+            viewType === 'questions' ? '' : 'hidden'
+          }`}
+        >
+          <div>
+            {/* Document Header */}
+            <div className="border-b-2 border-slate-900 pb-4 mb-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif">
+                    Mr. Pinilla’s Math Lab
+                  </h1>
+                  <div className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
+                    Unit {currentTopic.number}: {currentTopic.title}
                   </div>
+                  <div className="text-xs font-semibold text-slate-600 mt-0.5">
+                    {printMode === 'self-check'
+                      ? `Self Check Practice (${activeQuestions.length} Questions)`
+                      : printMode === 'staar'
+                      ? `STAAR Practice Review (${activeQuestions.length} Questions)`
+                      : `Complete Practice Packet: Self Check + STAAR Practice (${activeQuestions.length} Questions)`}
+                  </div>
+                </div>
+                <div className="text-right text-xs text-slate-500 font-mono font-bold">
+                  Student Copy
+                </div>
                 </div>
 
                 {/* Student Identification Lines */}
@@ -1232,7 +1563,6 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                 })}
               </div>
             </div>
-          )}
         </div>
       </main>
     </div>
