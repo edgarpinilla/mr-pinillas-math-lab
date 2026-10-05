@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { TOPICS_DATA } from '../data/topicsData';
 import { TeacherPrintCenter } from './TeacherPrintCenter';
+import { Unit1StaarAnalysis } from './Unit1StaarAnalysis';
 import { Unit7StaarAnalysis } from './Unit7StaarAnalysis';
 
 interface TeacherAccessPortalProps {
@@ -19,10 +20,10 @@ interface TeacherAccessPortalProps {
 
 /**
  * Explicit list of unit numbers that have a completed STAAR Analysis.
- * Currently only Unit 7 (Angle Relationships) has a completed STAAR Analysis.
- * Future units (e.g., 8, 9, 10) can be added here once their research is completed.
+ * Currently Unit 1 (Transformations) and Unit 7 (Angle Relationships) have completed STAAR Analyses.
+ * Future units (e.g., 2–6, 8, 9, 10) can be added here once their research is completed.
  */
-export const STAAR_ANALYSIS_AVAILABLE_UNITS: number[] = [7];
+export const STAAR_ANALYSIS_AVAILABLE_UNITS: number[] = [1, 7];
 
 export const TeacherAccessPortal: React.FC<TeacherAccessPortalProps> = ({
   initialTopicId,
@@ -207,8 +208,9 @@ export const TeacherAccessPortal: React.FC<TeacherAccessPortalProps> = ({
             </div>
           </header>
 
-          {/* Direct Unit 7 STAAR Analysis View (No redundant unit selection required) */}
+          {/* Direct Unit STAAR Analysis View (No redundant unit selection required) */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            {currentTopic.number === 1 && <Unit1StaarAnalysis />}
             {currentTopic.number === 7 && <Unit7StaarAnalysis />}
           </div>
         </div>
