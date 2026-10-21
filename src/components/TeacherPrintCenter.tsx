@@ -23,7 +23,16 @@ import { STAAR_EQUATIONS_QUESTIONS } from '../data/staar/staarQuestionsEquations
 import { STAAR_ANGLE_RELATIONSHIPS_QUESTIONS } from '../data/staar/staarQuestionsAngleRelationships';
 import { UNIT_6_SELF_CHECK_QUESTIONS } from '../data/unit6SelfCheckQuestions';
 import { UNIT_7_SELF_CHECK_QUESTIONS } from '../data/unit7SelfCheckQuestions';
+import { UNIT_8_SELF_CHECK_QUESTIONS } from '../data/unit8SelfCheckQuestions';
 import { Unit7SelfCheckDiagram } from './visualizers/Unit7SelfCheckDiagram';
+import {
+  Unit8VltGraphSvg,
+  Unit8CarAGraphSvg,
+  Unit8TableOptionsGrid,
+  getUnit8VltGraphHtml,
+  getUnit8CarAGraphHtml,
+  getUnit8TableOptionsHtml,
+} from './visualizers/Unit8SelfCheckVisuals';
 
 /**
  * Registry connecting topic IDs to existing local STAAR Practice question banks.
@@ -727,10 +736,12 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
   // Lookup topic data from existing repository
   const currentTopic = TOPICS_DATA.find((t) => t.id === selectedUnitId) || TOPICS_DATA[0];
 
-  // Self Check questions dynamically pulled from topic.practiceApp.quizQuestions (or Unit 7 Self-Check bank)
+  // Self Check questions dynamically pulled from topic.practiceApp.quizQuestions (or Unit 7 / Unit 8 Self-Check bank)
   const selfCheckQuestions =
     selectedUnitId === 'angle-relationships-parallel-lines-triangles'
       ? UNIT_7_SELF_CHECK_QUESTIONS
+      : selectedUnitId === 'functions-linear-relationships' || selectedUnitId === 'functions'
+      ? UNIT_8_SELF_CHECK_QUESTIONS
       : currentTopic.practiceApp?.quizQuestions || [];
 
   // STAAR Practice questions dynamically pulled from existing question banks
@@ -792,6 +803,18 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
         box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
+      }
+      .print-question-item {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-visual-option {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      svg {
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
       }
     </style>
   </head>
@@ -944,9 +967,51 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
             ? UNIT_6_SELF_CHECK_QUESTIONS[index]
             : undefined;
         const correctText = escapeHtml(getQuestionCorrectAnswerText(q, rawU6SelfCheck));
+
+        let visualHtml = '';
+        if (q.vltGraphOptions) {
+          const correctOpt =
+            q.vltGraphOptions.find((o: any) => o.id === 'C') ||
+            q.vltGraphOptions[q.correctIndex ?? 2];
+          if (correctOpt) {
+            visualHtml = `
+              <div style="margin: 4px 0 2px 40px;">
+                <div style="font-size: 11px; font-weight: bold; color: #047857; margin-bottom: 2px;">Correct Graph: ${escapeHtml(
+                  correctOpt.label
+                )} (Passes Vertical Line Test)</div>
+                ${getUnit8VltGraphHtml(correctOpt.type, 'ak-print-' + correctOpt.id, true)}
+              </div>
+            `;
+          }
+        } else if (q.carAGraphData) {
+          visualHtml = `
+            <div style="margin: 4px 0 2px 40px;">
+              <div style="font-size: 11px; font-weight: bold; color: #047857; margin-bottom: 2px;">Car A Distance vs. Time Graph:</div>
+              ${getUnit8CarAGraphHtml()}
+            </div>
+          `;
+        } else if (q.tableOptions) {
+          const correctTbl =
+            q.tableOptions.find((t: any) => t.id === 'B') ||
+            q.tableOptions[q.correctIndex ?? 1];
+          if (correctTbl) {
+            visualHtml = `
+              <div style="margin: 4px 0 2px 40px;">
+                <div style="font-size: 11px; font-weight: bold; color: #047857; margin-bottom: 2px;">Correct Function Table: ${escapeHtml(
+                  correctTbl.label
+                )} (Every input has exactly one output)</div>
+                ${getUnit8TableOptionsHtml([correctTbl], 'B')}
+              </div>
+            `;
+          }
+        }
+
         return `<div class="answer-row">
-          <span class="q-num">${index + 1}.</span>
-          <span class="q-ans">${correctText}</span>
+          <div class="answer-row-top">
+            <span class="q-num">${index + 1}.</span>
+            <span class="q-ans">${correctText}</span>
+          </div>
+          ${visualHtml}
         </div>`;
       })
       .join('\n');
@@ -1019,14 +1084,25 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
       }
       .answer-row {
         display: flex;
-        align-items: baseline;
-        gap: 10px;
-        padding: 7px 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px 0;
         border-bottom: 1px solid #e2e8f0;
         font-size: 14px;
         line-height: 1.45;
         break-inside: avoid;
         page-break-inside: avoid;
+      }
+      .answer-row-top {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        width: 100%;
+      }
+      svg {
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
       }
       .answer-row:last-child {
         border-bottom: none;
@@ -1116,6 +1192,14 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
             break-inside: avoid !important;
             page-break-inside: avoid !important;
             page-break-after: auto;
+          }
+          .print-visual-option {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          svg {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
           }
           @page {
             margin: 0.5in;
@@ -1389,10 +1473,55 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                 return (
                   <div
                     key={q.id || `answer-${index}`}
-                    className="print-question-item py-1.5 border-b border-slate-200 last:border-b-0 flex items-baseline gap-2.5 text-sm sm:text-base text-slate-900 break-inside-avoid"
+                    className="print-question-item py-2 border-b border-slate-200 last:border-b-0 flex flex-col gap-1.5 text-sm sm:text-base text-slate-900 break-inside-avoid"
                   >
-                    <span className="font-black shrink-0 w-7 text-right">{index + 1}.</span>
-                    <span className="font-semibold">{answerText}</span>
+                    <div className="flex items-baseline gap-2.5">
+                      <span className="font-black shrink-0 w-7 text-right">{index + 1}.</span>
+                      <span className="font-semibold">{answerText}</span>
+                    </div>
+
+                    {q.vltGraphOptions && (
+                      <div className="ml-9 my-1">
+                        <div className="text-xs font-bold text-emerald-800 mb-1">
+                          Correct Graph: Graph C (Passes Vertical Line Test)
+                        </div>
+                        <div className="inline-block">
+                          <Unit8VltGraphSvg
+                            type="parabola"
+                            optId="ak-preview-C"
+                            ariaLabel="Upward-opening parabola y = x² - 3 passing the vertical line test"
+                            isPrint={true}
+                            highlightAsCorrect={true}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {q.carAGraphData && (
+                      <div className="ml-9 my-1">
+                        <div className="text-xs font-bold text-emerald-800 mb-1">
+                          Car A Distance vs. Time Graph:
+                        </div>
+                        <div className="inline-block max-w-[260px]">
+                          <Unit8CarAGraphSvg isPrint={true} />
+                        </div>
+                      </div>
+                    )}
+
+                    {q.tableOptions && (
+                      <div className="ml-9 my-1">
+                        <div className="text-xs font-bold text-emerald-800 mb-1">
+                          Correct Function Table: Table B (Every input has exactly one output)
+                        </div>
+                        <div className="inline-block">
+                          <Unit8TableOptionsGrid
+                            tableOptions={q.tableOptions.filter((t: any) => t.id === 'B')}
+                            highlightOptionId="B"
+                            isPrint={true}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -1531,8 +1660,44 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                             </div>
                           )}
 
-                          {/* Multiple Choice Options or Numeric Response Line (No answers revealed) */}
-                          {Array.isArray(q.options) && q.options.length > 0 ? (
+                          {/* Optional Unit 8 Car A Graph (Overall Question 11) */}
+                          {q.carAGraphData && (
+                            <div className="my-3 flex justify-center break-inside-avoid">
+                              <Unit8CarAGraphSvg isPrint={true} />
+                            </div>
+                          )}
+
+                          {/* Multiple Choice Options or Numeric Response Line (No answers revealed in student copy) */}
+                          {q.vltGraphOptions && Array.isArray(q.vltGraphOptions) ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                              {q.vltGraphOptions.map((vltOpt: any) => (
+                                <div
+                                  key={vltOpt.id}
+                                  className="print-visual-option p-2.5 rounded-xl border border-slate-300 bg-white flex flex-col items-center gap-1.5 break-inside-avoid"
+                                >
+                                  <div className="flex items-center justify-between w-full px-1">
+                                    <span className="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center text-xs font-black bg-white text-slate-900">
+                                      {vltOpt.id}
+                                    </span>
+                                    <span className="text-xs font-bold text-slate-700">{vltOpt.label}</span>
+                                  </div>
+                                  <div className="w-full flex justify-center py-1">
+                                    <Unit8VltGraphSvg
+                                      type={vltOpt.type}
+                                      optId={`student-print-${vltOpt.id}`}
+                                      ariaLabel={vltOpt.ariaLabel}
+                                      isPrint={true}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : q.tableOptions && Array.isArray(q.tableOptions) ? (
+                            <Unit8TableOptionsGrid
+                              tableOptions={q.tableOptions}
+                              isPrint={true}
+                            />
+                          ) : Array.isArray(q.options) && q.options.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                               {q.options.map((opt: any, optIdx: number) => {
                                 const letter = ['A', 'B', 'C', 'D', 'E', 'F'][optIdx] || `${optIdx + 1}`;
@@ -1540,7 +1705,7 @@ export const TeacherPrintCenter: React.FC<TeacherPrintCenterProps> = ({
                                 return (
                                   <div
                                     key={optIdx}
-                                    className="flex items-start gap-2 text-xs sm:text-sm text-slate-800 py-1 px-1.5 rounded-md"
+                                    className="flex items-start gap-2 text-xs sm:text-sm text-slate-800 py-1 px-1.5 rounded-md break-inside-avoid"
                                   >
                                     <span className="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 bg-white text-slate-900">
                                       {letter}

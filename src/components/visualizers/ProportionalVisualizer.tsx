@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { CheckCircle2, XCircle, Calculator, TrendingUp, Sparkles } from 'lucide-react';
 
 export const ProportionalVisualizer: React.FC = () => {
-  // Slope (k or m)
-  const [kValue, setKValue] = useState<number>(3);
-  // Y-intercept (b)
+  // Rate of Change / Slope (m)
+  const [mValue, setMValue] = useState<number>(3);
+  // Initial Value / y-Intercept (b)
   const [bValue, setBValue] = useState<number>(0);
 
   const isProportional = bValue === 0;
@@ -12,9 +12,23 @@ export const ProportionalVisualizer: React.FC = () => {
   // Generate table points for x = 0, 1, 2, 3, 4
   const xValues = [0, 1, 2, 3, 4];
   const tableData = xValues.map((x) => {
-    const y = kValue * x + bValue;
-    const ratio = x === 0 ? (bValue === 0 ? '0/0 (Origin)' : `${bValue}/0 (Undefined)`) : (Math.round((y / x) * 100) / 100).toString();
-    return { x, y, ratio };
+    const y = mValue * x + bValue;
+    let ratioDisplay = '';
+    let ratioValueStr = '';
+    if (x === 0) {
+      ratioDisplay = 'Undefined (x = 0; division by 0)';
+      ratioValueStr = 'Undefined';
+    } else {
+      const rounded = Math.round((y / x) * 100) / 100;
+      if (x === 3 && y % 3 !== 0) {
+        ratioDisplay = `${y} ÷ 3 = ${y}/3 ≈ ${rounded}`;
+        ratioValueStr = `${y}/3 ≈ ${rounded}`;
+      } else {
+        ratioDisplay = `${y} ÷ ${x} = ${rounded}`;
+        ratioValueStr = `${rounded}`;
+      }
+    }
+    return { x, y, ratioDisplay, ratioValueStr };
   });
 
   // SVG coordinate graph parameters
@@ -29,9 +43,9 @@ export const ProportionalVisualizer: React.FC = () => {
 
   // Line endpoints on graph
   const x1 = 0;
-  const y1 = kValue * x1 + bValue;
-  const x2 = Math.min(maxX, (maxY - bValue) / (kValue || 1));
-  const y2 = kValue * x2 + bValue;
+  const y1 = mValue * x1 + bValue;
+  const x2 = Math.min(maxX, (maxY - bValue) / (mValue || 1));
+  const y2 = mValue * x2 + bValue;
 
   return (
     <div id="proportional-interactive-visualizer" className="bg-slate-900 text-slate-100 rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-800">
@@ -42,8 +56,8 @@ export const ProportionalVisualizer: React.FC = () => {
           </div>
           <h3 className="text-xl font-bold text-white">Table & Graph Proportionality Checker</h3>
           <p className="text-slate-400 text-sm mt-0.5">
-            Adjust the rate <span className="text-emerald-400 font-semibold">(k)</span> and starting value{' '}
-            <span className="text-amber-400 font-semibold">(b)</span> to see the origin rule and constant ratio live!
+            Adjust the Rate of Change / Slope <span className="text-emerald-400 font-semibold">(m)</span> and Initial Value{' '}
+            <span className="text-amber-400 font-semibold">(b)</span> in the general linear model <span className="text-slate-200 font-mono font-semibold">y = mx + b</span>. When b = 0, m represents the constant of proportionality k.
           </p>
         </div>
 
@@ -51,11 +65,11 @@ export const ProportionalVisualizer: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => {
-              setKValue(3);
+              setMValue(3);
               setBValue(0);
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
-              isProportional && kValue === 3
+              isProportional && mValue === 3
                 ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
             }`}
@@ -65,25 +79,25 @@ export const ProportionalVisualizer: React.FC = () => {
           </button>
           <button
             onClick={() => {
-              setKValue(2);
+              setMValue(2);
               setBValue(5);
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
-              !isProportional && bValue === 5
+              !isProportional && mValue === 2 && bValue === 5
                 ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
             }`}
           >
             <XCircle className="w-3.5 h-3.5 text-amber-400" />
-            Non-Prop (Flat Fee): y = 2x + 5
+            Non-Prop: y = 2x + 5
           </button>
           <button
             onClick={() => {
-              setKValue(4);
+              setMValue(4);
               setBValue(0);
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
-              isProportional && kValue === 4
+              isProportional && mValue === 4
                 ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
             }`}
@@ -96,7 +110,7 @@ export const ProportionalVisualizer: React.FC = () => {
 
       {/* Status Bar */}
       <div
-        className={`mt-4 p-3 rounded-xl flex items-center justify-between border ${
+        className={`mt-4 p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
           isProportional
             ? 'bg-emerald-950/70 border-emerald-500/40 text-emerald-200'
             : 'bg-rose-950/70 border-rose-500/40 text-rose-200'
@@ -110,17 +124,18 @@ export const ProportionalVisualizer: React.FC = () => {
           )}
           <div>
             <span className="font-bold text-sm">
-              {isProportional ? 'STATUS: PROPORTIONAL RELATIONSHIP' : 'STATUS: NON-PROPORTIONAL RELATIONSHIP'}
+              {isProportional ? 'STATUS: PROPORTIONAL RELATIONSHIP (y = kx)' : 'STATUS: NON-PROPORTIONAL LINEAR MODEL (y = mx + b)'}
             </span>
-            <p className="text-xs opacity-90">
+            <p className="text-xs opacity-90 mt-0.5">
               {isProportional
-                ? `Passes both tests! 1) Straight line, and 2) Passes through the origin (0, 0). Ratio k = y/x = ${kValue} is constant.`
-                : `Fails origin test! Starts at (0, ${bValue}) because b = ${bValue} ≠ 0. The ratio y/x changes for every row.`}
+                ? `Passes both conditions! 1) Non-vertical straight line, and 2) passes through the origin (0, 0). Because b = 0, slope m = ${mValue} is the constant of proportionality k = y/x = ${mValue} for all x ≠ 0.`
+                : `Fails origin condition! Crosses the y-axis at (0, ${bValue}) because initial value b = ${bValue} ≠ 0. Constant slope m = ${mValue}, but the ratio y/x varies for nonzero inputs (no constant of proportionality).`}
             </p>
           </div>
         </div>
-        <div className="font-mono text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700">
-          Equation: y = {kValue}x {bValue > 0 ? `+ ${bValue}` : bValue < 0 ? `- ${Math.abs(bValue)}` : ''}
+        <div className="font-mono text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700 shrink-0 self-start sm:self-auto">
+          Model: y = {mValue}x {bValue > 0 ? `+ ${bValue}` : bValue < 0 ? `- ${Math.abs(bValue)}` : ''}
+          {isProportional && ` (k = ${mValue})`}
         </div>
       </div>
 
@@ -131,8 +146,10 @@ export const ProportionalVisualizer: React.FC = () => {
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4 text-emerald-400" /> Coordinate Graph
             </span>
-            <span className="text-xs font-mono text-emerald-300">
-              Unit Rate Point: (1, {kValue + bValue})
+            <span className={`text-xs font-mono font-semibold ${isProportional ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {isProportional
+                ? `Unit Rate Point: (1, ${mValue})`
+                : `Point at x = 1: (1, ${mValue + bValue})`}
             </span>
           </div>
 
@@ -283,12 +300,19 @@ export const ProportionalVisualizer: React.FC = () => {
             </svg>
           </div>
 
-          <div className="w-full flex items-center justify-between text-xs text-slate-400 mt-2 px-1">
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2.5 h-2.5 rounded-full ${isProportional ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-              Line: {isProportional ? 'Goes through (0,0)' : `Misses (0,0), starts at (0,${bValue})`}
-            </span>
-            <span>Origin: (0,0)</span>
+          <div className="w-full flex flex-col gap-1 text-xs text-slate-400 mt-2 px-1">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span className={`w-2.5 h-2.5 rounded-full ${isProportional ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                Line: {isProportional ? 'Passes through (0,0)' : `Starts at (0,${bValue})`}
+              </span>
+              <span>Slope m = {mValue}</span>
+            </div>
+            {!isProportional && (
+              <p className="text-[11px] text-amber-300/90 leading-tight">
+                For y = {mValue}x + {bValue}, the slope is {mValue} and (1, {mValue + bValue}) is a point on the graph; {mValue + bValue} is not its constant rate of change.
+              </p>
+            )}
           </div>
         </div>
 
@@ -298,25 +322,27 @@ export const ProportionalVisualizer: React.FC = () => {
           <div className="bg-slate-800/80 rounded-xl p-4 border border-slate-700 space-y-3">
             <div>
               <div className="flex justify-between text-xs font-semibold mb-1">
-                <span className="text-slate-300">Rate / Constant of Proportionality (k):</span>
-                <span className="text-emerald-400 font-bold font-mono">k = {kValue}</span>
+                <span className="text-slate-300">Rate of Change / Slope (m):</span>
+                <span className="text-emerald-400 font-bold font-mono">
+                  m = {mValue} {isProportional && `(k = ${mValue})`}
+                </span>
               </div>
               <input
                 type="range"
                 min="1"
                 max="5"
                 step="1"
-                value={kValue}
-                onChange={(e) => setKValue(parseInt(e.target.value))}
+                value={mValue}
+                onChange={(e) => setMValue(parseInt(e.target.value))}
                 className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-700 rounded-lg"
               />
             </div>
 
             <div>
               <div className="flex justify-between text-xs font-semibold mb-1">
-                <span className="text-slate-300">Initial Value / Starting Base Fee (b):</span>
+                <span className="text-slate-300">Initial Value / y-Intercept (b):</span>
                 <span className={`font-bold font-mono ${bValue === 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  b = {bValue} {bValue === 0 ? '(No Fee → Proportional)' : '(Has Initial Fee → Non-Proportional)'}
+                  b = {bValue} {bValue === 0 ? '(b = 0 → Proportional)' : '(b ≠ 0 → Non-Proportional)'}
                 </span>
               </div>
               <input
@@ -335,7 +361,7 @@ export const ProportionalVisualizer: React.FC = () => {
           <div className="bg-slate-800/80 rounded-xl p-4 border border-slate-700">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Calculator className="w-3.5 h-3.5 text-emerald-400" /> Ratio Table (Checking k = y / x)
+                <Calculator className="w-3.5 h-3.5 text-emerald-400" /> Ratio Check: y/x (x ≠ 0)
               </h4>
               <span
                 className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
@@ -344,7 +370,7 @@ export const ProportionalVisualizer: React.FC = () => {
                     : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                 }`}
               >
-                {isProportional ? 'k is Constant (All = ' + kValue + ')' : 'Ratios Vary (Not Constant)'}
+                {isProportional ? `k is Constant (All y/x = ${mValue})` : 'Ratios Vary: Not constant'}
               </span>
             </div>
 
@@ -354,7 +380,7 @@ export const ProportionalVisualizer: React.FC = () => {
                   <tr className="border-b border-slate-700 text-slate-400">
                     <th className="pb-1.5 font-semibold">x (Input)</th>
                     <th className="pb-1.5 font-semibold">y (Output)</th>
-                    <th className="pb-1.5 font-semibold text-emerald-300">Ratio (y ÷ x)</th>
+                    <th className="pb-1.5 font-semibold text-emerald-300">Ratio Check: y/x (x ≠ 0)</th>
                     <th className="pb-1.5 font-semibold text-right">Result</th>
                   </tr>
                 </thead>
@@ -365,22 +391,22 @@ export const ProportionalVisualizer: React.FC = () => {
                       <td className="py-1.5 font-bold text-blue-300">{row.y}</td>
                       <td className="py-1.5 text-emerald-300">
                         {row.x === 0 ? (
-                          <span className="text-slate-500">Origin check (0,0)</span>
+                          <span className="text-slate-400 italic">Undefined (x = 0; division by 0)</span>
                         ) : (
-                          `${row.y} ÷ ${row.x} = ${row.ratio}`
+                          row.ratioDisplay
                         )}
                       </td>
                       <td className="py-1.5 text-right font-sans">
                         {row.x === 0 ? (
                           bValue === 0 ? (
-                            <span className="text-emerald-400 font-semibold text-[11px]">Starts at (0,0) ✓</span>
+                            <span className="text-emerald-400 font-semibold text-[11px]">Initial (0,0) ✓</span>
                           ) : (
-                            <span className="text-rose-400 font-semibold text-[11px]">Starts at (0,{bValue}) ✗</span>
+                            <span className="text-rose-400 font-semibold text-[11px]">Initial (0,{bValue}) ≠ (0,0) ✗</span>
                           )
                         ) : isProportional ? (
-                          <span className="text-emerald-400 font-semibold text-[11px]">k = {kValue} ✓</span>
+                          <span className="text-emerald-400 font-semibold text-[11px]">k = {mValue} (Constant) ✓</span>
                         ) : (
-                          <span className="text-amber-400 font-semibold text-[11px]">Changes ✗</span>
+                          <span className="text-amber-400 font-semibold text-[11px]">{row.ratioValueStr} (Not constant) ✗</span>
                         )}
                       </td>
                     </tr>
@@ -389,11 +415,16 @@ export const ProportionalVisualizer: React.FC = () => {
               </table>
             </div>
 
-            <div className="mt-3 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs text-slate-300">
-              <strong>Middle School Math Rule: </strong>
-              {isProportional
-                ? `Because every ratio y/x equals exactly ${kValue} and the graph starts at (0,0), this relationship is PROPORTIONAL with constant k = ${kValue}.`
-                : `Because the ratios change (${tableData[1].ratio} ≠ ${tableData[2].ratio}) and the starting value is ${bValue} (not 0), this is NON-PROPORTIONAL.`}
+            <div className="mt-3 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs text-slate-300 space-y-1.5">
+              <p>
+                <strong>Mathematical Rule: </strong>
+                {isProportional
+                  ? `Because the graph is a non-vertical straight line, passes through (0, 0), and every ratio y/x equals ${mValue} for all nonzero inputs (x ≠ 0), this relationship is PROPORTIONAL. The slope m = ${mValue} is the constant of proportionality k = ${mValue}.`
+                  : `In the general linear model y = mx + b, the slope is m = ${mValue}. Because the initial value is b = ${bValue} ≠ 0, the line starts at (0, ${bValue}) and misses the origin. The nonzero-input ratios y/x vary (${tableData[1].ratioValueStr} ≠ ${tableData[2].ratioValueStr}), so they are not constant and cannot be labeled as k.`}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                <strong>Note on x = 0: </strong>At x = 0, y/x is undefined; check the initial point (0, b) separately.
+              </p>
             </div>
           </div>
         </div>

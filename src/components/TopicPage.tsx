@@ -30,12 +30,15 @@ import { DilationsVisualizer } from './visualizers/DilationsVisualizer';
 import { EquationsInequalitiesVisualizer } from './visualizers/EquationsInequalitiesVisualizer';
 import { AngleRelationshipsVisualizer } from './visualizers/AngleRelationshipsVisualizer';
 import { Unit7WorkedExampleDiagram } from './visualizers/Unit7WorkedExampleDiagram';
+import { Unit8WorkedExampleDiagram } from './visualizers/Unit8WorkedExampleDiagram';
 import { SlopeLinearSimulator } from './SlopeLinearSimulator';
 import { DilationsPracticeLab } from './DilationsPracticeLab';
 import { EquationsPracticeLab } from './EquationsPracticeLab';
 import { AngleRelationshipsPracticeLab } from './AngleRelationshipsPracticeLab';
+import { FunctionsPracticeLab } from './FunctionsPracticeLab';
 import { Unit7AssessmentPlaceholder } from './Unit7AssessmentPlaceholder';
 import { Unit7SelfCheckPractice } from './Unit7SelfCheckPractice';
+import { Unit8SelfCheckPractice } from './Unit8SelfCheckPractice';
 import { StaarAngleRelationshipsQuiz } from './StaarAngleRelationshipsQuiz';
 import { DigitalStaarAngleRelationshipsSimulator } from './DigitalStaarAngleRelationshipsSimulator';
 import { DigitalStaarSimulator } from './DigitalStaarSimulator';
@@ -120,6 +123,10 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             ? '{'
             : topic.id === 'equations-inequalities'
             ? '≠'
+            : topic.id === 'angle-relationships-parallel-lines-triangles'
+            ? '∠'
+            : topic.id === 'functions-linear-relationships'
+            ? 'f(x)'
             : 'k'}
         </div>
 
@@ -521,6 +528,13 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                 />
               )}
 
+              {/* Visual Diagram for Unit 8 Worked Examples */}
+              {topic.id === 'functions-linear-relationships' && (
+                <Unit8WorkedExampleDiagram
+                  exampleId={topic.workedExamples[selectedExampleIndex].id}
+                />
+              )}
+
               {/* Strategy */}
               <div className="p-4 rounded-xl bg-blue-50/80 border border-blue-200 text-xs sm:text-sm text-blue-950 flex items-start gap-3">
                 <Lightbulb className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
@@ -619,7 +633,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className="relative z-10 max-w-3xl space-y-5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-emerald-400" />
-                {topic.id === 'slope-linear-equations' || topic.id === 'dilations-similarity' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
+                {topic.id === 'slope-linear-equations' || topic.id === 'dilations-similarity' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles' || topic.id === 'functions-linear-relationships'
                   ? 'Interactive In-Portal Math Lab Simulator'
                   : 'Interactive Cloud Run Math Simulator'}
               </div>
@@ -703,6 +717,20 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                     <ArrowRight className="w-5 h-5 opacity-80" />
                   </button>
                 </div>
+              ) : topic.id === 'functions-linear-relationships' ? (
+                <div className="pt-4">
+                  <button
+                    id="large-practice-app-button"
+                    onClick={() => {
+                      document.getElementById('functions-practice-lab-container')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
+                  >
+                    <Activity className="w-6 h-6" />
+                    <span>{topic.practiceApp.buttonText}</span>
+                    <ArrowRight className="w-5 h-5 opacity-80" />
+                  </button>
+                </div>
               ) : (
                 <div className="pt-4 space-y-3">
                   <a
@@ -748,6 +776,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           {/* Embedded Interactive Practice Lab for Module 7: Angle Relationships */}
           {topic.id === 'angle-relationships-parallel-lines-triangles' && <AngleRelationshipsPracticeLab />}
 
+          {/* Embedded Interactive Practice Lab for Unit 8: Functions */}
+          {topic.id === 'functions-linear-relationships' && <FunctionsPracticeLab />}
+
           {/* PRACTICE PATHWAY SELECTOR: Self Check | STAAR Practice */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -764,7 +795,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
             <div className={`grid grid-cols-1 ${
               topic.id === 'systems-of-linear-equations'
                 ? 'sm:grid-cols-2 md:grid-cols-3'
-                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
+                : topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles' || topic.id === 'functions-linear-relationships'
                 ? 'sm:grid-cols-2 lg:grid-cols-3'
                 : 'sm:grid-cols-2'
             } gap-3.5`}>
@@ -794,7 +825,7 @@ export const TopicPage: React.FC<TopicPageProps> = ({
                         Self Check
                       </div>
                       <div className="text-[11px] text-blue-700 font-bold">
-                        {topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles'
+                        {topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles' || topic.id === 'functions-linear-relationships'
                           ? 'Lesson Practice · 3 Rounds of 6 Questions'
                           : 'Lesson Practice · 6 Questions'}
                       </div>
@@ -816,70 +847,126 @@ export const TopicPage: React.FC<TopicPageProps> = ({
               </button>
 
               {/* Option 2: STAAR Practice */}
-              <button
-                id="pathway-staar-btn"
-                onClick={() => setPracticePathway('staar')}
-                className={`p-4 sm:p-5 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
-                  practicePathway === 'staar'
-                    ? 'bg-indigo-50/90 border-indigo-600 text-indigo-950 shadow-md ring-4 ring-indigo-500/15 -translate-y-0.5'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 shadow-xs'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className={`p-2 rounded-xl flex items-center justify-center transition-colors ${
+              {topic.id === 'functions-linear-relationships' ? (
+                <div
+                  id="pathway-staar-btn"
+                  className="p-4 sm:p-5 rounded-2xl text-left border-2 border-slate-200 bg-slate-50/70 text-slate-500 flex flex-col justify-between gap-2.5 opacity-85 select-none"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl flex items-center justify-center bg-slate-200 text-slate-500">
+                        <Target className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-lg font-black text-slate-700 tracking-tight">
+                          STAAR Practice
+                        </div>
+                        <div className="text-[11px] text-amber-700 font-bold">
+                          TEKS 8.5G & 8.5H · Coming soon
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
+                      Coming soon
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+                    36 STAAR practice questions are currently deferred pending researched questions.
+                  </p>
+                </div>
+              ) : (
+                <button
+                  id="pathway-staar-btn"
+                  onClick={() => setPracticePathway('staar')}
+                  className={`p-4 sm:p-5 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                    practicePathway === 'staar'
+                      ? 'bg-indigo-50/90 border-indigo-600 text-indigo-950 shadow-md ring-4 ring-indigo-500/15 -translate-y-0.5'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`p-2 rounded-xl flex items-center justify-center transition-colors ${
+                          practicePathway === 'staar'
+                            ? 'bg-indigo-600 text-white shadow-2xs'
+                            : 'bg-indigo-100 text-indigo-700'
+                        }`}
+                      >
+                        <Target className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                          STAAR Practice
+                        </div>
+                        <div className="text-[11px] text-indigo-700 font-bold">
+                          {topic.id === 'systems-of-linear-equations'
+                            ? 'TEKS 8.9A · 36 Original Questions'
+                            : topic.id === 'dilations-similarity'
+                            ? 'TEKS 8.3A/B/C & 8.10D · 36 Original Questions'
+                            : topic.id === 'geometric-transformations'
+                            ? 'TEKS 8.10C, 8.3C & 8.10B · 36 Original Questions'
+                            : topic.id === 'equations-inequalities'
+                            ? 'TEKS 8.8A/B/C · 36 Original Questions'
+                            : topic.id === 'angle-relationships-parallel-lines-triangles'
+                            ? 'TEKS 8.8D · 36 Questions (3 Rounds × 12)'
+                            : 'Aligned to TEKS · STAAR-style practice'}
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
                         practicePathway === 'staar'
-                          ? 'bg-indigo-600 text-white shadow-2xs'
-                          : 'bg-indigo-100 text-indigo-700'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-amber-100 text-amber-900 border border-amber-200'
                       }`}
                     >
-                      <Target className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                        STAAR Practice
-                      </div>
-                      <div className="text-[11px] text-indigo-700 font-bold">
-                        {topic.id === 'systems-of-linear-equations'
-                          ? 'TEKS 8.9A · 36 Original Questions'
-                          : topic.id === 'dilations-similarity'
-                          ? 'TEKS 8.3A/B/C & 8.10D · 36 Original Questions'
-                          : topic.id === 'geometric-transformations'
-                          ? 'TEKS 8.10C, 8.3C & 8.10B · 36 Original Questions'
-                          : topic.id === 'equations-inequalities'
-                          ? 'TEKS 8.8A/B/C · 36 Original Questions'
-                          : topic.id === 'angle-relationships-parallel-lines-triangles'
-                          ? 'TEKS 8.8D · 36 Questions (3 Rounds × 12)'
-                          : 'Aligned to TEKS · STAAR-style practice'}
-                      </div>
-                    </div>
+                      {practicePathway === 'staar' ? 'Active Mode' : 'TEKS Aligned'}
+                    </span>
                   </div>
-                  <span
-                    className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                      practicePathway === 'staar'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-amber-100 text-amber-900 border border-amber-200'
-                    }`}
-                  >
-                    {practicePathway === 'staar' ? 'Active Mode' : 'TEKS Aligned'}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                  {topic.id === 'systems-of-linear-equations'
-                    ? '36 Original STAAR-Style Questions · TEKS 8.9A · 6 Questions per Attempt'
-                    : topic.id === 'dilations-similarity'
-                    ? '36 Original STAAR-Style Questions · TEKS 8.3A/B/C & 8.10D · 6 Sequential Blocks'
-                    : topic.id === 'geometric-transformations'
-                    ? '36 Original STAAR-Style Questions · 6 Sequential Blocks with 0% Overlap'
-                    : topic.id === 'equations-inequalities'
-                    ? '36 Original STAAR-Style Questions · TEKS 8.8A/B/C · 3 Progressive Rounds of 12'
-                    : 'Practice STAAR-style questions aligned to this topic.'}
-                </p>
-              </button>
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                    {topic.id === 'systems-of-linear-equations'
+                      ? '36 Original STAAR-Style Questions · TEKS 8.9A · 6 Questions per Attempt'
+                      : topic.id === 'dilations-similarity'
+                      ? '36 Original STAAR-Style Questions · TEKS 8.3A/B/C & 8.10D · 6 Sequential Blocks'
+                      : topic.id === 'geometric-transformations'
+                      ? '36 Original STAAR-Style Questions · 6 Sequential Blocks with 0% Overlap'
+                      : topic.id === 'equations-inequalities'
+                      ? '36 Original STAAR-Style Questions · TEKS 8.8A/B/C · 3 Progressive Rounds of 12'
+                      : 'Practice STAAR-style questions aligned to this topic.'}
+                  </p>
+                </button>
+              )}
 
-              {/* Option 3: Digital STAAR Simulator (Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6 & Unit 7) */}
-              {(topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles') && (
+              {/* Option 3: Digital STAAR Simulator */}
+              {topic.id === 'functions-linear-relationships' ? (
+                <div
+                  id="pathway-digital-staar-btn"
+                  className="p-4 sm:p-5 rounded-2xl text-left border-2 border-slate-200 bg-slate-50/70 text-slate-500 flex flex-col justify-between gap-2.5 opacity-85 select-none"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl flex items-center justify-center bg-slate-200 text-slate-500">
+                        <Laptop className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-lg font-black text-slate-700 tracking-tight">
+                          Digital STAAR Simulator
+                        </div>
+                        <div className="text-[11px] text-cyan-700 font-bold">
+                          12 Tech-Enhanced Items · Coming soon
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
+                      Coming soon
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+                    Digital STAAR simulator for Unit 8 is deferred pending researched questions.
+                  </p>
+                </div>
+              ) : (topic.id === 'dilations-similarity' || topic.id === 'geometric-transformations' || topic.id === 'proportional-relationships' || topic.id === 'slope-linear-equations' || topic.id === 'systems-of-linear-equations' || topic.id === 'equations-inequalities' || topic.id === 'angle-relationships-parallel-lines-triangles') && (
                 <button
                   id="pathway-digital-staar-btn"
                   onClick={() => setPracticePathway('digital-staar')}
@@ -928,7 +1015,9 @@ export const TopicPage: React.FC<TopicPageProps> = ({
           </div>
 
           {/* Practice Component Container */}
-          {topic.id === 'angle-relationships-parallel-lines-triangles' ? (
+          {topic.id === 'functions-linear-relationships' ? (
+            <Unit8SelfCheckPractice />
+          ) : topic.id === 'angle-relationships-parallel-lines-triangles' ? (
             practicePathway === 'self-check' ? (
               <Unit7SelfCheckPractice />
             ) : practicePathway === 'staar' ? (

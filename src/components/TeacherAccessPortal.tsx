@@ -13,6 +13,7 @@ import { Unit2StaarAnalysis } from './Unit2StaarAnalysis';
 import { Unit3StaarAnalysis } from './Unit3StaarAnalysis';
 import { Unit4StaarAnalysis } from './Unit4StaarAnalysis';
 import { Unit5StaarAnalysis } from './Unit5StaarAnalysis';
+import { Unit6StaarAnalysis } from './Unit6StaarAnalysis';
 import { Unit7StaarAnalysis } from './Unit7StaarAnalysis';
 
 interface TeacherAccessPortalProps {
@@ -26,10 +27,10 @@ interface TeacherAccessPortalProps {
  * Explicit list of unit numbers that have a completed STAAR Analysis.
  * Currently Unit 1 (Transformations), Unit 2 (Proportional vs. Non-Proportional),
  * Unit 3 (Slope & Linear Equations), Unit 4 (Systems of Linear Equations),
- * Unit 5 (Dilations & Similarity), and Unit 7 (Angle Relationships) have completed STAAR Analyses.
- * Future units (e.g., 6, 8, 9, 10) can be added here once their research is completed.
+ * Unit 5 (Dilations & Similarity), Unit 6 (Linear Equations & Inequalities),
+ * and Unit 7 (Angle Relationships) have completed STAAR Analyses.
  */
-export const STAAR_ANALYSIS_AVAILABLE_UNITS: number[] = [1, 2, 3, 4, 5, 7];
+export const STAAR_ANALYSIS_AVAILABLE_UNITS: number[] = [1, 2, 3, 4, 5, 6, 7];
 
 export const TeacherAccessPortal: React.FC<TeacherAccessPortalProps> = ({
   initialTopicId,
@@ -221,6 +222,7 @@ export const TeacherAccessPortal: React.FC<TeacherAccessPortalProps> = ({
             {currentTopic.number === 3 && <Unit3StaarAnalysis />}
             {currentTopic.number === 4 && <Unit4StaarAnalysis />}
             {currentTopic.number === 5 && <Unit5StaarAnalysis />}
+            {currentTopic.number === 6 && <Unit6StaarAnalysis />}
             {currentTopic.number === 7 && <Unit7StaarAnalysis />}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { TOPIC_4_SYSTEMS } from './topics/systemsData';
 import { TOPIC_5_DILATIONS } from './topics/dilationsData';
 import { TOPIC_6_EQUATIONS_INEQUALITIES } from './topics/equationsInequalitiesData';
 import { TOPIC_7_ANGLE_RELATIONSHIPS } from './topics/angleRelationshipsData';
+import { TOPIC_8_FUNCTIONS } from './topics/functionsData';
 
 export const TOPICS_DATA: TopicData[] = [
   {
@@ -1506,4 +1507,5 @@ export const TOPICS_DATA: TopicData[] = [
   TOPIC_5_DILATIONS,
   TOPIC_6_EQUATIONS_INEQUALITIES,
   TOPIC_7_ANGLE_RELATIONSHIPS,
+  TOPIC_8_FUNCTIONS,
 ];

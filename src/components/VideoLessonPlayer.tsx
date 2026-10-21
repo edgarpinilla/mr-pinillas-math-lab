@@ -43,7 +43,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
         )}
 
         {/* Responsive Lesson Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className={`grid grid-cols-1 ${video.lessons.length === 3 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'} gap-6`}>
           {video.lessons.map((lesson) => (
             <div
               key={lesson.id}
@@ -113,7 +113,7 @@ export const VideoLessonPlayer: React.FC<VideoLessonPlayerProps> = ({ video, top
                     src={lesson.youtubeEmbedUrl}
                     title={lesson.title}
                     className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     loading="lazy"
                   />

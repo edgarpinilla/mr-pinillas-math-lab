@@ -98,6 +98,23 @@ export interface PracticeQuestion {
   tableData?: QuestionTable;
   graphData?: QuestionGraphData;
   diagramSvgType?: 'grid' | 'table' | 'equation' | 'graph';
+  vltGraphOptions?: Array<{
+    id: 'A' | 'B' | 'C' | 'D';
+    label: string;
+    ariaLabel: string;
+    type: 'circle' | 'segment' | 'parabola' | 'ellipse';
+  }>;
+  carAGraphData?: {
+    xMax: number;
+    yMax: number;
+    points: Array<{ x: number; y: number; label: string }>;
+  };
+  tableOptions?: Array<{
+    id: 'A' | 'B' | 'C' | 'D';
+    label: string;
+    headers: [string, string];
+    rows: Array<[number | string, number | string]>;
+  }>;
   options: string[];
   correctIndex: number;
   explanation: string;
